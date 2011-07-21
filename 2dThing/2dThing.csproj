@@ -63,13 +63,16 @@
     <Reference Include="System.Xml">
     </Reference>
     <Reference Include="sfmlnet-audio-2, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\..\..\..\..\..\sfml2\dotnet\lib\x86\sfmlnet-audio-2.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>sfmlnet-audio-2.dll</HintPath>
     </Reference>
     <Reference Include="sfmlnet-graphics-2, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\..\..\..\..\..\sfml2\dotnet\lib\x86\sfmlnet-graphics-2.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>sfmlnet-graphics-2.dll</HintPath>
     </Reference>
     <Reference Include="sfmlnet-window-2, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\..\..\..\..\..\sfml2\dotnet\lib\x86\sfmlnet-window-2.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>sfmlnet-window-2.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -136,6 +139,39 @@
     <None Include="sfmlnet-window-2.dll.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="sfmlnet-audio-2.dll" />
+    <None Include="sfmlnet-graphics-2.dll" />
+    <None Include="sfmlnet-window-2.dll" />
+    <None Include="lib\libcsfml-audio.so" />
+    <None Include="lib\libcsfml-audio.so.2" />
+    <None Include="lib\libcsfml-audio.so.2.0" />
+    <None Include="lib\libcsfml-graphics.so" />
+    <None Include="lib\libcsfml-graphics.so.2" />
+    <None Include="lib\libcsfml-graphics.so.2.0" />
+    <None Include="lib\libcsfml-network.so" />
+    <None Include="lib\libcsfml-network.so.2" />
+    <None Include="lib\libcsfml-network.so.2.0" />
+    <None Include="lib\libcsfml-system.so" />
+    <None Include="lib\libcsfml-system.so.2" />
+    <None Include="lib\libcsfml-system.so.2.0" />
+    <None Include="lib\libcsfml-window.so" />
+    <None Include="lib\libcsfml-window.so.2" />
+    <None Include="lib\libcsfml-window.so.2.0" />
+    <None Include="lib\libsfml-audio.so" />
+    <None Include="lib\libsfml-audio.so.2" />
+    <None Include="lib\libsfml-audio.so.2.0" />
+    <None Include="lib\libsfml-graphics.so" />
+    <None Include="lib\libsfml-graphics.so.2" />
+    <None Include="lib\libsfml-graphics.so.2.0" />
+    <None Include="lib\libsfml-network.so" />
+    <None Include="lib\libsfml-network.so.2" />
+    <None Include="lib\libsfml-network.so.2.0" />
+    <None Include="lib\libsfml-system.so" />
+    <None Include="lib\libsfml-system.so.2" />
+    <None Include="lib\libsfml-system.so.2.0" />
+    <None Include="lib\libsfml-window.so" />
+    <None Include="lib\libsfml-window.so.2" />
+    <None Include="lib\libsfml-window.so.2.0" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -167,6 +203,7 @@
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -174,4 +211,7 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <ItemGroup>
+    <Folder Include="libup\" />
+  </ItemGroup>
 </Project>
