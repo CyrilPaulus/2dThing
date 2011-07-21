@@ -20,7 +20,8 @@ namespace _2dThing.System.GameContent
         Sprite rightPupil;
 
         float speed = 100;
-        float acceleration = 1;
+        float fallSpeed = 1;
+		float jumpAcc = 300;
         bool noclip = false;
 
         bool moveLeft = false;
@@ -97,10 +98,10 @@ namespace _2dThing.System.GameContent
             }
             else if (moveUp && !noclip && !flying)
             {
-                acceleration = -2.5f;                
+                fallSpeed = - jumpAcc;                
             }
 
-            if (moveDown)
+            if (moveDown && noclip)
             {
                 Position += new Vector2f(0, speed) * frameTime;
                 Cube colliding = world.getCollidingCube(Bbox);
@@ -110,20 +111,21 @@ namespace _2dThing.System.GameContent
 
             if (!noclip)
             {
-                Position += new Vector2f(0, world.Gravity * acceleration) * frameTime;
-                acceleration += 0.2f;
+                Position += new Vector2f(0, fallSpeed) * frameTime;
+               	fallSpeed = Math.Min(fallSpeed + world.Gravity, world.MaxFallSpeed);
                 Cube colliding = world.getCollidingCube(Bbox);
                 flying = true;
                 if (colliding != null)
                 {
-                    if (acceleration > 0)
+                    if (fallSpeed > 0)
                     {
                         Position = new Vector2f(Position.X, colliding.Bbox.Top - Bbox.Height);
                         flying = false;
                     }
                     else
                         Position = new Vector2f(Position.X, colliding.Bbox.Top + colliding.Bbox.Height);
-                    acceleration = 0;        
+					
+                    fallSpeed = 0;        
 
                     
                 }

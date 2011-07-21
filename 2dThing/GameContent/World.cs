@@ -12,7 +12,8 @@ namespace _2dThing.System.GameContent
     {
         List<Cube> cubeList;
         List<Player> playerList;
-        float gravity = 100;
+        float gravity = 40;
+		float maxFallSpeed = 2000;
 
         QuadTree quadTree;
 
@@ -100,6 +101,12 @@ namespace _2dThing.System.GameContent
             get { return gravity; }
             set { gravity = value; }
         }
+		
+		public float MaxFallSpeed
+		{
+			get{ return maxFallSpeed;}
+			set{ maxFallSpeed = value;}
+		}
 
     }
 }
