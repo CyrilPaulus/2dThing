@@ -6,4 +6,4 @@ SFML=./lib/
 
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$SFML
 
-$MONO 2dThing.exe
+$MONO 2dThing.exe -client

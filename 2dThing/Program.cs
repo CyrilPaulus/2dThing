@@ -11,8 +11,8 @@ namespace _2dThing
     {
         static void Main(string[] args)
         {
-			bool isClient = false;
-			bool isServer = true;
+			bool isClient = true;
+			bool isServer = false;
 			
 			if (args.Length != 0)
             {
