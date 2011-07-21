@@ -150,36 +150,96 @@
     <None Include="sfmlnet-audio-2.dll" />
     <None Include="sfmlnet-graphics-2.dll" />
     <None Include="sfmlnet-window-2.dll" />
-    <None Include="lib\libcsfml-audio.so" />
-    <None Include="lib\libcsfml-audio.so.2" />
-    <None Include="lib\libcsfml-audio.so.2.0" />
-    <None Include="lib\libcsfml-graphics.so" />
-    <None Include="lib\libcsfml-graphics.so.2" />
-    <None Include="lib\libcsfml-graphics.so.2.0" />
-    <None Include="lib\libcsfml-network.so" />
-    <None Include="lib\libcsfml-network.so.2" />
-    <None Include="lib\libcsfml-network.so.2.0" />
-    <None Include="lib\libcsfml-system.so" />
-    <None Include="lib\libcsfml-system.so.2" />
-    <None Include="lib\libcsfml-system.so.2.0" />
-    <None Include="lib\libcsfml-window.so" />
-    <None Include="lib\libcsfml-window.so.2" />
-    <None Include="lib\libcsfml-window.so.2.0" />
-    <None Include="lib\libsfml-audio.so" />
-    <None Include="lib\libsfml-audio.so.2" />
-    <None Include="lib\libsfml-audio.so.2.0" />
-    <None Include="lib\libsfml-graphics.so" />
-    <None Include="lib\libsfml-graphics.so.2" />
-    <None Include="lib\libsfml-graphics.so.2.0" />
-    <None Include="lib\libsfml-network.so" />
-    <None Include="lib\libsfml-network.so.2" />
-    <None Include="lib\libsfml-network.so.2.0" />
-    <None Include="lib\libsfml-system.so" />
-    <None Include="lib\libsfml-system.so.2" />
-    <None Include="lib\libsfml-system.so.2.0" />
-    <None Include="lib\libsfml-window.so" />
-    <None Include="lib\libsfml-window.so.2" />
-    <None Include="lib\libsfml-window.so.2.0" />
+    <None Include="lib\libcsfml-audio.so">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="lib\libcsfml-audio.so.2">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="lib\libcsfml-audio.so.2.0">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="lib\libcsfml-graphics.so">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="lib\libcsfml-graphics.so.2">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="lib\libcsfml-graphics.so.2.0">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="lib\libcsfml-network.so">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="lib\libcsfml-network.so.2">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="lib\libcsfml-network.so.2.0">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="lib\libcsfml-system.so">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="lib\libcsfml-system.so.2">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="lib\libcsfml-system.so.2.0">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="lib\libcsfml-window.so">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="lib\libcsfml-window.so.2">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="lib\libcsfml-window.so.2.0">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="lib\libsfml-audio.so">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="lib\libsfml-audio.so.2">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="lib\libsfml-audio.so.2.0">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="lib\libsfml-graphics.so">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="lib\libsfml-graphics.so.2">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="lib\libsfml-graphics.so.2.0">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="lib\libsfml-network.so">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="lib\libsfml-network.so.2">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="lib\libsfml-network.so.2.0">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="lib\libsfml-system.so">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="lib\libsfml-system.so.2">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="lib\libsfml-system.so.2.0">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="lib\libsfml-window.so">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="lib\libsfml-window.so.2">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="lib\libsfml-window.so.2.0">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="launchLinux.sh">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
