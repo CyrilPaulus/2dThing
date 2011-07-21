@@ -172,6 +172,9 @@
     <None Include="lib\libsfml-window.so" />
     <None Include="lib\libsfml-window.so.2" />
     <None Include="lib\libsfml-window.so.2.0" />
+    <None Include="launchLinux.sh">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">
