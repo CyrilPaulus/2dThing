@@ -6,6 +6,7 @@ using SFML.Graphics;
 using SFML.Window;
 using _2dThing.Utils;
 using _2dThing.GameContent;
+using Lidgren.Network;
 
 namespace _2dThing
 {
@@ -20,6 +21,8 @@ namespace _2dThing
         Sprite mouse;
 
         World map;
+		
+		NetClient client;
 
         //TODO Dumb stuff to delete      
         Player player;
@@ -46,10 +49,17 @@ namespace _2dThing
             map.addPlayer(player);
             world.DefaultView.Center = new Vector2f(0, 0);
             world.SetView(world.DefaultView);
+			
+			NetPeerConfiguration netConfiguration = new NetPeerConfiguration("2dThing");
+			client = new NetClient(netConfiguration);
         }
 
         public void run()
         {
+			client.Start();
+			client.Connect("localhost", 55017);
+			Console.WriteLine("Client started");
+				
             //Dumb stuff to remove
             Font myFont = new Font("content/arial.ttf");            
             Text fps = new Text("Fps:", myFont);
