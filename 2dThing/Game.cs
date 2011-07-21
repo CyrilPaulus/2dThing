@@ -6,6 +6,7 @@ using SFML.Graphics;
 using SFML.Window;
 using _2dThing.System;
 using _2dThing.System.GameContent;
+using _2dThing.System.System;
 
 namespace _2dThing
 {
@@ -102,6 +103,12 @@ namespace _2dThing
         /// <param name="frameTime">time of last frame in seconds</param>
         private void update(float frameTime)
         {
+			if(Mouse.IsButtonPressed(Mouse.Button.Left))
+				map.addCube(getWorldMouse());
+			
+			if(Mouse.IsButtonPressed(Mouse.Button.Right))
+				map.deleteCube(getWorldMouse());
+			
             player.Left = Keyboard.IsKeyPressed(Keyboard.Key.Left);
             player.Right = Keyboard.IsKeyPressed(Keyboard.Key.Right);
             player.Up = Keyboard.IsKeyPressed(Keyboard.Key.Up);
@@ -126,18 +133,7 @@ namespace _2dThing
 
         void OnMouseButtonPressed(object sender, EventArgs e)
         {
-            MouseButtonEventArgs a = (MouseButtonEventArgs)e;
-            switch (a.Button)
-            {
-                case Mouse.Button.Left:
-                    map.addCube(getWorldMouse());
-                    break;
-                case Mouse.Button.Right:
-                    map.deleteCube(getWorldMouse());
-                    break;
-                default:
-                    break;
-            }
+            MouseButtonEventArgs a = (MouseButtonEventArgs)e;          
         }
 
         void OnKeyPressed(object sender, EventArgs e)

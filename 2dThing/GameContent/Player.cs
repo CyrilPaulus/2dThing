@@ -153,5 +153,10 @@ namespace _2dThing.System.GameContent
             get { return Down; }
             set { moveDown = value; }
         }
+		
+		public Vector2f Center 
+		{
+			get { return Position + new Vector2f(Bbox.Width / 2, Bbox.Height / 2); }
+		}
     }
 }
