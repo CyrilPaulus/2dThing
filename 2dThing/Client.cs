@@ -21,7 +21,7 @@ namespace _2dThing
 
         World map;
 
-        //Dumb stuff to delete      
+        //TODO Dumb stuff to delete      
         Player player;
 
         public Client()

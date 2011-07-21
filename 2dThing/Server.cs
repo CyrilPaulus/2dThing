@@ -32,9 +32,10 @@ namespace _2dThing
 			
 		}
 		
+				
 		public void update(float time){
+			Console.WriteLine("Update :" + time);
 		}
-		
 		
 	}
 }

@@ -11,8 +11,30 @@ namespace _2dThing
     {
         static void Main(string[] args)
         {
-            Client game = new Client();
-            game.run();
+			bool isClient = true;
+			bool isServer = false;
+			
+			if (args.Length != 0)
+            {
+                foreach (string v in args){
+                    if (v == "-server"){
+                        isServer = true;
+						isClient = false;
+						break;
+					}
+				}
+            }
+			
+			if(isClient){
+            	Client client = new Client();
+            	client.run();
+			}
+			else if (isServer){
+				Server server = new Server();
+				server.run();
+			}else{
+				//LOCAL GAME				
+			}
         }       
     }
 }
