@@ -15,8 +15,7 @@ namespace _2dThing.System.GameContent
         Vector2f leftPupilOrigin;
         Vector2f rightPupilOrigin;
         Vector2f leftPupilPosition;
-        Vector2f rightPupilPosition;
-        Vector2f pupilOrigin;
+        Vector2f rightPupilPosition;        
         Sprite leftPupil;
         Sprite rightPupil;
 
@@ -40,8 +39,7 @@ namespace _2dThing.System.GameContent
             rightPupil = new Sprite(new Image("content/pupil.png"));
 
             leftPupilOrigin = new Vector2f(5, 9);
-            rightPupilOrigin = new Vector2f(20, 9);
-            pupilOrigin = new Vector2f(2, 2);
+            rightPupilOrigin = new Vector2f(20, 9);            
 
             leftPupilPosition = leftPupilOrigin;
             rightPupilPosition = rightPupilOrigin;            
@@ -99,8 +97,7 @@ namespace _2dThing.System.GameContent
             }
             else if (moveUp && !noclip && !flying)
             {
-                acceleration = -2.5f;
-                Cube colliding = world.getCollidingCube(Bbox);
+                acceleration = -2.5f;                
             }
 
             if (moveDown)

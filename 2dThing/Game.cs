@@ -11,7 +11,6 @@ namespace _2dThing
 {
     class Game
     {
-        ImageManager imgManager;
         RenderWindow window;
         RenderImage world;
         RenderImage ui;
@@ -27,7 +26,6 @@ namespace _2dThing
 
         public Game()
         {
-            imgManager = new ImageManager();
             window = new RenderWindow(new VideoMode(800, 600), "2dThing is back bitches");
             world = new RenderImage(800, 600);
             ui = new RenderImage(800, 600);
