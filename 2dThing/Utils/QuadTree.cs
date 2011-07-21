@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using SFML.Window;
 using SFML.Graphics;
-using _2dThing.System.GameContent;
+using _2dThing.GameContent;
 
-namespace _2dThing.System.System
+namespace _2dThing.Utils
 {
     class QuadTree
     {

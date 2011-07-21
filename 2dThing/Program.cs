@@ -1,9 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using SFML.Graphics;
-using _2dThing.System;
 
 namespace _2dThing
 {
@@ -12,7 +11,7 @@ namespace _2dThing
     {
         static void Main(string[] args)
         {
-            Game game = new Game();
+            Client game = new Client();
             game.run();
         }       
     }

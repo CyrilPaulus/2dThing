@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using SFML.Graphics;
 
-namespace _2dThing.System.GameContent
+namespace _2dThing.GameContent
 {
     class Cube : Entity
     {

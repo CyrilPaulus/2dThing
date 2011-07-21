@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using SFML.Window;
 
-namespace _2dThing.System.System
+namespace _2dThing.Utils
 {
     class VectorUtils
     {

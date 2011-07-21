@@ -5,7 +5,7 @@ using System.Text;
 using SFML.Graphics;
 using SFML.Window;
 
-namespace _2dThing.System.GameContent
+namespace _2dThing.GameContent
 {
     class Entity
     {

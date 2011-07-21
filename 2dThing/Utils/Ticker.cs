@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace _2dThing.System
+namespace _2dThing.Utils
 {
     class Ticker
     {

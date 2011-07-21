@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using _2dThing.System.System;
+using _2dThing.Utils;
 using SFML.Window;
 using SFML.Graphics;
 
-namespace _2dThing.System.GameContent
+namespace _2dThing.GameContent
 {
     class World
     {

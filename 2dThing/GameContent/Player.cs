@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using SFML.Window;
 using SFML.Graphics;
-using _2dThing.System.System;
+using _2dThing.Utils;
 
-namespace _2dThing.System.GameContent
+namespace _2dThing.GameContent
 {
     class Player : Entity
     {

@@ -4,13 +4,12 @@ using System.Linq;
 using System.Text;
 using SFML.Graphics;
 using SFML.Window;
-using _2dThing.System;
-using _2dThing.System.GameContent;
-using _2dThing.System.System;
+using _2dThing.Utils;
+using _2dThing.GameContent;
 
 namespace _2dThing
 {
-    class Game
+    class Client
     {
         RenderWindow window;
         RenderImage world;
@@ -25,7 +24,7 @@ namespace _2dThing
         //Dumb stuff to delete      
         Player player;
 
-        public Game()
+        public Client()
         {
             window = new RenderWindow(new VideoMode(800, 600), "2dThing is back bitches");
             world = new RenderImage(800, 600);
