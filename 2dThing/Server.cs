@@ -3,6 +3,7 @@ using System.Threading;
 using _2dThing.GameContent;
 using _2dThing.Utils;
 using Lidgren.Network;
+using System.Collections.Generic;
 
 namespace _2dThing
 {
@@ -12,6 +13,7 @@ namespace _2dThing
 		World map;
 		DateTime lastTickTime;
 		NetServer server;
+		List<NetworkClient> clientList;
 		
 		
 		public Server ()
@@ -21,7 +23,8 @@ namespace _2dThing
 			lastTickTime = DateTime.Now;
 			NetPeerConfiguration netConfiguration  = new NetPeerConfiguration("2dThing");
 			netConfiguration.Port = 55017;
-			server = new NetServer(netConfiguration);			
+			server = new NetServer(netConfiguration);
+			clientList = new List<NetworkClient>();
 		}
 		
 		public void run()
@@ -50,28 +53,61 @@ namespace _2dThing
 		
 		public void readIncomingMsg(){
 			NetIncomingMessage msg;
-				while ((msg = server.ReadMessage()) != null)
-				{
-				    switch (msg.MessageType)
-				    {
-				        case NetIncomingMessageType.VerboseDebugMessage:
-				        case NetIncomingMessageType.DebugMessage:
-				        case NetIncomingMessageType.WarningMessage:
-					    case NetIncomingMessageType.ErrorMessage:
-							Console.WriteLine(msg.ReadString());
-				            break;
-						case NetIncomingMessageType.StatusChanged:
-							NetConnectionStatus status = (NetConnectionStatus)msg.ReadByte();	
-							
-							Console.WriteLine(status.ToString() + ": " + msg.ReadString());
-							break;
-				            
-				        default:
-				            Console.WriteLine("Unhandled type: " + msg.MessageType);
-				            break;
-				    }
-				    server.Recycle(msg);
-				}
+			while ((msg = server.ReadMessage()) != null)
+			{
+			    switch (msg.MessageType)
+			    {
+			        case NetIncomingMessageType.VerboseDebugMessage:
+			        case NetIncomingMessageType.DebugMessage:
+			        case NetIncomingMessageType.WarningMessage:
+				    case NetIncomingMessageType.ErrorMessage:
+						Console.WriteLine(msg.ReadString());
+			            break;
+					case NetIncomingMessageType.StatusChanged:
+						NetConnectionStatus status = (NetConnectionStatus)msg.ReadByte();
+						if(status == NetConnectionStatus.Connected){
+							NetworkClient newClient = new NetworkClient(msg.SenderConnection);
+							clientList.Add(newClient);
+							Console.WriteLine(newClient.Pseudo + " connected");
+						}
+						else if(status == NetConnectionStatus.Disconnected){
+							foreach (NetworkClient c in clientList){
+								if(c.Connection == msg.SenderConnection){
+									clientList.Remove(c);
+									Console.WriteLine("Client " + c.Pseudo + " disconnected");
+								break;
+								}
+							}
+						}						
+					break;	
+					
+					case NetIncomingMessageType.Data:
+						readPacket(msg);
+						break;
+			        default:
+			            Console.WriteLine("Unhandled type: " + msg.MessageType);
+			            break;
+			    }
+			    server.Recycle(msg);
+			}
+		}
+		
+		public void readPacket(NetIncomingMessage msg){
+			
+			switch(msg.PeekByte()){				
+				case Packet.CLIENTINFO:
+					foreach(NetworkClient c in clientList){
+						if(c.Connection.Equals(msg.SenderConnection)){
+							ClientInfo ci = ClientInfo.decode(ref msg);						
+							Console.WriteLine("Client " + c.Pseudo + " changed pseudo for " + ci.Pseudo);
+							c.Pseudo = ci.Pseudo;
+						}
+					}
+					break;
+				default:
+					Console.WriteLine("Unsupported packet recieved");
+					break;
+			}
 		}
 		
 	}

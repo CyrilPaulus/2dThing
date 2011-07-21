@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,7 +23,7 @@ namespace _2dThing
 
         World map;
 		
-		NetClient client;
+		NetClient client;		
 
         //TODO Dumb stuff to delete      
         Player player;
@@ -50,15 +51,27 @@ namespace _2dThing
             world.DefaultView.Center = new Vector2f(0, 0);
             world.SetView(world.DefaultView);
 			
-			NetPeerConfiguration netConfiguration = new NetPeerConfiguration("2dThing");
+			NetPeerConfiguration netConfiguration = new NetPeerConfiguration("2dThing");			
 			client = new NetClient(netConfiguration);
         }
 
         public void run()
         {
-			client.Start();
-			client.Connect("localhost", 55017);
-			Console.WriteLine("Client started");
+			client.Start();			
+					
+			client.Connect("localhost", 55017);			
+			
+			while(client.ConnectionStatus == NetConnectionStatus.Disconnected){
+				Thread.Sleep(10);
+			}
+			
+			Console.WriteLine("Client connected");
+			
+			NetOutgoingMessage msg = client.CreateMessage();
+			ClientInfo ci = new ClientInfo();
+			ci.Pseudo = "test";
+			ci.encode(ref msg);	
+			client.SendMessage(msg, NetDeliveryMethod.ReliableUnordered);
 				
             //Dumb stuff to remove
             Font myFont = new Font("content/arial.ttf");            
@@ -73,6 +86,7 @@ namespace _2dThing
 			tps.CharacterSize = 20;
 			tps.Color = Color.Black;
 			
+			
             while (window.IsOpened())
             {
                 if (window.GetFrameTime() != 0)
@@ -83,10 +97,10 @@ namespace _2dThing
 
                 if (ticker.Tick())
                 {
+					readIncomingMsg();
                     update((float) (DateTime.Now - lastTickTime).TotalSeconds);
 					tps.DisplayedString = "Tps: " + (int) (1 / (DateTime.Now - lastTickTime).TotalSeconds);
-                    lastTickTime = DateTime.Now;
-					
+                    lastTickTime = DateTime.Now;					
                 }
 
                 world.Clear(new Color(100, 149, 237));
@@ -104,6 +118,14 @@ namespace _2dThing
                 window.Draw(new Sprite(ui.Image));
                 window.Display();                
             }
+			
+			Console.WriteLine("Disconnecting");			
+			client.Disconnect("Bye bitches");
+			while(client.ConnectionStatus != NetConnectionStatus.Disconnected){
+				Thread.Sleep(10);
+			}
+			
+			
         }
 
         /// <summary>
@@ -201,5 +223,31 @@ namespace _2dThing
 
             world.SetView(world.DefaultView);
         }
+		
+		public void readIncomingMsg(){
+			NetIncomingMessage msg;
+			while ((msg = client.ReadMessage()) != null)
+			{
+			    switch (msg.MessageType)
+			    {
+			        case NetIncomingMessageType.VerboseDebugMessage:
+			        case NetIncomingMessageType.DebugMessage:
+			        case NetIncomingMessageType.WarningMessage:
+				    case NetIncomingMessageType.ErrorMessage:
+						Console.WriteLine(msg.ReadString());
+			            break;					
+					case NetIncomingMessageType.Data:
+						readPacket(msg);
+						break;
+			        default:
+			            Console.WriteLine("Unhandled type: " + msg.MessageType);
+			            break;
+			    }
+			    client.Recycle(msg);
+			}
+		}
+		
+		public void readPacket(NetIncomingMessage msg){
+		}
     }
 }
