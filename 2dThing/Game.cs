@@ -31,7 +31,7 @@ namespace _2dThing
             ui = new RenderImage(800, 600);
             map = new World();
             ticker = new Ticker();
-            ticker.TPS = 60;
+            //ticker.TPS = 60;
 
             window.Closed += new EventHandler(OnClose);
             window.MouseMoved += new EventHandler<MouseMoveEventArgs>(OnMouseMoved);
@@ -52,23 +52,31 @@ namespace _2dThing
         {
             //Dumb stuff to remove
             Font myFont = new Font("content/arial.ttf");            
-            Text text = new Text("Fps:", myFont);
-            text.Position = new Vector2f(0, 0);
-            text.CharacterSize = 20;
-            text.Color = Color.Black;
+            Text fps = new Text("Fps:", myFont);
+            fps.Position = new Vector2f(0, 0);
+            fps.CharacterSize = 20;
+            fps.Color = Color.Black;
             DateTime lastTickTime = DateTime.Now;
+			
+			Text tps = new Text("Tps:", myFont);
+			tps.Position = new Vector2f(0, 20);
+			tps.CharacterSize = 20;
+			tps.Color = Color.Black;
+			
             while (window.IsOpened())
             {
                 if (window.GetFrameTime() != 0)
                 {
-                    text.DisplayedString = "Fps: " + (int)(1f / window.GetFrameTime() * 1000);
+                    fps.DisplayedString = "Fps: " + (int)(1f / window.GetFrameTime() * 1000);
                 }
                 window.DispatchEvents();
 
                 if (ticker.Tick())
                 {
                     update((float) (DateTime.Now - lastTickTime).TotalSeconds);
+					tps.DisplayedString = "Tps: " + (int) (1 / (DateTime.Now - lastTickTime).TotalSeconds);
                     lastTickTime = DateTime.Now;
+					
                 }
 
                 world.Clear(new Color(100, 149, 237));
@@ -77,7 +85,8 @@ namespace _2dThing
 
                 ui.Clear(new Color(255, 255, 255, 0));
                 ui.Draw(mouse);
-                ui.Draw(text);
+                ui.Draw(fps);
+				ui.Draw(tps);
                 ui.Display();
 
                 window.Clear(new Color(100, 149, 237));                

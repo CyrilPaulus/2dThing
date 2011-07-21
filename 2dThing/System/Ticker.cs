@@ -39,11 +39,6 @@ namespace _2dThing.System
             get { return ticktime; }
             set { ticktime = value; }
         }
-
-        public float TPS
-        {
-            get { return (1 / ticktime) * 1000; }
-            set { ticktime = (1 / value) * 1000; }
-        }
+       
     }
 }
