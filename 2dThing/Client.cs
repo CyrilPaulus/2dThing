@@ -24,6 +24,7 @@ namespace _2dThing
 		NetClient client;
 		List<NetworkClient> otherClients;
 		String ip = "localhost";
+		Input input;
 		
 
 		//TODO Dumb stuff to delete      
@@ -41,6 +42,7 @@ namespace _2dThing
 			window.Closed += new EventHandler (OnClose);
 			window.MouseMoved += new EventHandler<MouseMoveEventArgs> (OnMouseMoved);
 			window.KeyPressed += new EventHandler<KeyEventArgs> (OnKeyPressed);
+			window.KeyReleased += new EventHandler<KeyEventArgs> (OnKeyReleased);
 			window.MouseButtonPressed += new EventHandler<MouseButtonEventArgs> (OnMouseButtonPressed);
 			window.ShowMouseCursor (false);
 			window.SetFramerateLimit (60);
@@ -55,6 +57,7 @@ namespace _2dThing
 			client = new NetClient (netConfiguration);
 			uMsgBuffer = new UserMessageBuffer();
 			otherClients = new List<NetworkClient>();
+			input = new Input();
 		}
 		
 		public Client(String ip) : this()
@@ -155,11 +158,6 @@ namespace _2dThing
 			}
 			
 			player.lookAt (getWorldMouse ());
-			Input input = new Input();
-			input.Left = Keyboard.IsKeyPressed(Keyboard.Key.Left);
-			input.Right = Keyboard.IsKeyPressed(Keyboard.Key.Right);
-			input.Up = Keyboard.IsKeyPressed(Keyboard.Key.Up);
-			input.Down = Keyboard.IsKeyPressed(Keyboard.Key.Down);
 			player.update (frameTime, input);
 			updateCam ();
 			
@@ -195,26 +193,43 @@ namespace _2dThing
 			KeyEventArgs a = (KeyEventArgs)e;
 			switch (a.Code) {
 			case Keyboard.Key.Left:
-                    //world.DefaultView.Move(new Vector2f(-10, 0));                    
-				world.SetView (world.DefaultView);                   
+                input.Left = true;          
 				break;
 			case Keyboard.Key.Right:
-                    //world.DefaultView.Move(new Vector2f(10, 0));
-				world.SetView (world.DefaultView);
+                input.Right = true;				
 				break;
 			case Keyboard.Key.Up:
-                    //world.DefaultView.Move(new Vector2f(0, -10));
-				world.SetView (world.DefaultView);
+                input.Up = true;				
 				break;
 			case Keyboard.Key.Down:
-                    //world.DefaultView.Move(new Vector2f(0, 10));
-				world.SetView (world.DefaultView);
+                input.Down = true;				
 				break;
 			case Keyboard.Key.R:
 				player.Position = new Vector2f (0, 0);
 				ClientReset cr = new ClientReset(clientId);
 				sendPkt(cr);
 				break;
+			default:
+				break;
+			}
+		}
+		
+		void OnKeyReleased (object sender, EventArgs e)
+		{
+			KeyEventArgs a = (KeyEventArgs)e;
+			switch (a.Code) {
+			case Keyboard.Key.Left:
+                input.Left = false;          
+				break;
+			case Keyboard.Key.Right:
+                input.Right = false;				
+				break;
+			case Keyboard.Key.Up:
+                input.Up = false;				
+				break;
+			case Keyboard.Key.Down:
+                input.Down = false;				
+				break;			
 			default:
 				break;
 			}
@@ -285,7 +300,7 @@ namespace _2dThing
 				}else{
 					foreach(NetworkClient c in otherClients){
 						if(c.ClientId == uMsg.ClientId){
-							if(VectorUtils.Distance(c.Player.Position, uMsg.Position) > 2){
+							if(VectorUtils.Distance(c.Player.Position, uMsg.Position) > 1){
 								c.Player.Position = uMsg.Position;
 							}else
 								c.Player.Position += (c.Player.Position - uMsg.Position) * 0.1F;							
