@@ -16,6 +16,8 @@ namespace _2dThing
         RenderWindow window;
         RenderImage world;
         RenderImage ui;
+		int clientId = 0;
+		bool hasId = false;
 
         Ticker ticker;
 
@@ -34,8 +36,7 @@ namespace _2dThing
             world = new RenderImage(800, 600);
             ui = new RenderImage(800, 600);
             map = new World();
-            ticker = new Ticker();
-            //ticker.TPS = 60;
+            ticker = new Ticker();            
 
             window.Closed += new EventHandler(OnClose);
             window.MouseMoved += new EventHandler<MouseMoveEventArgs>(OnMouseMoved);
@@ -65,33 +66,37 @@ namespace _2dThing
 				Thread.Sleep(10);
 			}
 			
+						
 			Console.WriteLine("Client connected");
 			
+			while(!hasId){
+				readIncomingMsg();
+				Thread.Sleep(10);
+			}
+			
+			
 			NetOutgoingMessage msg = client.CreateMessage();
-			ClientInfo ci = new ClientInfo();
+			ClientInfo ci = new ClientInfo(clientId);
 			ci.Pseudo = "test";
 			ci.encode(ref msg);	
 			client.SendMessage(msg, NetDeliveryMethod.ReliableUnordered);
 				
             //Dumb stuff to remove
             Font myFont = new Font("content/arial.ttf");            
-            Text fps = new Text("Fps:", myFont);
-            fps.Position = new Vector2f(0, 0);
-            fps.CharacterSize = 20;
-            fps.Color = Color.Black;
+            
             DateTime lastTickTime = DateTime.Now;
 			
-			Text tps = new Text("Tps:", myFont);
-			tps.Position = new Vector2f(0, 20);
-			tps.CharacterSize = 20;
-			tps.Color = Color.Black;
+			Text uiText = new Text("Tps:", myFont);
+			uiText.Position = new Vector2f(0, 0);
+			uiText.CharacterSize = 14;
+			//uiText.Color = Color.Black;
 			
 			
             while (window.IsOpened())
             {
                 if (window.GetFrameTime() != 0)
                 {
-                    fps.DisplayedString = "Fps: " + (int)(1f / window.GetFrameTime() * 1000);
+                    //fps.DisplayedString = "Fps: " + (int)(1f / window.GetFrameTime() * 1000);
                 }
                 window.DispatchEvents();
 
@@ -99,8 +104,20 @@ namespace _2dThing
                 {
 					readIncomingMsg();
                     update((float) (DateTime.Now - lastTickTime).TotalSeconds);
-					tps.DisplayedString = "Tps: " + (int) (1 / (DateTime.Now - lastTickTime).TotalSeconds);
-                    lastTickTime = DateTime.Now;					
+					uiText.DisplayedString = "Fps: " + (int)(1f / window.GetFrameTime() * 1000) + "\nTps: " + (int) (1 / (DateTime.Now - lastTickTime).TotalSeconds) + "\nClientId: " + clientId;
+                    lastTickTime = DateTime.Now;
+					
+					UserMessage uMsg = new UserMessage(clientId);
+					uMsg.Position = player.Position;
+					uMsg.Left = Keyboard.IsKeyPressed(Keyboard.Key.Left);
+					uMsg.Right = Keyboard.IsKeyPressed(Keyboard.Key.Right);
+					uMsg.Up = Keyboard.IsKeyPressed(Keyboard.Key.Up);
+					uMsg.Down = Keyboard.IsKeyPressed(Keyboard.Key.Down);
+					
+					msg = client.CreateMessage();
+					uMsg.encode(ref msg);
+					client.SendMessage(msg, NetDeliveryMethod.Unreliable);
+					
                 }
 
                 world.Clear(new Color(100, 149, 237));
@@ -108,9 +125,8 @@ namespace _2dThing
                 world.Display();
 
                 ui.Clear(new Color(255, 255, 255, 0));
-                ui.Draw(mouse);
-                ui.Draw(fps);
-				ui.Draw(tps);
+                ui.Draw(mouse);                
+				ui.Draw(uiText);
                 ui.Display();
 
                 window.Clear(new Color(100, 149, 237));                
@@ -248,6 +264,15 @@ namespace _2dThing
 		}
 		
 		public void readPacket(NetIncomingMessage msg){
+			switch(msg.PeekByte()){
+			case Packet.CLIENTINFO:
+				ClientInfo ci = ClientInfo.decode(ref msg);
+				clientId = ci.ClientId;
+				hasId = true;
+				break;
+			default:
+				break;
+			}
 		}
     }
 }

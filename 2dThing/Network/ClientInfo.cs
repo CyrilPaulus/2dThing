@@ -5,7 +5,7 @@ namespace _2dThing
 	public class ClientInfo : Packet
 	{
 		private String pseudo;
-		public ClientInfo () : base()
+		public ClientInfo (int clientId) : base(clientId)
 		{
 			type = Packet.CLIENTINFO;
 		}
@@ -24,8 +24,7 @@ namespace _2dThing
 		
 		public static new ClientInfo decode(ref Lidgren.Network.NetIncomingMessage msg)
 		{
-			Packet.decode(ref msg);
-			ClientInfo ci = new ClientInfo();
+			ClientInfo ci = new ClientInfo(Packet.decode(ref msg).ClientId);					
 			ci.Pseudo = msg.ReadString();
 			return ci;
 		}

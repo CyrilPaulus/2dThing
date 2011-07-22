@@ -14,6 +14,7 @@ namespace _2dThing
 		DateTime lastTickTime;
 		NetServer server;
 		List<NetworkClient> clientList;
+		int clientId = 1;
 		
 		
 		public Server ()
@@ -66,9 +67,18 @@ namespace _2dThing
 					case NetIncomingMessageType.StatusChanged:
 						NetConnectionStatus status = (NetConnectionStatus)msg.ReadByte();
 						if(status == NetConnectionStatus.Connected){
-							NetworkClient newClient = new NetworkClient(msg.SenderConnection);
+							int id = getUniqueClientId();
+							NetworkClient newClient = new NetworkClient(id, msg.SenderConnection);
 							clientList.Add(newClient);
 							Console.WriteLine(newClient.Pseudo + " connected");
+							
+							NetOutgoingMessage outMsg = server.CreateMessage();
+							ClientInfo ci = new ClientInfo(id);
+							ci.Pseudo = newClient.Pseudo;
+							ci.encode(ref outMsg);
+							server.SendMessage(outMsg, msg.SenderConnection, NetDeliveryMethod.ReliableOrdered);						
+							
+						
 						}
 						else if(status == NetConnectionStatus.Disconnected){
 							foreach (NetworkClient c in clientList){
@@ -104,10 +114,18 @@ namespace _2dThing
 						}
 					}
 					break;
+			case Packet.USERMESSAGE:
+				UserMessage uMsg = UserMessage.decode(ref msg);
+				//Console.WriteLine(uMsg.Time.Millisecond);
+				break;
 				default:
 					Console.WriteLine("Unsupported packet recieved");
 					break;
 			}
+		}
+		
+		private int getUniqueClientId(){
+			return clientId++;
 		}
 		
 	}

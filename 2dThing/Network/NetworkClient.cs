@@ -9,14 +9,16 @@ namespace _2dThing
 		
 		//Will be used as client ID
 		NetConnection connection;
+		private int clientId;
 		
 		String pseudo;
 		
-		public NetworkClient (NetConnection connection)
+		public NetworkClient (int clientId, NetConnection connection)
 		{
 			this.connection = connection;
 			lastHeartBeat = DateTime.Now;
-			pseudo = connection.RemoteEndpoint.ToString();
+			pseudo = "Anon " + clientId;
+			this.clientId = clientId;
 		}
 		
 		public void HeartBeat(){
@@ -29,6 +31,10 @@ namespace _2dThing
 		
 		public NetConnection Connection{
 			get{ return connection; }
+		}
+		
+		public int ClientId{
+			get { return clientId; }
 		}
 		
 		public String Pseudo

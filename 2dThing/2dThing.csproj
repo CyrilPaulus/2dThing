@@ -105,6 +105,7 @@
     <Compile Include="Network\NetworkClient.cs" />
     <Compile Include="Network\Packet.cs" />
     <Compile Include="Network\ClientInfo.cs" />
+    <Compile Include="Network\UserMessage.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="csfml-audio-2.dll">

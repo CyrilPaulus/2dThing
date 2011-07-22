@@ -11,7 +11,7 @@ namespace _2dThing.GameContent
     class Player : Entity
     {
         World world;
-
+		
         Vector2f leftPupilOrigin;
         Vector2f rightPupilOrigin;
         Vector2f leftPupilPosition;
