@@ -8,7 +8,7 @@ using SFML.Graphics;
 
 namespace _2dThing.GameContent
 {
-    class World
+    public class World
     {
         List<Cube> cubeList;
         List<Player> playerList;

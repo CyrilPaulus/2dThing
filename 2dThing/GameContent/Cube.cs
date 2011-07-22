@@ -6,7 +6,7 @@ using SFML.Graphics;
 
 namespace _2dThing.GameContent
 {
-    class Cube : Entity
+    public class Cube : Entity
     {
         public Cube()
             : base()

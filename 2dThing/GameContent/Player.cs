@@ -8,7 +8,7 @@ using _2dThing.Utils;
 
 namespace _2dThing.GameContent
 {
-    class Player : Entity
+    public class Player : Entity
     {
         World world;
 		
@@ -22,14 +22,9 @@ namespace _2dThing.GameContent
         float speed = 100;
         float fallSpeed = 1;
 		float jumpAcc = 300;
-        bool noclip = false;
+        bool noclip = true;
 
-        bool moveLeft = false;
-        bool moveRight = false;
-        bool moveUp = false;
-        bool moveDown = false;
-
-        bool flying = false;
+        bool flying = false;		
 
         public Player(World world)
             : base()
@@ -68,12 +63,12 @@ namespace _2dThing.GameContent
             rightPupilPosition = rightPupilOrigin + (rightPupilDist * rightPupilDir);
         }
 
-        public override void update(float frameTime)
+        public void update(float frameTime, Input input)
         {
             base.update(frameTime);
 
 
-            if (moveLeft)
+            if (input.Left)
             {
                 Position += new Vector2f(-speed, 0) * frameTime;
                 Cube colliding = world.getCollidingCube(Bbox);
@@ -81,7 +76,7 @@ namespace _2dThing.GameContent
                     Position = new Vector2f(colliding.Bbox.Left + colliding.Bbox.Width, Position.Y);
             }
 
-            if (moveRight)
+            if (input.Right)
             {
                 Position += new Vector2f(speed, 0) * frameTime;
                 Cube colliding = world.getCollidingCube(Bbox);
@@ -89,19 +84,19 @@ namespace _2dThing.GameContent
                     Position = new Vector2f(colliding.Bbox.Left - Bbox.Width, Position.Y);
             }
 
-            if (moveUp && noclip)
+            if (input.Up && noclip)
             {
                 Position += new Vector2f(0, -speed) * frameTime;
                 Cube colliding = world.getCollidingCube(Bbox);
                 if (colliding != null)
                     Position = new Vector2f(Position.X, colliding.Bbox.Top + colliding.Bbox.Height);
             }
-            else if (moveUp && !noclip && !flying)
+            else if (input.Up && !noclip && !flying)
             {
                 fallSpeed = - jumpAcc;                
             }
 
-            if (moveDown && noclip)
+            if (input.Down && noclip)
             {
                 Position += new Vector2f(0, speed) * frameTime;
                 Cube colliding = world.getCollidingCube(Bbox);
@@ -132,29 +127,7 @@ namespace _2dThing.GameContent
             }
         }
 
-        public bool Left
-        {
-            get { return moveLeft; }
-            set { moveLeft = value; }
-        }
-
-        public bool Right
-        {
-            get { return Right; }
-            set { moveRight = value; }
-        }
-        public bool Up
-        {
-            get { return Up; }
-            set { moveUp = value; }
-        }
-        public bool Down
-        {
-            get { return Down; }
-            set { moveDown = value; }
-        }
-		
-		public Vector2f Center 
+       	public Vector2f Center 
 		{
 			get { return Position + new Vector2f(Bbox.Width / 2, Bbox.Height / 2); }
 		}

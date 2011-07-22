@@ -25,6 +25,7 @@ namespace _2dThing
 
 		//TODO Dumb stuff to delete      
 		Player player;
+		UserMessageBuffer uMsgBuffer;
 
 		public Client ()
 		{
@@ -50,6 +51,7 @@ namespace _2dThing
 			
 			NetPeerConfiguration netConfiguration = new NetPeerConfiguration ("2dThing");			
 			client = new NetClient (netConfiguration);
+			uMsgBuffer = new UserMessageBuffer();
 		}
 
 		public void run ()
@@ -89,28 +91,15 @@ namespace _2dThing
 			
 			
 			while (window.IsOpened()) {
-				if (window.GetFrameTime () != 0) {
-					//fps.DisplayedString = "Fps: " + (int)(1f / window.GetFrameTime() * 1000);
-				}
+				
 				window.DispatchEvents ();
 
 				if (ticker.Tick ()) {
+					float ticktime = (float)(DateTime.Now - lastTickTime).TotalSeconds;
 					readIncomingMsg ();
-					update ((float)(DateTime.Now - lastTickTime).TotalSeconds);
+					update (ticktime);
 					uiText.DisplayedString = "Fps: " + (int)(1f / window.GetFrameTime () * 1000) + "\nTps: " + (int)(1 / (DateTime.Now - lastTickTime).TotalSeconds) + "\nClientId: " + clientId;
-					lastTickTime = DateTime.Now;
-					
-					UserMessage uMsg = new UserMessage (clientId);
-					uMsg.Position = player.Position;
-					uMsg.Left = Keyboard.IsKeyPressed (Keyboard.Key.Left);
-					uMsg.Right = Keyboard.IsKeyPressed (Keyboard.Key.Right);
-					uMsg.Up = Keyboard.IsKeyPressed (Keyboard.Key.Up);
-					uMsg.Down = Keyboard.IsKeyPressed (Keyboard.Key.Down);
-					
-					msg = client.CreateMessage ();
-					uMsg.encode (ref msg);
-					client.SendMessage (msg, NetDeliveryMethod.Unreliable);
-					
+					lastTickTime = DateTime.Now;					
 				}
 
 				world.Clear (new Color (100, 149, 237));
@@ -149,13 +138,24 @@ namespace _2dThing
 			if (Mouse.IsButtonPressed (Mouse.Button.Right))
 				map.deleteCube (getWorldMouse ());
 			
-			player.Left = Keyboard.IsKeyPressed (Keyboard.Key.Left);
-			player.Right = Keyboard.IsKeyPressed (Keyboard.Key.Right);
-			player.Up = Keyboard.IsKeyPressed (Keyboard.Key.Up);
-			player.Down = Keyboard.IsKeyPressed (Keyboard.Key.Down);
 			player.lookAt (getWorldMouse ());
-			player.update (frameTime);
+			Input input = new Input();
+			input.Left = Keyboard.IsKeyPressed(Keyboard.Key.Left);
+			input.Right = Keyboard.IsKeyPressed(Keyboard.Key.Right);
+			input.Up = Keyboard.IsKeyPressed(Keyboard.Key.Up);
+			input.Down = Keyboard.IsKeyPressed(Keyboard.Key.Down);
+			player.update (frameTime, input);
 			updateCam ();
+			
+			UserMessage uMsg = new UserMessage (clientId);
+			uMsg.Position = player.Position;
+			uMsg.Ticktime = frameTime;
+				
+			uMsg.Input = input;
+			NetOutgoingMessage msg = client.CreateMessage ();
+			uMsg.encode (ref msg);
+			uMsgBuffer.insert(uMsg);
+			client.SendMessage (msg, NetDeliveryMethod.Unreliable);
 		}
 
 		//Events
@@ -261,6 +261,12 @@ namespace _2dThing
 				ClientInfo ci = ClientInfo.decode (ref msg);
 				clientId = ci.ClientId;
 				hasId = true;
+				break;
+			case Packet.USERMESSAGE:
+				UserMessage uMsg = UserMessage.decode(ref msg);
+				if(uMsg.ClientId == clientId){
+					uMsgBuffer.clientCorrection(player, uMsg);					
+				}
 				break;
 			default:
 				break;

@@ -7,7 +7,7 @@ using SFML.Window;
 
 namespace _2dThing.GameContent
 {
-    class Entity
+    public class Entity
     {
         protected Sprite sprite;
 

@@ -70,7 +70,11 @@ namespace _2dThing
 						ClientInfo ci = new ClientInfo (id);
 						ci.Pseudo = newClient.Pseudo;
 						ci.encode (ref outMsg);
-						server.SendMessage (outMsg, msg.SenderConnection, NetDeliveryMethod.ReliableOrdered);						
+						server.SendMessage (outMsg, msg.SenderConnection, NetDeliveryMethod.ReliableOrdered);
+						
+						Player p = new Player(map);
+						map.addPlayer(p);
+						newClient.Player = p;
 							
 						
 					} else if (status == NetConnectionStatus.Disconnected) {
@@ -110,7 +114,23 @@ namespace _2dThing
 				break;
 			case Packet.USERMESSAGE:
 				UserMessage uMsg = UserMessage.decode (ref msg);
-				//Console.WriteLine(uMsg.Time.Millisecond);
+				foreach(NetworkClient c in clientList){
+					if(c.Connection.Equals(msg.SenderConnection)){
+					
+						
+						c.Player.update((float) (uMsg.Time - c.LastUpdate).TotalSeconds, uMsg.Input);
+						c.LastUpdate = uMsg.Time;
+						
+						Console.WriteLine(c.Player.Position);
+						Console.WriteLine(uMsg.Ticktime);
+						
+						
+						uMsg.Position = c.Player.Position;
+						NetOutgoingMessage outMsg = server.CreateMessage();
+						uMsg.encode(ref outMsg);
+						server.SendToAll(outMsg, NetDeliveryMethod.Unreliable);
+					}
+				}
 				break;
 			default:
 				Console.WriteLine ("Unsupported packet recieved");
