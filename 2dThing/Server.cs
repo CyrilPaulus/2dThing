@@ -84,10 +84,15 @@ namespace _2dThing
 						foreach (NetworkClient c in clientList) {
 							if (c.Connection == msg.SenderConnection) {
 								clientList.Remove (c);
+								map.deletePlayer(c.Player);
 								Console.WriteLine ("Client " + c.Pseudo + " disconnected");
+								NetOutgoingMessage outMsg = server.CreateMessage();
+								ClientDisconnect cd = new ClientDisconnect(c.ClientId);
+								cd.encode(ref outMsg);
+								server.SendToAll(outMsg, NetDeliveryMethod.ReliableUnordered);
 								break;
 							}
-						}
+						}						
 					}						
 					break;	
 					
@@ -125,9 +130,7 @@ namespace _2dThing
 						c.Player.update((float) (uMsg.Time - c.LastUpdate).TotalSeconds, uMsg.Input);
 						c.LastUpdate = uMsg.Time;
 						
-						Console.WriteLine(c.Player.Position);
-						Console.WriteLine(uMsg.Ticktime);
-						
+											
 						
 						uMsg.Position = c.Player.Position;
 						NetOutgoingMessage outMsg = server.CreateMessage();

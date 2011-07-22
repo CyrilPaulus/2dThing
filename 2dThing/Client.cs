@@ -304,6 +304,15 @@ namespace _2dThing
 				else
 					map.deleteCube(bu.Position);
 				break;
+			case Packet.CLIENTDISCONNECT:
+				ClientDisconnect cd = ClientDisconnect.decode(ref msg);
+				foreach(NetworkClient c in otherClients)
+					if(c.ClientId == cd.ClientId){
+						otherClients.Remove(c);
+						map.deletePlayer(c.Player);
+						break;
+					}
+				break;
 			default:
 				break;
 			}
