@@ -77,8 +77,7 @@ namespace _2dThing
 			NetOutgoingMessage msg = client.CreateMessage ();
 			ClientInfo ci = new ClientInfo (clientId);
 			ci.Pseudo = "test";
-			ci.encode (ref msg);	
-			client.SendMessage (msg, NetDeliveryMethod.ReliableUnordered);
+			sendPkt(ci, true);
 				
 			//Dumb stuff to remove
 			Font myFont = new Font ("content/arial.ttf");            
@@ -133,23 +132,19 @@ namespace _2dThing
 		/// <param name="frameTime">time of last frame in seconds</param>
 		private void update (float frameTime)
 		{
-			NetOutgoingMessage msg;
+			
 			if (Mouse.IsButtonPressed (Mouse.Button.Left)){				
 				BlockUpdate bu = new BlockUpdate(clientId);
 				bu.Added = true;
 				bu.Position = getWorldMouse();
-				msg = client.CreateMessage();
-				bu.encode(ref msg);
-				client.SendMessage(msg, NetDeliveryMethod.ReliableUnordered);				
+				sendPkt(bu);				
 			}
 			
 			if (Mouse.IsButtonPressed (Mouse.Button.Right)){				
 				BlockUpdate bu = new BlockUpdate(clientId);
 				bu.Added = false;
 				bu.Position = getWorldMouse();
-				msg = client.CreateMessage();
-				bu.encode(ref msg);
-				client.SendMessage(msg, NetDeliveryMethod.ReliableUnordered);
+				sendPkt(bu);
 			}
 			
 			player.lookAt (getWorldMouse ());
@@ -166,10 +161,8 @@ namespace _2dThing
 			uMsg.Ticktime = frameTime;
 				
 			uMsg.Input = input;
-			msg = client.CreateMessage ();
-			uMsg.encode (ref msg);
 			uMsgBuffer.insert(uMsg);
-			client.SendMessage (msg, NetDeliveryMethod.Unreliable);
+			sendPkt(uMsg);
 		}
 
 		//Events
@@ -316,6 +309,19 @@ namespace _2dThing
 			default:
 				break;
 			}
+		}
+		
+		private void sendPkt(Packet pkt){
+			sendPkt(pkt, false);
+		}
+		
+		private void sendPkt(Packet pkt, bool secure){
+			NetOutgoingMessage outMsg = client.CreateMessage();
+			pkt.encode(ref outMsg);
+			if(secure)
+				client.SendMessage(outMsg, NetDeliveryMethod.ReliableUnordered);
+			else
+				client.SendMessage(outMsg, NetDeliveryMethod.Unreliable);
 		}
 	}
 }

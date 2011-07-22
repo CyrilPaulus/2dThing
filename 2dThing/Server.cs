@@ -68,11 +68,10 @@ namespace _2dThing
 						clientList.Add (newClient);
 						Console.WriteLine (newClient.Pseudo + " connected");
 							
-						NetOutgoingMessage outMsg = server.CreateMessage ();
+						
 						ClientInfo ci = new ClientInfo (id);
 						ci.Pseudo = newClient.Pseudo;
-						ci.encode (ref outMsg);
-						server.SendMessage (outMsg, msg.SenderConnection, NetDeliveryMethod.ReliableOrdered);
+						sendPkt(ci, msg.SenderConnection, true);
 						
 						Player p = new Player(map);
 						map.addPlayer(p);
@@ -86,10 +85,9 @@ namespace _2dThing
 								clientList.Remove (c);
 								map.deletePlayer(c.Player);
 								Console.WriteLine ("Client " + c.Pseudo + " disconnected");
-								NetOutgoingMessage outMsg = server.CreateMessage();
+								
 								ClientDisconnect cd = new ClientDisconnect(c.ClientId);
-								cd.encode(ref outMsg);
-								server.SendToAll(outMsg, NetDeliveryMethod.ReliableUnordered);
+								sendPktToAll(cd, true);
 								break;
 							}
 						}						
@@ -129,13 +127,10 @@ namespace _2dThing
 						
 						c.Player.update((float) (uMsg.Time - c.LastUpdate).TotalSeconds, uMsg.Input);
 						c.LastUpdate = uMsg.Time;
-						
 											
 						
 						uMsg.Position = c.Player.Position;
-						NetOutgoingMessage outMsg = server.CreateMessage();
-						uMsg.encode(ref outMsg);
-						server.SendToAll(outMsg, NetDeliveryMethod.Unreliable);
+						sendPktToAll(uMsg);
 					}
 				}
 				break;
@@ -144,9 +139,7 @@ namespace _2dThing
 				BlockUpdate bu = BlockUpdate.decode(ref msg);
 				
 				if((bu.Added && map.addCube(bu.Position)) || !bu.Added) {
-					NetOutgoingMessage outMsg = server.CreateMessage();
-					bu.encode(ref outMsg);
-					server.SendToAll(outMsg, NetDeliveryMethod.ReliableUnordered);
+					sendPktToAll(bu);
 				}
 					
 				if(!bu.Added)
@@ -172,10 +165,34 @@ namespace _2dThing
 				BlockUpdate bu = new BlockUpdate(0);
 				bu.Added = true;
 				bu.Position = c.Position;
-				NetOutgoingMessage msg = server.CreateMessage();
-				bu.encode(ref msg);
-				server.SendMessage(msg, client, NetDeliveryMethod.ReliableUnordered);
+				sendPkt(bu, client, true);
 			}
+		}
+		
+		private void sendPkt(Packet pkt, NetConnection client){
+			sendPkt(pkt, client, false);
+		}
+		
+		private void sendPkt(Packet pkt, NetConnection client, bool secure){
+			NetOutgoingMessage outMsg = server.CreateMessage();
+			pkt.encode(ref outMsg);
+			if(secure)
+				server.SendMessage(outMsg, client, NetDeliveryMethod.ReliableUnordered);
+			else
+				server.SendMessage(outMsg, client, NetDeliveryMethod.Unreliable);
+		}
+		
+		private void sendPktToAll(Packet pkt){
+			sendPktToAll(pkt, false);
+		}
+		
+		private void sendPktToAll(Packet pkt, bool secure){
+			NetOutgoingMessage outMsg = server.CreateMessage();
+			pkt.encode(ref outMsg);
+			if(secure)
+				server.SendToAll(outMsg, NetDeliveryMethod.ReliableUnordered);
+			else
+				server.SendToAll(outMsg, NetDeliveryMethod.Unreliable);
 		}
 		
 	}
