@@ -50,9 +50,7 @@ namespace _2dThing
 			world.DefaultView.Center = new Vector2f (0, 0);
 			world.SetView (world.DefaultView);
 			
-			NetPeerConfiguration netConfiguration = new NetPeerConfiguration ("2dThing");
-			netConfiguration.SimulatedMinimumLatency = 0.2F;
-			netConfiguration.SimulatedLoss = 0.5f;
+			NetPeerConfiguration netConfiguration = new NetPeerConfiguration ("2dThing");			
 			client = new NetClient (netConfiguration);
 			uMsgBuffer = new UserMessageBuffer();
 			otherClients = new List<NetworkClient>();
