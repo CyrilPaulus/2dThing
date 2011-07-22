@@ -17,19 +17,21 @@ namespace _2dThing
 			this.clientId = clientId;
 		}
 		
-		public virtual void encode(ref NetOutgoingMessage msg){
-			msg.Write(type);
-			msg.Write(clientId);
+		public virtual void encode (ref NetOutgoingMessage msg)
+		{
+			msg.Write (type);
+			msg.Write (clientId);
 		}
 		
-		public static Packet decode(ref NetIncomingMessage msg){
-			Packet p = new Packet(0);
-			p.type = msg.ReadByte();
-			p.clientId = msg.ReadInt32();
+		public static Packet decode (ref NetIncomingMessage msg)
+		{
+			Packet p = new Packet (0);
+			p.type = msg.ReadByte ();
+			p.clientId = msg.ReadInt32 ();
 			return p;
 		}
 		
-		public int ClientId{
+		public int ClientId {
 			get { return clientId; }
 		}
 				

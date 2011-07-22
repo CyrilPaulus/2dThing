@@ -10,7 +10,6 @@ namespace _2dThing
 		//Will be used as client ID
 		NetConnection connection;
 		private int clientId;
-		
 		String pseudo;
 		
 		public NetworkClient (int clientId, NetConnection connection)
@@ -21,24 +20,24 @@ namespace _2dThing
 			this.clientId = clientId;
 		}
 		
-		public void HeartBeat(){
+		public void HeartBeat ()
+		{
 			lastHeartBeat = DateTime.Now;
 		}
 		
-		public DateTime LastHeartBeat{
+		public DateTime LastHeartBeat {
 			get { return lastHeartBeat; }
 		}
 		
-		public NetConnection Connection{
+		public NetConnection Connection {
 			get{ return connection; }
 		}
 		
-		public int ClientId{
+		public int ClientId {
 			get { return clientId; }
 		}
 		
-		public String Pseudo
-		{
+		public String Pseudo {
 			get { return pseudo; }
 			set { pseudo = value; }
 		}
