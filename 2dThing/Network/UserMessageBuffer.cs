@@ -19,29 +19,25 @@ namespace _2dThing
 		}
 		
 		public void insert(UserMessage um){
-			buffer[head] = um;
-			advance();
-		}
-		
-		public void advance(){
+			buffer[tail] = um;
 			tail = (tail + 1) % capacity;
 		}
 		
 		public void clientCorrection(Player p, UserMessage um){
 			while(um.Time > buffer[head].Time && head != tail){
-				advance();
+				head = (head + 1) % capacity;
 			}
 			
 			
 			if(head != tail && um.Time.Equals(buffer[head].Time)){
-				
+								
 				if(VectorUtils.Distance(buffer[head].Position, um.Position) > 1){
 				
 					DateTime currentTime = um.Time;
 					Input currentInput = um.Input;
 					p.Position = um.Position;
 					
-					advance();
+					head = (head + 1) % capacity;
 					int index = head;
 					
 					while(index != tail){
@@ -53,7 +49,7 @@ namespace _2dThing
 						currentInput = buffer[index].Input;
 						
 						buffer[index].Position = p.Position;
-						advance();				
+						index = (index + 1) % capacity;			
 						
 					}
 				}
