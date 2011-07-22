@@ -16,6 +16,8 @@ namespace _2dThing
 		NetServer server;
 		List<NetworkClient> clientList;
 		int clientId = 1;
+		bool running = true;
+		bool local = false;
 		
 		public Server ()
 		{
@@ -29,11 +31,16 @@ namespace _2dThing
 			clientList = new List<NetworkClient> ();
 		}
 		
+		public Server (bool local) : this()
+		{
+			this.local = local;
+		}
+		
 		public void run ()
 		{
 			server.Start ();
 			Console.WriteLine ("Server started");
-			while (true) {
+			while (running) {
 				if (ticker.Tick ()) {
 					update ((float)(DateTime.Now - lastTickTime).TotalSeconds);
 					lastTickTime = DateTime.Now;
@@ -41,7 +48,14 @@ namespace _2dThing
 					Thread.Sleep (10);
 				}
 			}
+			Console.WriteLine("Shutting server down");
+			server.Shutdown("Time to sleep bitches");
 			
+		}
+		
+		public void stop()
+		{
+			running = false;
 		}
 				
 		public void update (float time)

@@ -23,6 +23,8 @@ namespace _2dThing
 		World map;
 		NetClient client;
 		List<NetworkClient> otherClients;
+		String ip = "localhost";
+		
 
 		//TODO Dumb stuff to delete      
 		Player player;
@@ -54,12 +56,17 @@ namespace _2dThing
 			uMsgBuffer = new UserMessageBuffer();
 			otherClients = new List<NetworkClient>();
 		}
+		
+		public Client(String ip) : this()
+		{
+			this.ip = ip;
+		}
 
 		public void run ()
 		{
 			client.Start ();			
 					
-			client.Connect ("localhost", 55017);			
+			client.Connect (ip, 55017);			
 			
 			while (client.ConnectionStatus == NetConnectionStatus.Disconnected) {
 				Thread.Sleep (10);
