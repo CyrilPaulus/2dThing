@@ -4,6 +4,7 @@ using _2dThing.GameContent;
 using _2dThing.Utils;
 using Lidgren.Network;
 using System.Collections.Generic;
+using SFML.Window;
 
 namespace _2dThing
 {
@@ -20,6 +21,7 @@ namespace _2dThing
 		{
 			this.ticker = new Ticker ();
 			this.map = new World ();
+			this.map.addCube(new Vector2f(0, 90));
 			lastTickTime = DateTime.Now;
 			NetPeerConfiguration netConfiguration = new NetPeerConfiguration ("2dThing");			
 			netConfiguration.Port = 55017;			
@@ -75,6 +77,7 @@ namespace _2dThing
 						Player p = new Player(map);
 						map.addPlayer(p);
 						newClient.Player = p;
+						sendFullWorldUpdate(msg.SenderConnection);
 							
 						
 					} else if (status == NetConnectionStatus.Disconnected) {
@@ -103,7 +106,7 @@ namespace _2dThing
 		{
 			
 			switch (msg.PeekByte ()) {				
-			case Packet.CLIENTINFO:
+			case Packet.CLIENTINFO:{
 				foreach (NetworkClient c in clientList) {
 					if (c.Connection.Equals (msg.SenderConnection)) {
 						ClientInfo ci = ClientInfo.decode (ref msg);						
@@ -112,7 +115,8 @@ namespace _2dThing
 					}
 				}
 				break;
-			case Packet.USERMESSAGE:
+			}
+			case Packet.USERMESSAGE:{
 				UserMessage uMsg = UserMessage.decode (ref msg);
 				foreach(NetworkClient c in clientList){
 					if(c.Connection.Equals(msg.SenderConnection)){
@@ -132,6 +136,22 @@ namespace _2dThing
 					}
 				}
 				break;
+			}
+			case Packet.BLOCKUPDATE:{
+				BlockUpdate bu = BlockUpdate.decode(ref msg);
+				
+				if((bu.Added && map.addCube(bu.Position)) || !bu.Added) {
+					NetOutgoingMessage outMsg = server.CreateMessage();
+					bu.encode(ref outMsg);
+					server.SendToAll(outMsg, NetDeliveryMethod.ReliableUnordered);
+				}
+					
+				if(!bu.Added)
+					map.deleteCube(bu.Position);
+				
+				
+				break;
+			}
 			default:
 				Console.WriteLine ("Unsupported packet recieved");
 				break;
@@ -141,6 +161,18 @@ namespace _2dThing
 		private int getUniqueClientId ()
 		{
 			return clientId++;
+		}
+		
+		private void sendFullWorldUpdate(NetConnection client){
+			
+			foreach (Cube c in map.CubeList){
+				BlockUpdate bu = new BlockUpdate(0);
+				bu.Added = true;
+				bu.Position = c.Position;
+				NetOutgoingMessage msg = server.CreateMessage();
+				bu.encode(ref msg);
+				server.SendMessage(msg, client, NetDeliveryMethod.ReliableUnordered);
+			}
 		}
 		
 	}

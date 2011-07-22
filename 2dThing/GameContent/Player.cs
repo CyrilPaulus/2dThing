@@ -22,7 +22,7 @@ namespace _2dThing.GameContent
         float speed = 100;
         float fallSpeed = 1;
 		float jumpAcc = 300;
-        bool noclip = true;
+        bool noclip = false;
 
         bool flying = false;		
 

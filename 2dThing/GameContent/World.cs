@@ -24,7 +24,7 @@ namespace _2dThing.GameContent
             quadTree = new QuadTree(100, new Vector2f(90, 90));
         }
 
-        public void addCube(Vector2f pos)
+        public bool addCube(Vector2f pos)
         {
             Vector2f gridPos = new Vector2f((float)Math.Floor((pos.X / 30)) * 30, (float)Math.Floor((pos.Y / 30)) * 30);
             Cube cube = new Cube();
@@ -43,8 +43,19 @@ namespace _2dThing.GameContent
             {
                 cubeList.Add(cube);
                 quadTree.addCube(cube);
-            }        
+            }
+			return !exist;
         }
+		
+		public void forceAddCube(Vector2f pos){
+			Vector2f gridPos = new Vector2f((float)Math.Floor((pos.X / 30)) * 30, (float)Math.Floor((pos.Y / 30)) * 30);
+            Cube cube = new Cube();
+            cube.Position = gridPos;
+			cubeList.Add(cube);
+            quadTree.addCube(cube);
+		}
+		
+		
 
         public void deleteCube(Vector2f pos)
         {
@@ -106,6 +117,10 @@ namespace _2dThing.GameContent
 		{
 			get{ return maxFallSpeed;}
 			set{ maxFallSpeed = value;}
+		}
+		
+		public List<Cube> CubeList{
+			get { return cubeList; }
 		}
 
     }

@@ -44,8 +44,7 @@ namespace _2dThing
 			window.SetFramerateLimit (60);
 			mouse = new Sprite (new Image ("content/mouse.png"));
 
-			player = new Player (map);
-			map.addCube (new Vector2f (0, 80));
+			player = new Player (map);			
 			map.addPlayer (player);
 			world.DefaultView.Center = new Vector2f (0, 0);
 			world.SetView (world.DefaultView);
@@ -134,11 +133,24 @@ namespace _2dThing
 		/// <param name="frameTime">time of last frame in seconds</param>
 		private void update (float frameTime)
 		{
-			if (Mouse.IsButtonPressed (Mouse.Button.Left))
-				map.addCube (getWorldMouse ());
+			NetOutgoingMessage msg;
+			if (Mouse.IsButtonPressed (Mouse.Button.Left)){				
+				BlockUpdate bu = new BlockUpdate(clientId);
+				bu.Added = true;
+				bu.Position = getWorldMouse();
+				msg = client.CreateMessage();
+				bu.encode(ref msg);
+				client.SendMessage(msg, NetDeliveryMethod.ReliableUnordered);				
+			}
 			
-			if (Mouse.IsButtonPressed (Mouse.Button.Right))
-				map.deleteCube (getWorldMouse ());
+			if (Mouse.IsButtonPressed (Mouse.Button.Right)){				
+				BlockUpdate bu = new BlockUpdate(clientId);
+				bu.Added = false;
+				bu.Position = getWorldMouse();
+				msg = client.CreateMessage();
+				bu.encode(ref msg);
+				client.SendMessage(msg, NetDeliveryMethod.ReliableUnordered);
+			}
 			
 			player.lookAt (getWorldMouse ());
 			Input input = new Input();
@@ -154,7 +166,7 @@ namespace _2dThing
 			uMsg.Ticktime = frameTime;
 				
 			uMsg.Input = input;
-			NetOutgoingMessage msg = client.CreateMessage ();
+			msg = client.CreateMessage ();
 			uMsg.encode (ref msg);
 			uMsgBuffer.insert(uMsg);
 			client.SendMessage (msg, NetDeliveryMethod.Unreliable);
@@ -274,7 +286,7 @@ namespace _2dThing
 							if(VectorUtils.Distance(c.Player.Position, uMsg.Position) > 2){
 								c.Player.Position = uMsg.Position;
 							}else
-							c.Player.Position += (c.Player.Position - uMsg.Position) * 0.1F;							
+								c.Player.Position += (c.Player.Position - uMsg.Position) * 0.1F;							
 							return;
 						}
 					}
@@ -284,6 +296,13 @@ namespace _2dThing
 					map.addPlayer(newClient.Player);
 					otherClients.Add(newClient);
 				}
+				break;
+			case Packet.BLOCKUPDATE:
+				BlockUpdate bu = BlockUpdate.decode(ref msg);
+				if(bu.Added)
+					map.forceAddCube(bu.Position);
+				else
+					map.deleteCube(bu.Position);
 				break;
 			default:
 				break;

@@ -108,6 +108,7 @@
     <Compile Include="Network\UserMessage.cs" />
     <Compile Include="Network\UserMessageBuffer.cs" />
     <Compile Include="GameContent\Input.cs" />
+    <Compile Include="Network\BlockUpdate.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="csfml-audio-2.dll">
