@@ -1,1 +1,1 @@
-2dThing.exe -client
+2dThing.exe -client localhost

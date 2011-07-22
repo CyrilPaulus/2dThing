@@ -110,6 +110,7 @@
     <Compile Include="GameContent\Input.cs" />
     <Compile Include="Network\BlockUpdate.cs" />
     <Compile Include="Network\ClientDisconnect.cs" />
+    <Compile Include="Network\ClientReset.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="csfml-audio-2.dll">

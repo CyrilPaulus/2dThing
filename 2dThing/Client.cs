@@ -212,6 +212,8 @@ namespace _2dThing
 				break;
 			case Keyboard.Key.R:
 				player.Position = new Vector2f (0, 0);
+				ClientReset cr = new ClientReset(clientId);
+				sendPkt(cr);
 				break;
 			default:
 				break;

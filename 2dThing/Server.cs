@@ -162,6 +162,12 @@ namespace _2dThing
 				
 				break;
 			}
+			case Packet.CLIENTRESET:{
+				foreach(NetworkClient c in clientList)
+					if(c.Connection.Equals(msg.SenderConnection))
+						c.Player.Position = new Vector2f(0,0);
+				break;
+			}
 			default:
 				Console.WriteLine ("Unsupported packet recieved");
 				break;
