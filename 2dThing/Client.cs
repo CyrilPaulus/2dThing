@@ -21,7 +21,8 @@ namespace _2dThing
 		Ticker ticker;
 		Sprite mouse;
 		World map;
-		NetClient client;		
+		NetClient client;
+		List<NetworkClient> otherClients;
 
 		//TODO Dumb stuff to delete      
 		Player player;
@@ -50,9 +51,11 @@ namespace _2dThing
 			world.SetView (world.DefaultView);
 			
 			NetPeerConfiguration netConfiguration = new NetPeerConfiguration ("2dThing");
-			netConfiguration.SimulatedMinimumLatency = 0.05F;
+			netConfiguration.SimulatedMinimumLatency = 0.2F;
+			netConfiguration.SimulatedLoss = 0.5f;
 			client = new NetClient (netConfiguration);
 			uMsgBuffer = new UserMessageBuffer();
+			otherClients = new List<NetworkClient>();
 		}
 
 		public void run ()
@@ -267,6 +270,21 @@ namespace _2dThing
 				UserMessage uMsg = UserMessage.decode(ref msg);
 				if(uMsg.ClientId == clientId){
 					uMsgBuffer.clientCorrection(player, uMsg);					
+				}else{
+					foreach(NetworkClient c in otherClients){
+						if(c.ClientId == uMsg.ClientId){
+							if(VectorUtils.Distance(c.Player.Position, uMsg.Position) > 2){
+								c.Player.Position = uMsg.Position;
+							}else
+							c.Player.Position += (c.Player.Position - uMsg.Position) * 0.1F;							
+							return;
+						}
+					}
+					
+					NetworkClient newClient = new NetworkClient(uMsg.ClientId, null);
+					newClient.Player = new Player(map);
+					map.addPlayer(newClient.Player);
+					otherClients.Add(newClient);
 				}
 				break;
 			default:

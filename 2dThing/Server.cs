@@ -22,7 +22,8 @@ namespace _2dThing
 			this.map = new World ();
 			lastTickTime = DateTime.Now;
 			NetPeerConfiguration netConfiguration = new NetPeerConfiguration ("2dThing");
-			netConfiguration.SimulatedMinimumLatency = 0.5F;
+			netConfiguration.SimulatedMinimumLatency = 0.2F;
+			netConfiguration.SimulatedLoss = 0.5f;
 			netConfiguration.Port = 55017;			
 			server = new NetServer (netConfiguration);
 			clientList = new List<NetworkClient> ();
