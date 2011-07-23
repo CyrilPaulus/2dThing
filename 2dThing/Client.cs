@@ -86,6 +86,7 @@ namespace _2dThing
 			
 			NetOutgoingMessage msg = client.CreateMessage ();
 			ClientInfo ci = new ClientInfo (clientId);
+			ci.Color = player.Color;
 			ci.Pseudo = "test";
 			sendPkt(ci, true);
 				
@@ -290,8 +291,26 @@ namespace _2dThing
 			switch (msg.PeekByte ()) {
 			case Packet.CLIENTINFO:
 				ClientInfo ci = ClientInfo.decode (ref msg);
-				clientId = ci.ClientId;
-				hasId = true;
+				if(!hasId){				
+					clientId = ci.ClientId;
+					hasId = true;
+				}
+				else if (ci.ClientId != clientId){
+					
+					foreach(NetworkClient c in otherClients){
+						if(c.ClientId == ci.ClientId){
+							c.Pseudo = ci.Pseudo;
+							c.Player.Color = ci.Color;
+							return;
+						}
+						
+					}
+					NetworkClient newClient = new NetworkClient(ci.ClientId, null);
+					newClient.Player = new Player(map);
+					newClient.Player.Color = ci.Color;
+					map.addPlayer(newClient.Player);
+					otherClients.Add(newClient);
+				}
 				break;
 			case Packet.USERMESSAGE:
 				UserMessage uMsg = UserMessage.decode(ref msg);
@@ -308,12 +327,9 @@ namespace _2dThing
 						}
 					}
 					
-					NetworkClient newClient = new NetworkClient(uMsg.ClientId, null);
-					newClient.Player = new Player(map);
-					map.addPlayer(newClient.Player);
-					otherClients.Add(newClient);
+					
 				}
-				break;
+				break;			
 			case Packet.BLOCKUPDATE:
 				BlockUpdate bu = BlockUpdate.decode(ref msg);
 				if(bu.Added)

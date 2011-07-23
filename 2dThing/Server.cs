@@ -91,6 +91,7 @@ namespace _2dThing
 						map.addPlayer(p);
 						newClient.Player = p;
 						sendFullWorldUpdate(msg.SenderConnection);
+						sendFullClientInfo(msg.SenderConnection);
 							
 						
 					} else if (status == NetConnectionStatus.Disconnected) {
@@ -129,6 +130,8 @@ namespace _2dThing
 						ClientInfo ci = ClientInfo.decode (ref msg);						
 						Console.WriteLine ("Client " + c.Pseudo + " changed pseudo for " + ci.Pseudo);
 						c.Pseudo = ci.Pseudo;
+						c.Player.Color = ci.Color;
+						sendPktToAll(ci);
 					}
 				}
 				break;
@@ -144,7 +147,7 @@ namespace _2dThing
 											
 						
 						uMsg.Position = c.Player.Position;
-						sendPktToAll(uMsg);
+						sendPktToAll(uMsg, true);
 					}
 				}
 				break;
@@ -189,6 +192,15 @@ namespace _2dThing
 			}
 		}
 		
+		private void sendFullClientInfo(NetConnection client){
+			foreach (NetworkClient c in clientList){
+				ClientInfo ci = new ClientInfo(c.ClientId);
+				ci.Color = c.Player.Color;
+				ci.Pseudo = c.Pseudo;
+				sendPkt(ci, client, true);
+			}
+		}
+		
 		private void sendPkt(Packet pkt, NetConnection client){
 			sendPkt(pkt, client, false);
 		}
@@ -197,7 +209,7 @@ namespace _2dThing
 			NetOutgoingMessage outMsg = server.CreateMessage();
 			pkt.encode(ref outMsg);
 			if(secure)
-				server.SendMessage(outMsg, client, NetDeliveryMethod.ReliableUnordered);
+				server.SendMessage(outMsg, client, NetDeliveryMethod.ReliableOrdered);
 			else
 				server.SendMessage(outMsg, client, NetDeliveryMethod.Unreliable);
 		}
@@ -210,7 +222,7 @@ namespace _2dThing
 			NetOutgoingMessage outMsg = server.CreateMessage();
 			pkt.encode(ref outMsg);
 			if(secure)
-				server.SendToAll(outMsg, NetDeliveryMethod.ReliableUnordered);
+				server.SendToAll(outMsg, NetDeliveryMethod.ReliableOrdered);
 			else
 				server.SendToAll(outMsg, NetDeliveryMethod.Unreliable);
 		}

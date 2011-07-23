@@ -51,6 +51,12 @@ namespace _2dThing.GameContent
 			
 			
         }
+		
+		public Color Color
+		{
+			get { return colorMask.Color; }
+			set { colorMask.Color = value; }
+		}
 
         public override void Draw(RenderTarget world)
         {
