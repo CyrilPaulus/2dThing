@@ -25,7 +25,7 @@ namespace _2dThing
 		List<NetworkClient> otherClients;
 		String ip = "localhost";
 		Input input;
-		
+		String pseudo = "Anon";
 
 		//TODO Dumb stuff to delete      
 		Player player;
@@ -88,7 +88,7 @@ namespace _2dThing
 			NetOutgoingMessage msg = client.CreateMessage ();
 			ClientInfo ci = new ClientInfo (clientId);
 			ci.Color = player.Color;
-			ci.Pseudo = "test";
+			ci.Pseudo = pseudo;
 			sendPkt(ci, true);
 				
 			//Dumb stuff to remove
@@ -102,6 +102,7 @@ namespace _2dThing
 			//uiText.Color = Color.Black;
 			
 			
+			
 			while (window.IsOpened()) {
 				
 				window.DispatchEvents ();
@@ -113,19 +114,24 @@ namespace _2dThing
 					uiText.DisplayedString = "Fps: " + (int)(1f / window.GetFrameTime () * 1000) + "\nTps: " + (int)(1 / (DateTime.Now - lastTickTime).TotalSeconds) + "\nClientId: " + clientId;
 					lastTickTime = DateTime.Now;					
 				}
+				
 
 				world.Clear (new Color (100, 149, 237));
-				map.Draw (world);                
+				map.Draw (world);
+				drawPlayersPseudo();
 				world.Display ();
+				
+					
 
 				ui.Clear (new Color (255, 255, 255, 0));
-				ui.Draw (mouse);                
+				ui.Draw (mouse);				
 				ui.Draw (uiText);
+				
 				ui.Display ();
 
 				window.Clear (new Color (100, 149, 237));                
 				window.Draw (new Sprite (world.Image));
-				window.Draw (new Sprite (ui.Image));
+				window.Draw (new Sprite (ui.Image));				
 				window.Display ();                
 			}
 			
@@ -325,6 +331,7 @@ namespace _2dThing
 					NetworkClient newClient = new NetworkClient(ci.ClientId, null);
 					newClient.Player = new Player(map);
 					newClient.Player.Color = ci.Color;
+					newClient.Pseudo = ci.Pseudo;
 					map.addPlayer(newClient.Player);
 					otherClients.Add(newClient);
 				}
@@ -380,6 +387,22 @@ namespace _2dThing
 				client.SendMessage(outMsg, NetDeliveryMethod.ReliableUnordered);
 			else
 				client.SendMessage(outMsg, NetDeliveryMethod.Unreliable);
+		}
+		
+		private void drawPlayersPseudo(){
+			Text pseudo = new Text();
+			foreach (NetworkClient c in otherClients){				
+				pseudo.DisplayedString = c.Pseudo;
+				pseudo.CharacterSize = 12;
+				pseudo.Color = Color.White;
+				pseudo.Position = c.Player.Position - new Vector2f(pseudo.GetRect().Width / 2 - c.Player.Bbox.Width / 2, 20);
+				world.Draw(pseudo);
+			}
+		}
+		
+		public string Pseudo{
+			get {return pseudo;}
+			set {pseudo = value;}
 		}
 	}
 }

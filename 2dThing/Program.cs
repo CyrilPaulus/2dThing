@@ -14,28 +14,36 @@ namespace _2dThing
 			bool isClient = false;
 			bool isServer = false;
 			String ip = "localhost";
+			String pseudo = null;
 			int index = 0;
 			if (args.Length != 0) {
 				foreach (string v in args) {
 					if (v == "-server") {
 						isServer = true;
 						isClient = false;
-						break;
 						
 					}
 					
 					if (v == "-client") {
 						isServer = false;
 						isClient = true;
-						ip = args[index +1];
-						break;
+						ip = args[index +1];						
 					}
+					
+					if( v == "-pseudo"){
+						pseudo = args[index + 1];
+					}
+					
+					
 					index++;
 				}
 			}
 			
 			if (isClient) {
+				
 				Client client = new Client (ip);
+				if(pseudo != null)
+					client.Pseudo = pseudo;
 				client.run ();
 			} else if (isServer) {
 				Server server = new Server ();
