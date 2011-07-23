@@ -26,7 +26,8 @@ namespace _2dThing
 		String ip = "localhost";
 		Input input;
 		String pseudo = "Anon";
-
+		Font myFont = new Font ("content/arial.ttf"); 
+		
 		//TODO Dumb stuff to delete      
 		Player player;
 		UserMessageBuffer uMsgBuffer;
@@ -92,7 +93,7 @@ namespace _2dThing
 			sendPkt(ci, true);
 				
 			//Dumb stuff to remove
-			Font myFont = new Font ("content/arial.ttf");            
+			           
             
 			DateTime lastTickTime = DateTime.Now;
 			
@@ -390,9 +391,9 @@ namespace _2dThing
 		}
 		
 		private void drawPlayersPseudo(){
-			Text pseudo = new Text();
+			
 			foreach (NetworkClient c in otherClients){				
-				pseudo.DisplayedString = c.Pseudo;
+				Text pseudo = new Text(c.Pseudo, myFont);
 				pseudo.CharacterSize = 12;
 				pseudo.Color = Color.White;
 				pseudo.Position = c.Player.Position - new Vector2f(pseudo.GetRect().Width / 2 - c.Player.Bbox.Width / 2, 20);
