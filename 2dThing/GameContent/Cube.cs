@@ -11,7 +11,7 @@ namespace _2dThing.GameContent
         public Cube()
             : base()
         {
-            sprite = new Sprite(new Image("content/cube.png"));            
+            Sprite = new Sprite(new Image("content/cube.png"));            
         }
     }
 }

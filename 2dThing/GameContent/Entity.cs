@@ -10,16 +10,20 @@ namespace _2dThing.GameContent
     public class Entity
     {
         protected Sprite sprite;
-
+		protected Vector2f offset;
+		protected Vector2f position;
+		protected Vector2f size;
         public Entity()
         {            
-            this.sprite = new Sprite(new Image("content/cube.png"));
+            Sprite = new Sprite(new Image("content/cube.png"));
+			offset = new Vector2f(0, 0);
+			position = new Vector2f(0, 0);			
         }
 
         public Vector2f Position
         {
-            get { return sprite.Position; }
-            set { sprite.Position = value; }
+            get { return position; }
+            set { position = value; }
         }
 
         public Vector2f Scale
@@ -30,9 +34,10 @@ namespace _2dThing.GameContent
 
         public virtual void Draw(RenderTarget world)
         {
+			sprite.Position = Position + offset;
           world.Draw(sprite);
-          //Shape rectangle = Shape.Rectangle(Bbox, new Color(0, 0, 0, 0), 2, Color.Green);
-          //world.Draw(rectangle);            
+          Shape rectangle = Shape.Rectangle(Bbox, new Color(0, 0, 0, 0), -2, Color.Red);
+          world.Draw(rectangle);            
         }
 
         public virtual void DrawUI(RenderTarget ui)
@@ -50,10 +55,14 @@ namespace _2dThing.GameContent
             set {sprite.Image = value;}
         }
 
-        public FloatRect Bbox
+        public virtual FloatRect Bbox
         {
-            get { return new FloatRect(sprite.Position.X, sprite.Position.Y, sprite.Width, sprite.Height); }
+            get { return new FloatRect(Position.X, Position.Y, size.X, size.Y); }
         }
+		
+		public Sprite Sprite{
+			set { sprite = value; size = new Vector2f(sprite.Width, sprite.Height);}
+		}
     
     }
 }

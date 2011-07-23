@@ -30,7 +30,9 @@ namespace _2dThing.GameContent
             : base()
         {
             this.world = world;
-            sprite = new Sprite(new Image("content/player.png"));			
+            Sprite = new Sprite(new Image("content/player.png"));			
+			size = new Vector2f(sprite.Width - 2, sprite.Height);
+			offset = new Vector2f(-1,0);
             leftPupil = new Sprite(new Image("content/pupil.png"));
             rightPupil = new Sprite(new Image("content/pupil.png"));
 
@@ -128,8 +130,8 @@ namespace _2dThing.GameContent
 			
 			
         }
-
-       	public Vector2f Center 
+		
+		public Vector2f Center 
 		{
 			get { return Position + new Vector2f(Bbox.Width / 2, Bbox.Height / 2); }
 		}		
