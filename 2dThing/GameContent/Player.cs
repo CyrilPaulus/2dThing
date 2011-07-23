@@ -30,7 +30,7 @@ namespace _2dThing.GameContent
             : base()
         {
             this.world = world;
-            sprite = new Sprite(new Image("content/player.png"));
+            sprite = new Sprite(new Image("content/player.png"));			
             leftPupil = new Sprite(new Image("content/pupil.png"));
             rightPupil = new Sprite(new Image("content/pupil.png"));
 
@@ -66,7 +66,7 @@ namespace _2dThing.GameContent
         public void update(float frameTime, Input input)
         {
             base.update(frameTime);
-
+			Vector2f oldPos = Position;
 
             if (input.Left)
             {
@@ -87,7 +87,7 @@ namespace _2dThing.GameContent
             if (input.Up && noclip)
             {
                 Position += new Vector2f(0, -speed) * frameTime;
-                Cube colliding = world.getCollidingCube(Bbox);
+               	Cube colliding = world.getCollidingCube(Bbox);
                 if (colliding != null)
                     Position = new Vector2f(Position.X, colliding.Bbox.Top + colliding.Bbox.Height);
             }
@@ -112,7 +112,7 @@ namespace _2dThing.GameContent
                 flying = true;
                 if (colliding != null)
                 {
-                    if (fallSpeed > 0)
+                    if (fallSpeed >= 0)
                     {
                         Position = new Vector2f(Position.X, colliding.Bbox.Top - Bbox.Height);
                         flying = false;
@@ -124,12 +124,15 @@ namespace _2dThing.GameContent
 
                     
                 }
-            }
+            }		
+			
+			
         }
 
        	public Vector2f Center 
 		{
 			get { return Position + new Vector2f(Bbox.Width / 2, Bbox.Height / 2); }
-		}
+		}		
+		
     }
 }
