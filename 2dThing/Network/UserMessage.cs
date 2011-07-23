@@ -9,6 +9,8 @@ namespace _2dThing
 		Input input;
 		Vector2f position;
 		float ticktime;
+		Vector2f eyePosition;
+		float fallSpeed;
 		
 		public UserMessage (int clientId) : base(clientId)
 		{
@@ -31,6 +33,9 @@ namespace _2dThing
 			msg.Write (position.X);
 			msg.Write (position.Y);
 			msg.Write (ticktime);
+			msg.Write(eyePosition.X);
+			msg.Write(eyePosition.Y);
+			msg.Write(fallSpeed);
 		}
 		
 		public new static UserMessage decode (ref Lidgren.Network.NetIncomingMessage msg)
@@ -43,6 +48,8 @@ namespace _2dThing
 			um.input.Right = msg.ReadBoolean ();
 			um.position = new Vector2f (msg.ReadFloat (), msg.ReadFloat ());
 			um.ticktime = msg.ReadFloat();
+			um.EyePosition = new Vector2f(msg.ReadFloat(), msg.ReadFloat());
+			um.fallSpeed = msg.ReadFloat();
 			return um;			
 		}
 		
@@ -61,9 +68,19 @@ namespace _2dThing
 			set { position = value; }
 		}
 		
+		public Vector2f EyePosition {
+			get { return eyePosition; }
+			set { eyePosition = value; }
+		}
+		
 		public float Ticktime {
 			get { return ticktime; }
 			set { ticktime = value; }
+		}
+		
+		public float FallSpeed {
+			get { return fallSpeed; }
+			set { fallSpeed = value; }
 		}
 		
 	}

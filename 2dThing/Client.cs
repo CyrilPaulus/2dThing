@@ -165,6 +165,8 @@ namespace _2dThing
 			UserMessage uMsg = new UserMessage (clientId);
 			uMsg.Position = player.Position;
 			uMsg.Ticktime = frameTime;
+			uMsg.EyePosition = getWorldMouse();
+			uMsg.FallSpeed = player.FallSpeed;
 				
 			uMsg.Input = input;
 			uMsgBuffer.insert(uMsg);
@@ -206,7 +208,7 @@ namespace _2dThing
                 input.Down = true;				
 				break;
 			case Keyboard.Key.R:
-				player.Position = new Vector2f (0, 0);
+				player.reset();
 				ClientReset cr = new ClientReset(clientId);
 				sendPkt(cr);
 				break;
@@ -325,8 +327,9 @@ namespace _2dThing
 				}else{
 					foreach(NetworkClient c in otherClients){
 						if(c.ClientId == uMsg.ClientId){
+							c.Player.lookAt(uMsg.EyePosition);
 							if(VectorUtils.Distance(c.Player.Position, uMsg.Position) > 1){
-								c.Player.Position = uMsg.Position;
+								c.Player.Position = uMsg.Position;								
 							}else
 								c.Player.Position += (c.Player.Position - uMsg.Position) * 0.1F;							
 							return;

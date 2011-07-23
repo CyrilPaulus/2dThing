@@ -36,6 +36,7 @@ namespace _2dThing
 					DateTime currentTime = um.Time;
 					Input currentInput = um.Input;
 					p.Position = um.Position;
+					p.FallSpeed = um.FallSpeed;
 					
 					head = (head + 1) % capacity;
 					int index = head;
@@ -49,6 +50,7 @@ namespace _2dThing
 						currentInput = buffer[index].Input;
 						
 						buffer[index].Position = p.Position;
+						buffer[index].FallSpeed = p.FallSpeed;
 						index = (index + 1) % capacity;			
 						
 					}

@@ -22,7 +22,7 @@ namespace _2dThing.GameContent
 
         float speed = 100;
         float fallSpeed = 1;
-		float jumpAcc = 300;
+		float jumpAcc = 200;
         bool noclip = false;
 
         bool flying = false;		
@@ -142,7 +142,7 @@ namespace _2dThing.GameContent
                 }
 				else
 				{
-					fallSpeed = Math.Min(fallSpeed + world.Gravity, world.MaxFallSpeed);
+					fallSpeed = Math.Min(fallSpeed + (world.Gravity * frameTime), world.MaxFallSpeed);
 				}
             }		
 			
@@ -154,5 +154,14 @@ namespace _2dThing.GameContent
 			get { return Position + new Vector2f(Bbox.Width / 2, Bbox.Height / 2); }
 		}		
 		
+		public float FallSpeed{
+			get {return fallSpeed;}
+			set {fallSpeed = value;}
+		}
+		
+		public void reset(){
+			Position = new Vector2f(0,0);
+			fallSpeed = 0;
+		}
     }
 }

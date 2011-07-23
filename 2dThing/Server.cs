@@ -148,6 +148,7 @@ namespace _2dThing
 						
 						uMsg.Position = c.Player.Position;
 						sendPktToAll(uMsg, true);
+						
 					}
 				}
 				break;
@@ -168,7 +169,7 @@ namespace _2dThing
 			case Packet.CLIENTRESET:{
 				foreach(NetworkClient c in clientList)
 					if(c.Connection.Equals(msg.SenderConnection))
-						c.Player.Position = new Vector2f(0,0);
+						c.Player.reset();
 				break;
 			}
 			default:
@@ -225,7 +226,7 @@ namespace _2dThing
 				server.SendToAll(outMsg, NetDeliveryMethod.ReliableOrdered);
 			else
 				server.SendToAll(outMsg, NetDeliveryMethod.Unreliable);
-		}
+		}	
 		
 	}
 }
