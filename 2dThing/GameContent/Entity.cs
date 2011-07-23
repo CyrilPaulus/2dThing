@@ -35,9 +35,9 @@ namespace _2dThing.GameContent
         public virtual void Draw(RenderTarget world)
         {
 			sprite.Position = Position + offset;
-          world.Draw(sprite);
-          Shape rectangle = Shape.Rectangle(Bbox, new Color(0, 0, 0, 0), -2, Color.Red);
-          world.Draw(rectangle);            
+          	world.Draw(sprite);
+          	/*Shape rectangle = Shape.Rectangle(Bbox, new Color(0, 0, 0, 0), -2, Color.Red);
+          	world.Draw(rectangle); */           
         }
 
         public virtual void DrawUI(RenderTarget ui)

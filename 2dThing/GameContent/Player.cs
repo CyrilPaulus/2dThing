@@ -18,6 +18,7 @@ namespace _2dThing.GameContent
         Vector2f rightPupilPosition;        
         Sprite leftPupil;
         Sprite rightPupil;
+		Sprite colorMask;
 
         float speed = 100;
         float fallSpeed = 1;
@@ -35,21 +36,31 @@ namespace _2dThing.GameContent
 			offset = new Vector2f(-1,0);
             leftPupil = new Sprite(new Image("content/pupil.png"));
             rightPupil = new Sprite(new Image("content/pupil.png"));
+			colorMask = new Sprite(new Image("content/colorMask.png"));
+			Random randomiser = new Random();
+			byte[] rgb = new byte[3];
+			randomiser.NextBytes(rgb);
+			colorMask.Color = new Color(rgb[0], rgb[1] , rgb[2]);
+			
 
             leftPupilOrigin = new Vector2f(5, 9);
             rightPupilOrigin = new Vector2f(20, 9);            
 
             leftPupilPosition = leftPupilOrigin;
-            rightPupilPosition = rightPupilOrigin;            
+            rightPupilPosition = rightPupilOrigin;
+			
+			
         }
 
         public override void Draw(RenderTarget world)
         {
             base.Draw(world);
-            leftPupil.Position = Position + leftPupilPosition;
-            rightPupil.Position = Position + rightPupilPosition;
+            leftPupil.Position = sprite.Position + leftPupilPosition;
+            rightPupil.Position = sprite.Position + rightPupilPosition;
+			colorMask.Position = sprite.Position;
             world.Draw(leftPupil);
             world.Draw(rightPupil);
+			world.Draw(colorMask);			
         }
 
         public void lookAt(Vector2f pos)
@@ -108,13 +119,12 @@ namespace _2dThing.GameContent
 
             if (!noclip)
             {
-                Position += new Vector2f(0, fallSpeed) * frameTime;
-               	fallSpeed = Math.Min(fallSpeed + world.Gravity, world.MaxFallSpeed);
+                Position += new Vector2f(0, fallSpeed) * frameTime;               	
                 Cube colliding = world.getCollidingCube(Bbox);
                 flying = true;
                 if (colliding != null)
                 {
-                    if (fallSpeed >= 0)
+                    if (fallSpeed > 0)
                     {
                         Position = new Vector2f(Position.X, colliding.Bbox.Top - Bbox.Height);
                         flying = false;
@@ -122,10 +132,12 @@ namespace _2dThing.GameContent
                     else
                         Position = new Vector2f(Position.X, colliding.Bbox.Top + colliding.Bbox.Height);
 					
-                    fallSpeed = 0;        
-
-                    
+                    fallSpeed = 0;
                 }
+				else
+				{
+					fallSpeed = Math.Min(fallSpeed + world.Gravity, world.MaxFallSpeed);
+				}
             }		
 			
 			
