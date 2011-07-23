@@ -44,6 +44,7 @@ namespace _2dThing
 			window.KeyPressed += new EventHandler<KeyEventArgs> (OnKeyPressed);
 			window.KeyReleased += new EventHandler<KeyEventArgs> (OnKeyReleased);
 			window.MouseButtonPressed += new EventHandler<MouseButtonEventArgs> (OnMouseButtonPressed);
+			window.MouseWheelMoved += new EventHandler<MouseWheelEventArgs> (OnMouseWheelMoved);
 			window.ShowMouseCursor (false);
 			window.SetFramerateLimit (60);
 			mouse = new Sprite (new Image ("content/mouse.png"));
@@ -242,6 +243,14 @@ namespace _2dThing
 			default:
 				break;
 			}
+		}
+		
+		void OnMouseWheelMoved(object sender, EventArgs e){
+			MouseWheelEventArgs a = (MouseWheelEventArgs) e;
+			if(a.Delta < 0)
+				world.DefaultView.Zoom(1.3333333F);
+			else
+				world.DefaultView.Zoom(0.75F);
 		}
 
 		private Vector2f getWorldMouse ()
