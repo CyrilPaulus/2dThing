@@ -210,6 +210,12 @@ namespace _2dThing
 				ClientReset cr = new ClientReset(clientId);
 				sendPkt(cr);
 				break;
+			case Keyboard.Key.PageDown:
+				world.DefaultView.Zoom(1.3333333F);
+				break;
+			case Keyboard.Key.PageUp:
+				world.DefaultView.Zoom(0.75F);
+				break;			
 			default:
 				break;
 			}
