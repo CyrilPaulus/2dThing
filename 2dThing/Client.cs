@@ -26,7 +26,10 @@ namespace _2dThing
 		String ip = "localhost";
 		Input input;
 		String pseudo = "Anon";
-		Font myFont = new Font ("content/arial.ttf"); 
+		Font myFont = new Font ("content/arial.ttf");
+		
+		bool leftMouseButtonDown = false;
+		bool rightMouseButtonDown = false;
 		
 		//TODO Dumb stuff to delete      
 		Player player;
@@ -45,8 +48,9 @@ namespace _2dThing
 			window.KeyPressed += new EventHandler<KeyEventArgs> (OnKeyPressed);
 			window.KeyReleased += new EventHandler<KeyEventArgs> (OnKeyReleased);
 			window.MouseButtonPressed += new EventHandler<MouseButtonEventArgs> (OnMouseButtonPressed);
+			window.MouseButtonReleased += new EventHandler<MouseButtonEventArgs>(OnMouseButtonReleased);
 			window.MouseWheelMoved += new EventHandler<MouseWheelEventArgs> (OnMouseWheelMoved);
-			window.Resized += new EventHandler<SizeEventArgs>(OnWindowResized);
+			window.Resized += new EventHandler<SizeEventArgs>(OnWindowResized);			
 			window.ShowMouseCursor (false);
 			window.SetFramerateLimit (60);
 			mouse = new Sprite (new Image ("content/mouse.png"));
@@ -153,14 +157,14 @@ namespace _2dThing
 		private void update (float frameTime)
 		{
 			
-			if (Mouse.IsButtonPressed (Mouse.Button.Left)){				
+			if (leftMouseButtonDown){				
 				BlockUpdate bu = new BlockUpdate(clientId);
 				bu.Added = true;
 				bu.Position = getWorldMouse();
 				sendPkt(bu);				
 			}
 			
-			if (Mouse.IsButtonPressed (Mouse.Button.Right)){				
+			if (rightMouseButtonDown){				
 				BlockUpdate bu = new BlockUpdate(clientId);
 				bu.Added = false;
 				bu.Position = getWorldMouse();
@@ -197,7 +201,30 @@ namespace _2dThing
 
 		void OnMouseButtonPressed (object sender, EventArgs e)
 		{
-			MouseButtonEventArgs a = (MouseButtonEventArgs)e;          
+			MouseButtonEventArgs a = (MouseButtonEventArgs)e;
+			switch(a.Button){
+			case Mouse.Button.Left:
+				leftMouseButtonDown = true;
+				break;
+			case Mouse.Button.Right:
+				rightMouseButtonDown = true;
+				break;
+			default:break;
+			}
+		}
+		
+		void OnMouseButtonReleased (object sender, EventArgs e)
+		{
+			MouseButtonEventArgs a = (MouseButtonEventArgs)e;
+			switch(a.Button){
+			case Mouse.Button.Left:
+				leftMouseButtonDown = false;
+				break;
+			case Mouse.Button.Right:
+				rightMouseButtonDown = false;
+				break;
+			default:break;
+			}
 		}
 
 		void OnKeyPressed (object sender, EventArgs e)
