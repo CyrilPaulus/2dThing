@@ -14,7 +14,7 @@ namespace _2dThing
 		World map;
 		DateTime lastTickTime;
 		NetServer server;
-		List<NetworkClient> clientList;
+		Dictionary<NetConnection, NetworkClient> clientList;
 		int clientId = 1;
 		bool running = true;
 		bool local = false;
@@ -28,7 +28,7 @@ namespace _2dThing
 			NetPeerConfiguration netConfiguration = new NetPeerConfiguration ("2dThing");			
 			netConfiguration.Port = 55017;			
 			server = new NetServer (netConfiguration);
-			clientList = new List<NetworkClient> ();
+			clientList = new Dictionary<NetConnection, NetworkClient>();
 		}
 		
 		public Server (bool local) : this()
@@ -74,12 +74,13 @@ namespace _2dThing
 				case NetIncomingMessageType.ErrorMessage:
 					Console.WriteLine (msg.ReadString ());
 					break;
+					
 				case NetIncomingMessageType.StatusChanged:
 					NetConnectionStatus status = (NetConnectionStatus)msg.ReadByte ();
 					if (status == NetConnectionStatus.Connected) {
 						int id = getUniqueClientId ();
 						NetworkClient newClient = new NetworkClient (id, msg.SenderConnection);
-						clientList.Add (newClient);
+						clientList.Add (msg.SenderConnection, newClient);
 						Console.WriteLine (newClient.Pseudo + " connected");
 							
 						
@@ -95,26 +96,27 @@ namespace _2dThing
 							
 						
 					} else if (status == NetConnectionStatus.Disconnected) {
-						foreach (NetworkClient c in clientList) {
-							if (c.Connection == msg.SenderConnection) {
-								clientList.Remove (c);
-								map.deletePlayer(c.Player);
-								Console.WriteLine ("Client " + c.Pseudo + " disconnected");
+						if(clientList.ContainsKey(msg.SenderConnection)){						
+							NetworkClient c = clientList[msg.SenderConnection];
+							clientList.Remove (c.Connection);
+							map.deletePlayer(c.Player);
+							Console.WriteLine ("Client " + c.Pseudo + " disconnected");
 								
-								ClientDisconnect cd = new ClientDisconnect(c.ClientId);
-								sendPktToAll(cd, true);
-								break;
-							}
-						}						
+							ClientDisconnect cd = new ClientDisconnect(c.ClientId);
+							sendPktToAll(cd, true);								
+						}
+												
 					}						
 					break;	
 					
 				case NetIncomingMessageType.Data:
 					readPacket (msg);
 					break;
+					
 				default:
 					Console.WriteLine ("Unhandled type: " + msg.MessageType);
 					break;
+					
 				}
 				server.Recycle (msg);
 			}
@@ -124,36 +126,29 @@ namespace _2dThing
 		{
 			
 			switch (msg.PeekByte ()) {				
-			case Packet.CLIENTINFO:{
-				foreach (NetworkClient c in clientList) {
-					if (c.Connection.Equals (msg.SenderConnection)) {
-						ClientInfo ci = ClientInfo.decode (ref msg);						
-						Console.WriteLine ("Client " + c.Pseudo + " changed pseudo for " + ci.Pseudo);
-						c.Pseudo = ci.Pseudo;
-						c.Player.Color = ci.Color;
-						sendPktToAll(ci);
-					}
-				}
+			case Packet.CLIENTINFO:				
+				if (clientList.ContainsKey(msg.SenderConnection)) {
+					NetworkClient c = clientList[msg.SenderConnection];
+					ClientInfo ci = ClientInfo.decode (ref msg);						
+					Console.WriteLine ("Client " + c.Pseudo + " changed pseudo for " + ci.Pseudo);
+					c.Pseudo = ci.Pseudo;
+					c.Player.Color = ci.Color;
+					sendPktToAll(ci);
+				}				
 				break;
-			}
-			case Packet.USERMESSAGE:{
+			
+			case Packet.USERMESSAGE:
 				UserMessage uMsg = UserMessage.decode (ref msg);
-				foreach(NetworkClient c in clientList){
-					if(c.Connection.Equals(msg.SenderConnection)){
-					
-						
-						c.Player.update((float) (uMsg.Time - c.LastUpdate).TotalSeconds, uMsg.Input);
-						c.LastUpdate = uMsg.Time;
-											
-						
-						uMsg.Position = c.Player.Position;
-						sendPktToAll(uMsg, true);
-						
-					}
+				if (clientList.ContainsKey(msg.SenderConnection)) {
+					NetworkClient c = clientList[msg.SenderConnection];	
+					c.Player.update((float) (uMsg.Time - c.LastUpdate).TotalSeconds, uMsg.Input);
+					c.LastUpdate = uMsg.Time;	
+					uMsg.Position = c.Player.Position;
+					sendPktToAll(uMsg, true);				
 				}
 				break;
-			}
-			case Packet.BLOCKUPDATE:{
+			
+			case Packet.BLOCKUPDATE:
 				BlockUpdate bu = BlockUpdate.decode(ref msg);
 				
 				if((bu.Added && map.addCube(bu.Position)) || !bu.Added) {
@@ -161,17 +156,17 @@ namespace _2dThing
 				}
 					
 				if(!bu.Added)
-					map.deleteCube(bu.Position);
-				
+					map.deleteCube(bu.Position);		
 				
 				break;
-			}
-			case Packet.CLIENTRESET:{
-				foreach(NetworkClient c in clientList)
-					if(c.Connection.Equals(msg.SenderConnection))
+			
+			case Packet.CLIENTRESET:
+				if (clientList.ContainsKey(msg.SenderConnection)) {
+						NetworkClient c = clientList[msg.SenderConnection];
 						c.Player.reset();
+				}
 				break;
-			}
+			
 			default:
 				Console.WriteLine ("Unsupported packet recieved");
 				break;
@@ -194,7 +189,7 @@ namespace _2dThing
 		}
 		
 		private void sendFullClientInfo(NetConnection client){
-			foreach (NetworkClient c in clientList){
+			foreach (NetworkClient c in clientList.Values){
 				ClientInfo ci = new ClientInfo(c.ClientId);
 				ci.Color = c.Player.Color;
 				ci.Pseudo = c.Pseudo;

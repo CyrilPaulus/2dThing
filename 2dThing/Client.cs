@@ -16,22 +16,29 @@ namespace _2dThing
 		RenderWindow window;
 		RenderImage world;
 		RenderImage ui;
+		
 		int clientId = 0;
-		bool hasId = false;
-		Ticker ticker;
-		Sprite mouse;
-		World map;
-		NetClient client;
-		List<NetworkClient> otherClients;
-		String ip = "localhost";
-		Input input;
 		String pseudo = "Anon";
-		Font myFont = new Font ("content/arial.ttf");
+		bool hasId = false;
+		
+		Ticker ticker;
+		
+		Sprite mouse;
+		Input input;
+		World map;
+		
+		NetClient client;
+		//List<NetworkClient> otherClients;
+		Dictionary<int, NetworkClient> otherClients;
+		String ip = "localhost";
+		
+		
+		Font myFont;
 		
 		bool leftMouseButtonDown = false;
 		bool rightMouseButtonDown = false;
 		
-		//TODO Dumb stuff to delete      
+		   
 		Player player;
 		UserMessageBuffer uMsgBuffer;
 
@@ -40,6 +47,7 @@ namespace _2dThing
 			window = new RenderWindow (new VideoMode (800, 600), "2dThing is back bitches");
 			world = new RenderImage (800, 600);
 			ui = new RenderImage (800, 600);
+			
 			map = new World ();
 			ticker = new Ticker ();            
 
@@ -53,6 +61,7 @@ namespace _2dThing
 			window.Resized += new EventHandler<SizeEventArgs>(OnWindowResized);			
 			window.ShowMouseCursor (false);
 			window.SetFramerateLimit (60);
+			
 			mouse = new Sprite (new Image ("content/mouse.png"));
 
 			player = new Player (map);			
@@ -63,8 +72,10 @@ namespace _2dThing
 			NetPeerConfiguration netConfiguration = new NetPeerConfiguration ("2dThing");			
 			client = new NetClient (netConfiguration);
 			uMsgBuffer = new UserMessageBuffer();
-			otherClients = new List<NetworkClient>();
+			otherClients = new Dictionary<int, NetworkClient>();
+			
 			input = new Input();
+			myFont = new Font ("content/arial.ttf");
 		}
 		
 		public Client(String ip) : this()
@@ -97,15 +108,14 @@ namespace _2dThing
 			ci.Pseudo = pseudo;
 			sendPkt(ci, true);
 				
-			//Dumb stuff to remove
-			           
+			         
             
 			DateTime lastTickTime = DateTime.Now;
 			
 			Text uiText = new Text ("Tps:", myFont);
 			uiText.Position = new Vector2f (0, 0);
 			uiText.CharacterSize = 14;
-			//uiText.Color = Color.Black;
+			
 			
 			
 			
@@ -125,14 +135,11 @@ namespace _2dThing
 				world.Clear (new Color (100, 149, 237));
 				map.Draw (world);
 				drawPlayersPseudo();
-				world.Display ();
-				
-					
+				world.Display ();						
 
 				ui.Clear (new Color (255, 255, 255, 0));
 				ui.Draw (mouse);				
-				ui.Draw (uiText);
-				
+				ui.Draw (uiText);				
 				ui.Display ();
 
 				window.Clear (new Color (100, 149, 237));                
@@ -179,11 +186,11 @@ namespace _2dThing
 			uMsg.Position = player.Position;
 			uMsg.Ticktime = frameTime;
 			uMsg.EyePosition = getWorldMouse();
-			uMsg.FallSpeed = player.FallSpeed;
-				
-			uMsg.Input = input;
-			uMsgBuffer.insert(uMsg);
+			uMsg.FallSpeed = player.FallSpeed;				
+			uMsg.Input = input;			
 			sendPkt(uMsg);
+			
+			uMsgBuffer.insert(uMsg);
 		}
 
 		//Events
@@ -354,49 +361,52 @@ namespace _2dThing
 		public void readPacket (NetIncomingMessage msg)
 		{
 			switch (msg.PeekByte ()) {
+				
 			case Packet.CLIENTINFO:
 				ClientInfo ci = ClientInfo.decode (ref msg);
 				if(!hasId){				
 					clientId = ci.ClientId;
 					hasId = true;
 				}
-				else if (ci.ClientId != clientId){
-					
-					foreach(NetworkClient c in otherClients){
-						if(c.ClientId == ci.ClientId){
-							c.Pseudo = ci.Pseudo;
-							c.Player.Color = ci.Color;
-							return;
-						}
-						
+				else if (ci.ClientId != clientId ){				
+				
+					if(otherClients.ContainsKey(ci.ClientId)){
+						NetworkClient c = otherClients[ci.ClientId];
+						c.Pseudo = ci.Pseudo;
+						c.Player.Color = ci.Color;						
 					}
-					NetworkClient newClient = new NetworkClient(ci.ClientId, null);
-					newClient.Player = new Player(map);
-					newClient.Player.Color = ci.Color;
-					newClient.Pseudo = ci.Pseudo;
-					map.addPlayer(newClient.Player);
-					otherClients.Add(newClient);
+					else
+					{
+						NetworkClient newClient = new NetworkClient(ci.ClientId, null);
+						newClient.Player = new Player(map);
+						newClient.Player.Color = ci.Color;
+						newClient.Pseudo = ci.Pseudo;
+						map.addPlayer(newClient.Player);
+						otherClients.Add(newClient.ClientId, newClient);
+					}
 				}
 				break;
+			
 			case Packet.USERMESSAGE:
 				UserMessage uMsg = UserMessage.decode(ref msg);
 				if(uMsg.ClientId == clientId){
 					uMsgBuffer.clientCorrection(player, uMsg);					
-				}else{
-					foreach(NetworkClient c in otherClients){
-						if(c.ClientId == uMsg.ClientId){
-							c.Player.lookAt(uMsg.EyePosition);
-							if(VectorUtils.Distance(c.Player.Position, uMsg.Position) > 1){
-								c.Player.Position = uMsg.Position;								
-							}else
-								c.Player.Position += (c.Player.Position - uMsg.Position) * 0.1F;							
-							return;
-						}
-					}
-					
-					
 				}
-				break;			
+				else
+				{					
+					if(otherClients.ContainsKey(uMsg.ClientId)){
+						NetworkClient c = otherClients[uMsg.ClientId];
+						c.Player.lookAt(uMsg.EyePosition);
+						if(VectorUtils.Distance(c.Player.Position, uMsg.Position) > 1){
+							c.Player.Position = uMsg.Position;								
+						}
+						else
+							c.Player.Position += (c.Player.Position - uMsg.Position) * 0.1F;							
+						return;
+					}
+				}								
+				break;
+			
 			case Packet.BLOCKUPDATE:
 				BlockUpdate bu = BlockUpdate.decode(ref msg);
 				if(bu.Added)
@@ -404,19 +414,22 @@ namespace _2dThing
 				else
 					map.deleteCube(bu.Position);
 				break;
+			
 			case Packet.CLIENTDISCONNECT:
-				ClientDisconnect cd = ClientDisconnect.decode(ref msg);
-				foreach(NetworkClient c in otherClients)
-					if(c.ClientId == cd.ClientId){
-						otherClients.Remove(c);
-						map.deletePlayer(c.Player);
-						break;
-					}
+				ClientDisconnect cd = ClientDisconnect.decode(ref msg);				
+				
+				if(otherClients.ContainsKey(cd.ClientId)){
+					NetworkClient c = otherClients[cd.ClientId];
+					otherClients.Remove(c.ClientId);
+					map.deletePlayer(c.Player);				
+				}
 				break;
+			
 			default:
 				break;
 			}
 		}
+		
 		
 		private void sendPkt(Packet pkt){
 			sendPkt(pkt, false);
@@ -433,7 +446,7 @@ namespace _2dThing
 		
 		private void drawPlayersPseudo(){
 			
-			foreach (NetworkClient c in otherClients){				
+			foreach (NetworkClient c in otherClients.Values){				
 				Text pseudo = new Text(c.Pseudo, myFont);
 				pseudo.CharacterSize = 12;
 				pseudo.Color = Color.White;
