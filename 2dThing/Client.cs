@@ -280,7 +280,7 @@ namespace _2dThing
 				chat.Writing = true;
 				
 			}
-			else
+			else if (chat.Writing)
 			{				
 				chat.update(a.Unicode);
 			}
