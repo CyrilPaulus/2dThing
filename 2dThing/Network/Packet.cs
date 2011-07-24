@@ -11,6 +11,7 @@ namespace _2dThing
 		public const byte BLOCKUPDATE =  3;
 		public const byte CLIENTDISCONNECT = 4;
 		public const byte CLIENTRESET = 5;
+		public const byte CHATMESSAGE = 6;
 		protected byte type;
 		protected int clientId;
 		

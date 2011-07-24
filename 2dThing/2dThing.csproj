@@ -111,6 +111,8 @@
     <Compile Include="Network\BlockUpdate.cs" />
     <Compile Include="Network\ClientDisconnect.cs" />
     <Compile Include="Network\ClientReset.cs" />
+    <Compile Include="UiContent\Chat.cs" />
+    <Compile Include="Network\ChatMessage.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="csfml-audio-2.dll">
@@ -303,5 +305,6 @@
   -->
   <ItemGroup>
     <Folder Include="Network\" />
+    <Folder Include="UiContent\" />
   </ItemGroup>
 </Project>

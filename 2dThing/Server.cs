@@ -166,6 +166,11 @@ namespace _2dThing
 						c.Player.reset();
 				}
 				break;
+			case Packet.CHATMESSAGE:
+				ChatMessage cm = ChatMessage.decode(ref msg);
+				sendPktToAll(cm, true);
+				Console.WriteLine(cm.Pseudo +": " + cm.Message);
+				break;
 			
 			default:
 				Console.WriteLine ("Unsupported packet recieved");

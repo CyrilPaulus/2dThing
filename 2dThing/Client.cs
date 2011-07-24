@@ -11,7 +11,7 @@ using Lidgren.Network;
 
 namespace _2dThing
 {
-	class Client
+	public class Client
 	{
 		RenderWindow window;
 		RenderImage world;
@@ -28,7 +28,6 @@ namespace _2dThing
 		World map;
 		
 		NetClient client;
-		//List<NetworkClient> otherClients;
 		Dictionary<int, NetworkClient> otherClients;
 		String ip = "localhost";
 		
@@ -37,6 +36,8 @@ namespace _2dThing
 		
 		bool leftMouseButtonDown = false;
 		bool rightMouseButtonDown = false;
+		
+		Chat chat;
 		
 		   
 		Player player;
@@ -58,7 +59,8 @@ namespace _2dThing
 			window.MouseButtonPressed += new EventHandler<MouseButtonEventArgs> (OnMouseButtonPressed);
 			window.MouseButtonReleased += new EventHandler<MouseButtonEventArgs>(OnMouseButtonReleased);
 			window.MouseWheelMoved += new EventHandler<MouseWheelEventArgs> (OnMouseWheelMoved);
-			window.Resized += new EventHandler<SizeEventArgs>(OnWindowResized);			
+			window.Resized += new EventHandler<SizeEventArgs>(OnWindowResized);	
+			window.TextEntered += new EventHandler<TextEventArgs>(OnTextEntered);
 			window.ShowMouseCursor (false);
 			window.SetFramerateLimit (60);
 			
@@ -74,6 +76,7 @@ namespace _2dThing
 			uMsgBuffer = new UserMessageBuffer();
 			otherClients = new Dictionary<int, NetworkClient>();
 			
+			chat = new Chat(this);
 			input = new Input();
 			myFont = new Font ("content/arial.ttf");
 		}
@@ -139,7 +142,8 @@ namespace _2dThing
 
 				ui.Clear (new Color (255, 255, 255, 0));
 				ui.Draw (mouse);				
-				ui.Draw (uiText);				
+				ui.Draw (uiText);
+				chat.Draw(ui);
 				ui.Display ();
 
 				window.Clear (new Color (100, 149, 237));                
@@ -222,6 +226,7 @@ namespace _2dThing
 		
 		void OnMouseButtonReleased (object sender, EventArgs e)
 		{
+			
 			MouseButtonEventArgs a = (MouseButtonEventArgs)e;
 			switch(a.Button){
 			case Mouse.Button.Left:
@@ -237,33 +242,49 @@ namespace _2dThing
 		void OnKeyPressed (object sender, EventArgs e)
 		{
 			KeyEventArgs a = (KeyEventArgs)e;
-			switch (a.Code) {
-			case Keyboard.Key.Left:
-                input.Left = true;          
-				break;
-			case Keyboard.Key.Right:
-                input.Right = true;				
-				break;
-			case Keyboard.Key.Up:
-                input.Up = true;				
-				break;
-			case Keyboard.Key.Down:
-                input.Down = true;				
-				break;
-			case Keyboard.Key.R:
-				player.reset();
-				ClientReset cr = new ClientReset(clientId);
-				sendPkt(cr);
-				break;
-			case Keyboard.Key.PageDown:
-				world.DefaultView.Zoom(1.3333333F);
-				break;
-			case Keyboard.Key.PageUp:
-				world.DefaultView.Zoom(0.75F);
-				break;			
-			default:
-				break;
+			
+			if(!chat.Writing){
+				switch (a.Code) {
+				case Keyboard.Key.Left:
+	                input.Left = true;          
+					break;
+				case Keyboard.Key.Right:
+	                input.Right = true;				
+					break;
+				case Keyboard.Key.Up:
+	                input.Up = true;				
+					break;
+				case Keyboard.Key.Down:
+	                input.Down = true;				
+					break;
+				case Keyboard.Key.R:
+					player.reset();
+					ClientReset cr = new ClientReset(clientId);
+					sendPkt(cr);
+					break;				
+				case Keyboard.Key.PageDown:
+					world.DefaultView.Zoom(1.3333333F);
+					break;
+				case Keyboard.Key.PageUp:
+					world.DefaultView.Zoom(0.75F);
+					break;			
+				default:
+					break;
+				}
 			}
+		}
+		
+		void OnTextEntered(object sender, EventArgs e){
+			TextEventArgs a = (TextEventArgs) e;
+			if(!chat.Writing && a.Unicode.Equals("y")){
+				chat.Writing = true;
+				
+			}
+			else
+			{				
+				chat.update(a.Unicode);
+			}
+			
 		}
 		
 		void OnKeyReleased (object sender, EventArgs e)
@@ -424,6 +445,11 @@ namespace _2dThing
 					map.deletePlayer(c.Player);				
 				}
 				break;
+				
+			case Packet.CHATMESSAGE:
+				ChatMessage cm = ChatMessage.decode(ref msg);
+				chat.addMsg(cm.Pseudo +": " + cm.Message);
+				break;
 			
 			default:
 				break;
@@ -431,11 +457,11 @@ namespace _2dThing
 		}
 		
 		
-		private void sendPkt(Packet pkt){
+		public void sendPkt(Packet pkt){
 			sendPkt(pkt, false);
 		}
 		
-		private void sendPkt(Packet pkt, bool secure){
+		public void sendPkt(Packet pkt, bool secure){
 			NetOutgoingMessage outMsg = client.CreateMessage();
 			pkt.encode(ref outMsg);
 			if(secure)
@@ -458,6 +484,10 @@ namespace _2dThing
 		public string Pseudo{
 			get {return pseudo;}
 			set {pseudo = value;}
+		}
+		
+		public int ClientId{
+			get {return clientId;}
 		}
 	}
 }
