@@ -82,13 +82,12 @@ namespace _2dThing.GameContent
 
         public void Draw(RenderTarget rt)
         {
-            //List<Cube> toDraw = quadTree.getList(viewRect);
+						
             foreach (Cube c in cubeList)
                 c.Draw(rt);
 
-            foreach (Player p in playerList)
-                //if (viewRect.Intersects(p.Bbox))
-                    p.Draw(rt);
+            foreach (Player p in playerList)                
+                p.Draw(rt);
 
         }
 

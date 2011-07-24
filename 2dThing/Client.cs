@@ -46,6 +46,7 @@ namespace _2dThing
 			window.KeyReleased += new EventHandler<KeyEventArgs> (OnKeyReleased);
 			window.MouseButtonPressed += new EventHandler<MouseButtonEventArgs> (OnMouseButtonPressed);
 			window.MouseWheelMoved += new EventHandler<MouseWheelEventArgs> (OnMouseWheelMoved);
+			window.Resized += new EventHandler<SizeEventArgs>(OnWindowResized);
 			window.ShowMouseCursor (false);
 			window.SetFramerateLimit (60);
 			mouse = new Sprite (new Image ("content/mouse.png"));
@@ -250,6 +251,19 @@ namespace _2dThing
 			default:
 				break;
 			}
+		}
+		
+		void OnWindowResized(object sender, EventArgs e){
+			SizeEventArgs a = (SizeEventArgs) e;			
+			
+			View newView = new View(new FloatRect(0,0,a.Width, a.Height));
+			window.SetView(newView);
+			
+			world = new RenderImage(a.Width, a.Height);
+			world.DefaultView.Center = player.Position;
+			ui = new RenderImage(a.Width, a.Height);
+			
+			
 		}
 		
 		void OnMouseWheelMoved(object sender, EventArgs e){
