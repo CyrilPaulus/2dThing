@@ -23,19 +23,16 @@ namespace _2dThing
 		
 		Ticker ticker;
 		
-		Sprite mouse;
-		Input input;
+		Sprite mouse;		
 		World map;
+		InputManager inputManager;
 		
 		NetClient client;
 		Dictionary<int, NetworkClient> otherClients;
 		String ip = "localhost";
 		
 		
-		Font myFont;
-		
-		bool leftMouseButtonDown = false;
-		bool rightMouseButtonDown = false;
+		Font myFont;		
 		
 		Chat chat;
 		
@@ -48,19 +45,13 @@ namespace _2dThing
 			window = new RenderWindow (new VideoMode (800, 600), "2dThing is back bitches");
 			world = new RenderImage (800, 600);
 			ui = new RenderImage (800, 600);
-			
+						
 			map = new World ();
 			ticker = new Ticker ();            
 
 			window.Closed += new EventHandler (OnClose);
-			window.MouseMoved += new EventHandler<MouseMoveEventArgs> (OnMouseMoved);
-			window.KeyPressed += new EventHandler<KeyEventArgs> (OnKeyPressed);
-			window.KeyReleased += new EventHandler<KeyEventArgs> (OnKeyReleased);
-			window.MouseButtonPressed += new EventHandler<MouseButtonEventArgs> (OnMouseButtonPressed);
-			window.MouseButtonReleased += new EventHandler<MouseButtonEventArgs>(OnMouseButtonReleased);
-			window.MouseWheelMoved += new EventHandler<MouseWheelEventArgs> (OnMouseWheelMoved);
 			window.Resized += new EventHandler<SizeEventArgs>(OnWindowResized);	
-			window.TextEntered += new EventHandler<TextEventArgs>(OnTextEntered);
+			
 			window.ShowMouseCursor (false);
 			window.SetFramerateLimit (60);
 			
@@ -77,7 +68,7 @@ namespace _2dThing
 			otherClients = new Dictionary<int, NetworkClient>();
 			
 			chat = new Chat(this);
-			input = new Input();
+			inputManager = new InputManager(this);
 			myFont = new Font ("content/arial.ttf");
 		}
 		
@@ -168,14 +159,14 @@ namespace _2dThing
 		private void update (float frameTime)
 		{
 			
-			if (leftMouseButtonDown){				
+			if (inputManager.Input.LeftMouseButton){				
 				BlockUpdate bu = new BlockUpdate(clientId);
 				bu.Added = true;
 				bu.Position = getWorldMouse();
 				sendPkt(bu);				
 			}
 			
-			if (rightMouseButtonDown){				
+			if (inputManager.Input.RightMouseButton){				
 				BlockUpdate bu = new BlockUpdate(clientId);
 				bu.Added = false;
 				bu.Position = getWorldMouse();
@@ -183,7 +174,7 @@ namespace _2dThing
 			}
 			
 			player.lookAt (getWorldMouse ());
-			player.update (frameTime, input);
+			player.update (frameTime, inputManager.Input);
 			updateCam ();
 			
 			UserMessage uMsg = new UserMessage (clientId);
@@ -191,7 +182,7 @@ namespace _2dThing
 			uMsg.Ticktime = frameTime;
 			uMsg.EyePosition = getWorldMouse();
 			uMsg.FallSpeed = player.FallSpeed;				
-			uMsg.Input = input;			
+			uMsg.Input = inputManager.Input;			
 			sendPkt(uMsg);
 			
 			uMsgBuffer.insert(uMsg);
@@ -204,110 +195,7 @@ namespace _2dThing
 			window.Close ();
 		}
 
-		void OnMouseMoved (object sender, EventArgs e)
-		{
-			MouseMoveEventArgs a = (MouseMoveEventArgs)e;
-			mouse.Position = new Vector2f (a.X, a.Y);            
-		}
-
-		void OnMouseButtonPressed (object sender, EventArgs e)
-		{
-			MouseButtonEventArgs a = (MouseButtonEventArgs)e;
-			switch(a.Button){
-			case Mouse.Button.Left:
-				leftMouseButtonDown = true;
-				break;
-			case Mouse.Button.Right:
-				rightMouseButtonDown = true;
-				break;
-			default:break;
-			}
-		}
-		
-		void OnMouseButtonReleased (object sender, EventArgs e)
-		{
 			
-			MouseButtonEventArgs a = (MouseButtonEventArgs)e;
-			switch(a.Button){
-			case Mouse.Button.Left:
-				leftMouseButtonDown = false;
-				break;
-			case Mouse.Button.Right:
-				rightMouseButtonDown = false;
-				break;
-			default:break;
-			}
-		}
-
-		void OnKeyPressed (object sender, EventArgs e)
-		{
-			KeyEventArgs a = (KeyEventArgs)e;
-			
-			if(!chat.Writing){
-				switch (a.Code) {
-				case Keyboard.Key.Left:
-	                input.Left = true;          
-					break;
-				case Keyboard.Key.Right:
-	                input.Right = true;				
-					break;
-				case Keyboard.Key.Up:
-	                input.Up = true;				
-					break;
-				case Keyboard.Key.Down:
-	                input.Down = true;				
-					break;
-				case Keyboard.Key.R:
-					player.reset();
-					ClientReset cr = new ClientReset(clientId);
-					sendPkt(cr);
-					break;				
-				case Keyboard.Key.PageDown:
-					world.DefaultView.Zoom(1.3333333F);
-					break;
-				case Keyboard.Key.PageUp:
-					world.DefaultView.Zoom(0.75F);
-					break;			
-				default:
-					break;
-				}
-			}
-		}
-		
-		void OnTextEntered(object sender, EventArgs e){
-			TextEventArgs a = (TextEventArgs) e;
-			if(!chat.Writing && a.Unicode.Equals("y")){
-				chat.Writing = true;
-				
-			}
-			else if (chat.Writing)
-			{				
-				chat.update(a.Unicode);
-			}
-			
-		}
-		
-		void OnKeyReleased (object sender, EventArgs e)
-		{
-			KeyEventArgs a = (KeyEventArgs)e;
-			switch (a.Code) {
-			case Keyboard.Key.Left:
-                input.Left = false;          
-				break;
-			case Keyboard.Key.Right:
-                input.Right = false;				
-				break;
-			case Keyboard.Key.Up:
-                input.Up = false;				
-				break;
-			case Keyboard.Key.Down:
-                input.Down = false;				
-				break;			
-			default:
-				break;
-			}
-		}
-		
 		void OnWindowResized(object sender, EventArgs e){
 			SizeEventArgs a = (SizeEventArgs) e;			
 			
@@ -321,15 +209,7 @@ namespace _2dThing
 			
 		}
 		
-		void OnMouseWheelMoved(object sender, EventArgs e){
-			MouseWheelEventArgs a = (MouseWheelEventArgs) e;
-			if(a.Delta < 0)
-				world.DefaultView.Zoom(1.3333333F);
-			else
-				world.DefaultView.Zoom(0.75F);
-		}
-
-		private Vector2f getWorldMouse ()
+		public Vector2f getWorldMouse ()
 		{
 			return world.ConvertCoords ((uint)mouse.Position.X, (uint)mouse.Position.Y);
 		}
@@ -488,6 +368,26 @@ namespace _2dThing
 		
 		public int ClientId{
 			get {return clientId;}
+		}
+		
+		public RenderWindow MainWindow{
+			get {return window;}			
+		}
+		
+		public Sprite Mouse{
+			get {return mouse;}
+		}
+		
+		public Chat Chat{
+			get {return chat;}
+		}
+		
+		public Player Player{
+			get {return player;}
+		}
+		
+		public void Zoom(float value){
+			world.DefaultView.Zoom(value);
 		}
 	}
 }

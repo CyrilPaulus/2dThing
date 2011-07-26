@@ -8,6 +8,8 @@ namespace _2dThing
 		public bool Right;
 		public bool Up;
 		public bool Down;
+		public bool LeftMouseButton;
+		public bool RightMouseButton;
 		
 		public Input ()
 		{
@@ -15,6 +17,8 @@ namespace _2dThing
 			Right = false;
 			Up = false;
 			Down = false;
+			LeftMouseButton = false;
+			RightMouseButton = false;
 		}
 	}
 }

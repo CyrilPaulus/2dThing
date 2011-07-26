@@ -36,9 +36,18 @@ namespace _2dThing.GameContent
         {
 			sprite.Position = Position + offset;
           	world.Draw(sprite);
-          	/*Shape rectangle = Shape.Rectangle(Bbox, new Color(0, 0, 0, 0), -2, Color.Red);
-          	world.Draw(rectangle); */           
+          	         
         }
+		
+		public virtual void DrawDebug(RenderTarget world){
+			Shape rectangle = Shape.Rectangle(Bbox, new Color(237, 28, 36, 100), -2, new Color(255,201,14));
+          	world.Draw(rectangle); 
+		}
+		
+		public virtual void DrawDebug(RenderTarget world, byte alpha){
+			Shape rectangle = Shape.Rectangle(Bbox, new Color(237, 28, 36, alpha), -2, new Color(255,201,14));
+          	world.Draw(rectangle); 
+		}
 
         public virtual void DrawUI(RenderTarget ui)
         {

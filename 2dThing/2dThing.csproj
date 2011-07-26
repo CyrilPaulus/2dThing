@@ -113,6 +113,7 @@
     <Compile Include="Network\ClientReset.cs" />
     <Compile Include="UiContent\Chat.cs" />
     <Compile Include="Network\ChatMessage.cs" />
+    <Compile Include="GameContent\InputManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="csfml-audio-2.dll">

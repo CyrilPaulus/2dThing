@@ -21,7 +21,7 @@ namespace _2dThing.GameContent
         {
             playerList = new List<Player>();
             cubeList = new List<Cube>();
-            quadTree = new QuadTree(100, new Vector2f(90, 90));
+            quadTree = new QuadTree(10, new Vector2f(90, 90));
         }
 
         public bool addCube(Vector2f pos)
@@ -90,6 +90,19 @@ namespace _2dThing.GameContent
                 p.Draw(rt);
 
         }
+		
+		public void DrawDebug(RenderTarget rt){
+			
+			
+			foreach(Cube c in cubeList)
+				c.DrawDebug(rt);
+				
+			foreach(Player p in playerList){
+				p.DrawDebug(rt);
+				foreach (Cube c in quadTree.getList(p.Bbox))
+					c.DrawDebug(rt, 215);
+			}
+		}
 
         public Cube getCollidingCube(FloatRect bbox)
         {
