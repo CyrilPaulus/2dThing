@@ -2,6 +2,7 @@ using System;
 using SFML.Graphics;
 using SFML.Window;
 using System.Collections.Generic;
+using _2dThing.GameContent;
 
 namespace _2dThing
 {
@@ -144,9 +145,9 @@ namespace _2dThing
 		void OnMouseWheelMoved(object sender, EventArgs e){
 			MouseWheelEventArgs a = (MouseWheelEventArgs) e;
 			if(a.Delta < 0)
-				client.Zoom(1.3333333F);
+				client.BlockType = (client.BlockType - 1 + Cube.BLOCKTYPECOUNT) % Cube.BLOCKTYPECOUNT;
 			else
-				client.Zoom(0.75F);
+				client.BlockType = (client.BlockType + 1) % Cube.BLOCKTYPECOUNT;
 		}
 		
 		public Input Input{

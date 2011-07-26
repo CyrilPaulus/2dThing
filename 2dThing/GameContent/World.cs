@@ -24,10 +24,10 @@ namespace _2dThing.GameContent
             quadTree = new QuadTree(10, new Vector2f(90, 90));
         }
 
-        public bool addCube(Vector2f pos)
+        public bool addCube(Vector2f pos, int type)
         {
-            Vector2f gridPos = new Vector2f((float)Math.Floor((pos.X / 30)) * 30, (float)Math.Floor((pos.Y / 30)) * 30);
-            Cube cube = new Cube();
+            Vector2f gridPos = new Vector2f((float)Math.Floor((pos.X / Cube.WIDTH)) * Cube.WIDTH, (float)Math.Floor((pos.Y / Cube.HEIGHT)) * Cube.HEIGHT);
+            Cube cube = new Cube(type);
             cube.Position = gridPos;
             bool exist = false;
 
@@ -47,9 +47,9 @@ namespace _2dThing.GameContent
 			return !exist;
         }
 		
-		public void forceAddCube(Vector2f pos){
-			Vector2f gridPos = new Vector2f((float)Math.Floor((pos.X / 30)) * 30, (float)Math.Floor((pos.Y / 30)) * 30);
-            Cube cube = new Cube();
+		public void forceAddCube(Vector2f pos, int type){
+			Vector2f gridPos = new Vector2f((float)Math.Floor((pos.X / Cube.WIDTH)) * Cube.WIDTH, (float)Math.Floor((pos.Y / Cube.HEIGHT)) * Cube.HEIGHT);
+            Cube cube = new Cube(type);
             cube.Position = gridPos;
 			cubeList.Add(cube);
             quadTree.addCube(cube);

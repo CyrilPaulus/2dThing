@@ -23,7 +23,7 @@ namespace _2dThing
 		{
 			this.ticker = new Ticker ();
 			this.map = new World ();
-			this.map.addCube(new Vector2f(0, 90));
+			this.map.addCube(new Vector2f(0, 90), 1);
 			lastTickTime = DateTime.Now;
 			NetPeerConfiguration netConfiguration = new NetPeerConfiguration ("2dThing");			
 			netConfiguration.Port = 55017;			
@@ -148,10 +148,10 @@ namespace _2dThing
 				}
 				break;
 			
-			case Packet.BLOCKUPDATE:
+			case Packet.BLOCKUPDATE:				
 				BlockUpdate bu = BlockUpdate.decode(ref msg);
 				
-				if((bu.Added && map.addCube(bu.Position)) || !bu.Added) {
+				if((bu.Added && map.addCube(bu.Position, bu.BlockType)) || !bu.Added) {
 					sendPktToAll(bu);
 				}
 					

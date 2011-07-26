@@ -71,6 +71,7 @@ namespace _2dThing.GameContent
 		
 		public Sprite Sprite{
 			set { sprite = value; size = new Vector2f(sprite.Width, sprite.Height);}
+			get { return sprite;}
 		}
     
     }

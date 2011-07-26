@@ -17,6 +17,7 @@ namespace _2dThing
 		RenderImage world;
 		RenderImage ui;
 		
+		int blockType = 0;
 		int clientId = 0;
 		String pseudo = "Anon";
 		bool hasId = false;
@@ -35,6 +36,7 @@ namespace _2dThing
 		Font myFont;		
 		
 		Chat chat;
+		Cube blockTypeDisplay;
 		
 		   
 		Player player;
@@ -70,6 +72,8 @@ namespace _2dThing
 			chat = new Chat(this);
 			inputManager = new InputManager(this);
 			myFont = new Font ("content/arial.ttf");
+			blockTypeDisplay = new Cube(blockType);
+			blockTypeDisplay.Position = new Vector2f(ui.Width - 2*Cube.WIDTH, ui.Height - 2* Cube.HEIGHT);
 		}
 		
 		public Client(String ip) : this()
@@ -128,12 +132,13 @@ namespace _2dThing
 
 				world.Clear (new Color (100, 149, 237));
 				map.Draw (world);
-				drawPlayersPseudo();
+				drawPlayersPseudo();				
 				world.Display ();						
 
 				ui.Clear (new Color (255, 255, 255, 0));
 				ui.Draw (mouse);				
 				ui.Draw (uiText);
+				blockTypeDisplay.Draw(ui);
 				chat.Draw(ui);
 				ui.Display ();
 
@@ -163,6 +168,7 @@ namespace _2dThing
 				BlockUpdate bu = new BlockUpdate(clientId);
 				bu.Added = true;
 				bu.Position = getWorldMouse();
+				bu.BlockType = (byte) blockType;
 				sendPkt(bu);				
 			}
 			
@@ -308,10 +314,10 @@ namespace _2dThing
 				}								
 				break;
 			
-			case Packet.BLOCKUPDATE:
+			case Packet.BLOCKUPDATE:				
 				BlockUpdate bu = BlockUpdate.decode(ref msg);
 				if(bu.Added)
-					map.forceAddCube(bu.Position);
+					map.forceAddCube(bu.Position, bu.BlockType);
 				else
 					map.deleteCube(bu.Position);
 				break;
@@ -388,6 +394,11 @@ namespace _2dThing
 		
 		public void Zoom(float value){
 			world.DefaultView.Zoom(value);
+		}
+		
+		public int BlockType{
+			get { return blockType;}
+			set { blockType = value; blockTypeDisplay.setType(value); }
 		}
 	}
 }
