@@ -126,6 +126,7 @@ namespace _2dThing
 		void OnKeyPressed (object sender, EventArgs e)
 		{
 			KeyEventArgs a = (KeyEventArgs)e;
+			if(!client.Chat.Writing)
 			try
 			{
 				keyMap[a.Code](true);
@@ -151,6 +152,7 @@ namespace _2dThing
 		void OnKeyReleased (object sender, EventArgs e)
 		{
 			KeyEventArgs a = (KeyEventArgs)e;
+			if(!client.Chat.Writing)
 			try
 			{
 				keyMap[a.Code](false);
