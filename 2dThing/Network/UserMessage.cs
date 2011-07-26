@@ -5,12 +5,16 @@ namespace _2dThing
 {
 	public class UserMessage : Packet
 	{
+		
+		//TODO reduce
 		DateTime time;
 		Input input;
 		Vector2f position;
 		float ticktime;
 		Vector2f eyePosition;
 		float fallSpeed;
+		byte layer;
+		bool noclip;
 		
 		public UserMessage (int clientId) : base(clientId)
 		{
@@ -36,6 +40,8 @@ namespace _2dThing
 			msg.Write(eyePosition.X);
 			msg.Write(eyePosition.Y);
 			msg.Write(fallSpeed);
+			msg.Write(layer);
+			msg.Write(noclip);
 		}
 		
 		public new static UserMessage decode (ref Lidgren.Network.NetIncomingMessage msg)
@@ -50,6 +56,8 @@ namespace _2dThing
 			um.ticktime = msg.ReadFloat();
 			um.EyePosition = new Vector2f(msg.ReadFloat(), msg.ReadFloat());
 			um.fallSpeed = msg.ReadFloat();
+			um.layer = msg.ReadByte();
+			um.noclip = msg.ReadBoolean();
 			return um;			
 		}
 		
@@ -81,6 +89,16 @@ namespace _2dThing
 		public float FallSpeed {
 			get { return fallSpeed; }
 			set { fallSpeed = value; }
+		}
+		
+		public byte Layer {
+			get { return layer; }
+			set { layer = value; }
+		}
+		
+		public bool Nolcip{
+			get { return noclip; }
+			set { noclip = value; }
 		}
 		
 	}

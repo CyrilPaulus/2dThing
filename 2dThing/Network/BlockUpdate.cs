@@ -8,12 +8,14 @@ namespace _2dThing
 		Vector2f position;
 		bool added;
 		byte blockType;
+		byte layer;
 		public BlockUpdate (int clientId) : base(clientId)			
 		{
 			this.type = Packet.BLOCKUPDATE;
 			added = false;
 			position = new Vector2f(0,0);
 			blockType = 0;
+			layer = 0;
 		}
 		
 		public bool Added{
@@ -33,6 +35,7 @@ namespace _2dThing
 			msg.Write(position.X);
 			msg.Write(position.Y);
 			msg.Write(blockType);
+			msg.Write(layer);
 		}
 		
 		public static new BlockUpdate decode (ref Lidgren.Network.NetIncomingMessage msg)
@@ -41,12 +44,18 @@ namespace _2dThing
 			bu.added = msg.ReadBoolean ();
 			bu.position = new Vector2f(msg.ReadFloat(), msg.ReadFloat());
 			bu.blockType = msg.ReadByte();
+			bu.layer = msg.ReadByte();
 			return bu;
 		}
 		
 		public byte BlockType{
 			get { return blockType; }
 			set { blockType = value;}
+		}
+		
+		public byte Layer{
+			get { return layer; }
+			set { layer = value; }
 		}
 		
 	}

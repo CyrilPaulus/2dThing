@@ -24,6 +24,7 @@ namespace _2dThing.GameContent
         float fallSpeed = 1;
 		float jumpAcc = 200;
         bool noclip = false;
+		int layer = World.LAYERNBR - 1;
 
         bool flying = false;		
 
@@ -90,7 +91,7 @@ namespace _2dThing.GameContent
             if (input.Left)
             {
                 Position += new Vector2f(-speed, 0) * frameTime;
-                Cube colliding = world.getCollidingCube(Bbox);
+                Cube colliding = world.getCollidingCube(Bbox, layer);
                 if (colliding != null)
                     Position = new Vector2f(colliding.Bbox.Left + colliding.Bbox.Width, Position.Y);
             }
@@ -98,7 +99,7 @@ namespace _2dThing.GameContent
             if (input.Right)
             {
                 Position += new Vector2f(speed, 0) * frameTime;
-                Cube colliding = world.getCollidingCube(Bbox);
+                Cube colliding = world.getCollidingCube(Bbox, layer);
                 if (colliding != null)
                     Position = new Vector2f(colliding.Bbox.Left - Bbox.Width, Position.Y);
             }
@@ -106,7 +107,7 @@ namespace _2dThing.GameContent
             if (input.Up && noclip)
             {
                 Position += new Vector2f(0, -speed) * frameTime;
-               	Cube colliding = world.getCollidingCube(Bbox);
+               	Cube colliding = world.getCollidingCube(Bbox, layer);
                 if (colliding != null)
                     Position = new Vector2f(Position.X, colliding.Bbox.Top + colliding.Bbox.Height);
             }
@@ -118,7 +119,7 @@ namespace _2dThing.GameContent
             if (input.Down && noclip)
             {
                 Position += new Vector2f(0, speed) * frameTime;
-                Cube colliding = world.getCollidingCube(Bbox);
+                Cube colliding = world.getCollidingCube(Bbox, layer);
                 if (colliding != null)
                     Position = new Vector2f(Position.X, colliding.Bbox.Top - Bbox.Height);
             }
@@ -126,7 +127,7 @@ namespace _2dThing.GameContent
             if (!noclip)
             {
                 Position += new Vector2f(0, fallSpeed) * frameTime;               	
-                Cube colliding = world.getCollidingCube(Bbox);
+                Cube colliding = world.getCollidingCube(Bbox, layer);
                 flying = true;
                 if (colliding != null)
                 {
@@ -162,6 +163,20 @@ namespace _2dThing.GameContent
 		public void reset(){
 			Position = new Vector2f(0,0);
 			fallSpeed = 0;
+		}
+		
+		public int Layer{
+			get { return layer; }
+			set 
+			{	
+				if(value >= 0 && value < World.LAYERNBR && world.getCollidingCube(Bbox, value) == null)
+					layer = value;
+			}
+		}
+		
+		public bool Noclip{
+			get { return noclip; }
+			set {noclip = value; }
 		}
     }
 }

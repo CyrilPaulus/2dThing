@@ -23,7 +23,7 @@ namespace _2dThing
 		{
 			this.ticker = new Ticker ();
 			this.map = new World ();
-			this.map.addCube(new Vector2f(0, 90), 1);
+			this.map.addCube(new Vector2f(0, 90), 0, World.LAYERNBR - 1);
 			lastTickTime = DateTime.Now;
 			NetPeerConfiguration netConfiguration = new NetPeerConfiguration ("2dThing");			
 			netConfiguration.Port = 55017;			
@@ -140,7 +140,9 @@ namespace _2dThing
 			case Packet.USERMESSAGE:
 				UserMessage uMsg = UserMessage.decode (ref msg);
 				if (clientList.ContainsKey(msg.SenderConnection)) {
-					NetworkClient c = clientList[msg.SenderConnection];	
+					NetworkClient c = clientList[msg.SenderConnection];
+					c.Player.Layer = uMsg.Layer;
+					c.Player.Noclip = uMsg.Nolcip;
 					c.Player.update((float) (uMsg.Time - c.LastUpdate).TotalSeconds, uMsg.Input);
 					c.LastUpdate = uMsg.Time;	
 					uMsg.Position = c.Player.Position;
@@ -151,12 +153,12 @@ namespace _2dThing
 			case Packet.BLOCKUPDATE:				
 				BlockUpdate bu = BlockUpdate.decode(ref msg);
 				
-				if((bu.Added && map.addCube(bu.Position, bu.BlockType)) || !bu.Added) {
+				if((bu.Added && map.addCube(bu.Position, bu.BlockType, bu.Layer)) || !bu.Added) {
 					sendPktToAll(bu);
 				}
 					
 				if(!bu.Added)
-					map.deleteCube(bu.Position);		
+					map.deleteCube(bu.Position, bu.Layer);		
 				
 				break;
 			
@@ -184,12 +186,17 @@ namespace _2dThing
 		}
 		
 		private void sendFullWorldUpdate(NetConnection client){
-			
-			foreach (Cube c in map.CubeList){
-				BlockUpdate bu = new BlockUpdate(0);
-				bu.Added = true;
-				bu.Position = c.Position;
-				sendPkt(bu, client, true);
+			int layer = 0;
+			foreach (List<Cube> cubeList in map.CubeLists){
+				foreach (Cube c in cubeList){
+					BlockUpdate bu = new BlockUpdate(0);
+					bu.Added = true;
+					bu.Position = c.Position;
+					bu.BlockType = (byte) c.type;
+					bu.Layer = (byte) layer;
+					sendPkt(bu, client, true);
+				}
+				layer++;
 			}
 		}
 		

@@ -125,13 +125,13 @@ namespace _2dThing
 					float ticktime = (float)(DateTime.Now - lastTickTime).TotalSeconds;
 					readIncomingMsg ();
 					update (ticktime);
-					uiText.DisplayedString = "Fps: " + (int)(1f / window.GetFrameTime () * 1000) + "\nTps: " + (int)(1 / (DateTime.Now - lastTickTime).TotalSeconds) + "\nClientId: " + clientId;
+					uiText.DisplayedString = "Fps: " + (int)(1f / window.GetFrameTime () * 1000) + "\nTps: " + (int)(1 / (DateTime.Now - lastTickTime).TotalSeconds) + "\nClientId: " + clientId + "\nLayer :" + player.Layer;
 					lastTickTime = DateTime.Now;					
 				}
 				
 
 				world.Clear (new Color (100, 149, 237));
-				map.Draw (world);
+				map.Draw (world, player.Layer);
 				drawPlayersPseudo();				
 				world.Display ();						
 
@@ -169,6 +169,7 @@ namespace _2dThing
 				bu.Added = true;
 				bu.Position = getWorldMouse();
 				bu.BlockType = (byte) blockType;
+				bu.Layer = (byte) player.Layer;
 				sendPkt(bu);				
 			}
 			
@@ -176,6 +177,7 @@ namespace _2dThing
 				BlockUpdate bu = new BlockUpdate(clientId);
 				bu.Added = false;
 				bu.Position = getWorldMouse();
+				bu.Layer = (byte) player.Layer;
 				sendPkt(bu);
 			}
 			
@@ -188,7 +190,9 @@ namespace _2dThing
 			uMsg.Ticktime = frameTime;
 			uMsg.EyePosition = getWorldMouse();
 			uMsg.FallSpeed = player.FallSpeed;				
-			uMsg.Input = inputManager.Input;			
+			uMsg.Input = inputManager.Input;
+			uMsg.Layer = (byte) player.Layer;
+			uMsg.Nolcip = player.Noclip;
 			sendPkt(uMsg);
 			
 			uMsgBuffer.insert(uMsg);
@@ -304,6 +308,7 @@ namespace _2dThing
 					if(otherClients.ContainsKey(uMsg.ClientId)){
 						NetworkClient c = otherClients[uMsg.ClientId];
 						c.Player.lookAt(uMsg.EyePosition);
+						c.Player.Layer = uMsg.Layer;
 						if(VectorUtils.Distance(c.Player.Position, uMsg.Position) > 1){
 							c.Player.Position = uMsg.Position;								
 						}
@@ -317,9 +322,9 @@ namespace _2dThing
 			case Packet.BLOCKUPDATE:				
 				BlockUpdate bu = BlockUpdate.decode(ref msg);
 				if(bu.Added)
-					map.forceAddCube(bu.Position, bu.BlockType);
+					map.forceAddCube(bu.Position, bu.BlockType, bu.Layer);
 				else
-					map.deleteCube(bu.Position);
+					map.deleteCube(bu.Position, bu.Layer);
 				break;
 			
 			case Packet.CLIENTDISCONNECT:

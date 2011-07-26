@@ -34,6 +34,9 @@ namespace _2dThing
 			keyMap[Keyboard.Key.R] = resetPlayer;
 			keyMap[Keyboard.Key.PageUp] = zoomIn;
 			keyMap[Keyboard.Key.PageDown] = zoomOut;
+			keyMap[Keyboard.Key.A] = layerIn;
+			keyMap[Keyboard.Key.Z] = layerOut;
+			keyMap[Keyboard.Key.N] = toggleNoclip;
 		}
 		
 		void OnMouseMoved (object sender, EventArgs e)
@@ -103,6 +106,21 @@ namespace _2dThing
 		private void zoomOut(bool pressed){
 			if(pressed)
 				client.Zoom(0.75F);
+		}
+		
+		private void layerIn(bool pressed){
+			if(pressed)
+				client.Player.Layer++;
+		}
+		
+		private void layerOut(bool pressed){
+			if(pressed)
+				client.Player.Layer--;
+		}
+		
+		private void toggleNoclip(bool pressed){
+			if(pressed)
+				client.Player.Noclip = !client.Player.Noclip;
 		}
 
 		void OnKeyPressed (object sender, EventArgs e)

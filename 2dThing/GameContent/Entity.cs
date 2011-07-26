@@ -39,6 +39,13 @@ namespace _2dThing.GameContent
           	         
         }
 		
+		public virtual void Draw(RenderTarget world, Color color){
+			Color original = sprite.Color;
+			sprite.Color = color;
+			Draw(world);
+			sprite.Color = original;
+		}
+		
 		public virtual void DrawDebug(RenderTarget world){
 			Shape rectangle = Shape.Rectangle(Bbox, new Color(237, 28, 36, 100), -2, new Color(255,201,14));
           	world.Draw(rectangle); 
