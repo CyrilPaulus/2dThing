@@ -44,7 +44,7 @@ namespace _2dThing.GameContent
                     exist = true;
 
             foreach (Player p in playerList)
-                if (p.Bbox.Intersects(cube.Bbox))
+                if (p.Bbox.Intersects(cube.Bbox) && p.Layer == layer)
                     exist = true;
 
             if (!exist)
@@ -96,27 +96,32 @@ namespace _2dThing.GameContent
             		foreach (Cube c in cubeList)
                			 c.Draw(rt, new Color(150,150,150));
 				}
-				else if (layerIndex > layer){
+				else if (layerIndex == layer){
 					foreach (Cube c in cubeList)
-               			 c.Draw(rt, new Color(255, 255, 255, 150));
+               			 c.Draw(rt);
 				}
-				else {
-					foreach (Cube c in cubeList)
-               		 c.Draw(rt);	
-				}
+				
 				foreach (Player p in playerList)
-					if(p.Layer < layer)
+					if(p.Layer == layerIndex && p.Layer < layer)
                 		p.Draw(rt, new Color(150,150,150));
-					else if(p.Layer > layer)
-						p.Draw(rt, new Color(255,255,255,150));
-					else
+					else if(p.Layer == layerIndex)
 						p.Draw(rt);
 				layerIndex++;
-			}
-
-            
+			}           
 
         }
+		
+		public void DrawUpperLayer(RenderTarget rt, int layer){
+			if(layer + 1 < World.LAYERNBR){
+				foreach (Player p in playerList)
+					if(p.Layer == layer + 1)
+						p.Draw(rt, new Color(255,255,255,150));
+				
+				foreach (Cube c in cubeLists[layer + 1])
+					c.Draw(rt, new Color(255,255,255,150));
+				
+			}
+		}
 		
 		public void DrawDebug(RenderTarget rt){
 			

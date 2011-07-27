@@ -10,6 +10,7 @@ namespace _2dThing
 		public bool Down;
 		public bool LeftMouseButton;
 		public bool RightMouseButton;
+		public bool UpperLayer;
 		
 		public Input ()
 		{
@@ -19,6 +20,7 @@ namespace _2dThing
 			Down = false;
 			LeftMouseButton = false;
 			RightMouseButton = false;
+			UpperLayer = false;
 		}
 	}
 }

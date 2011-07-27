@@ -108,12 +108,13 @@ namespace _2dThing
 				client.Zoom(0.75F);
 		}
 		
-		private void layerIn(bool pressed){
+		private void layerOut(bool pressed){
 			if(pressed)
 				client.Player.Layer++;
+			input.UpperLayer = pressed;
 		}
 		
-		private void layerOut(bool pressed){
+		private void layerIn(bool pressed){
 			if(pressed)
 				client.Player.Layer--;
 		}

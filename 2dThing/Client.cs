@@ -132,6 +132,8 @@ namespace _2dThing
 
 				world.Clear (new Color (100, 149, 237));
 				map.Draw (world, player.Layer);
+				if(inputManager.Input.UpperLayer)
+					map.DrawUpperLayer(world, player.Layer);
 				drawPlayersPseudo();				
 				world.Display ();						
 

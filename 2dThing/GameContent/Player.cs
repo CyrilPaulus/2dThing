@@ -69,6 +69,19 @@ namespace _2dThing.GameContent
             world.Draw(rightPupil);
 			world.Draw(colorMask);			
         }
+		
+		public override void Draw(RenderTarget world, Color color){
+			Color ori = colorMask.Color;
+			colorMask.Color = new Color((byte) (ori.R * color.R / 255), (byte) (ori.G * color.G / 255), (byte) (ori.B * Color.B / 255), (byte) (ori.A * Color.A / 255));
+			sprite.Color = color;
+			leftPupil.Color = color;
+			rightPupil.Color = color;
+			this.Draw(world);
+			colorMask.Color = ori;
+			sprite.Color = Color.White;
+			leftPupil.Color = Color.White;
+			rightPupil.Color = Color.White;
+		}
 
         public void lookAt(Vector2f pos)
         {
