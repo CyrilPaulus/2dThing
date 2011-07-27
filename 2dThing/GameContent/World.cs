@@ -92,7 +92,7 @@ namespace _2dThing.GameContent
         {
 			int layerIndex = 0;
 			foreach(List<Cube> cubeList in cubeLists){
-				if(layerIndex < layer - 1){
+				if(layerIndex < layer){
             		foreach (Cube c in cubeList)
                			 c.Draw(rt, new Color(150,150,150));
 				}
