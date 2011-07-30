@@ -11,7 +11,7 @@ using Lidgren.Network;
 
 namespace _2dThing
 {
-	public class Client
+	public class Client : Screen
 	{
 		RenderWindow window;
 		RenderImage world;
@@ -43,9 +43,9 @@ namespace _2dThing
 		Player player;
 		UserMessageBuffer uMsgBuffer;
 
-		public Client ()
+		public Client (RenderWindow window)
 		{
-			window = new RenderWindow (new VideoMode (800, 600), "2dThing is back bitches");
+			this.window = window;
 			world = new RenderImage (800, 600);
 			ui = new RenderImage (800, 600);
 			
@@ -79,15 +79,15 @@ namespace _2dThing
 			blockTypeDisplay = new Cube(blockType, imageManager);
 			blockTypeDisplay.Position = new Vector2f(ui.Width - 2*Cube.WIDTH, ui.Height - 2* Cube.HEIGHT);
 			mouse = new Sprite (imageManager.GetImage("mouse"));
+			Connect();
 		}
 		
-		public Client(String ip) : this()
+		public Client(RenderWindow window, String ip) : this(window)
 		{
 			this.ip = ip;
 		}
-
-		public void run ()
-		{
+		
+		private void Connect(){
 			client.Start ();			
 					
 			client.Connect (ip, 55017);			
@@ -110,19 +110,29 @@ namespace _2dThing
 			ci.Color = player.Color;
 			ci.Pseudo = pseudo;
 			sendPkt(ci, true);
+		}
+
+		public override int Run ()
+		{
+			
 				
 			         
-            
+            inputManager.Enable = true;
 			DateTime lastTickTime = DateTime.Now;
 			
 			Text uiText = new Text ("Tps:", myFont);
 			uiText.Position = new Vector2f (0, 0);
 			uiText.CharacterSize = 14;
 			
+		
 			
 			
-			
-			while (window.IsOpened()) {				
+			while (window.IsOpened()) {	
+				if(inputManager.MainMenu){
+					inputManager.MainMenu = false;
+					inputManager.Enable = false;
+					return Screen.MAINMENU;
+				}
 				window.DispatchEvents ();
 
 				if (ticker.Tick ()) {
@@ -160,6 +170,7 @@ namespace _2dThing
 				Thread.Sleep (10);
 			}
 			
+			return -1;
 			
 		}
 

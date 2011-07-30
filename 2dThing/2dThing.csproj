@@ -114,9 +114,10 @@
     <Compile Include="UiContent\Chat.cs" />
     <Compile Include="Network\ChatMessage.cs" />
     <Compile Include="GameContent\InputManager.cs" />
-    <Compile Include="MenuSystem\MenuItem.cs" />
-    <Compile Include="MenuSystem\Menu.cs" />
     <Compile Include="Utils\ImageManager.cs" />
+    <Compile Include="Screen.cs" />
+    <Compile Include="MenuSystem\MainMenu.cs" />
+    <Compile Include="MenuSystem\MenuItem.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="csfml-audio-2.dll">

@@ -11,6 +11,8 @@ namespace _2dThing
 		private Input input;
 		private Client client;		
 		private Dictionary<Keyboard.Key, Action<bool>> keyMap;
+		private bool mainMenu = false;
+		private bool enable = true;
 		
 		public InputManager (Client client)		
 		{
@@ -37,40 +39,46 @@ namespace _2dThing
 			keyMap[Keyboard.Key.A] = layerIn;
 			keyMap[Keyboard.Key.Z] = layerOut;
 			keyMap[Keyboard.Key.N] = toggleNoclip;
+			keyMap[Keyboard.Key.Escape] = toMainMenu;
 		}
 		
 		void OnMouseMoved (object sender, EventArgs e)
 		{
-			MouseMoveEventArgs a = (MouseMoveEventArgs)e;
-			client.Mouse.Position = new Vector2f (a.X, a.Y);            
+			if(enable){
+				MouseMoveEventArgs a = (MouseMoveEventArgs)e;
+				client.Mouse.Position = new Vector2f (a.X, a.Y);
+			}
 		}
 
 		void OnMouseButtonPressed (object sender, EventArgs e)
 		{
-			MouseButtonEventArgs a = (MouseButtonEventArgs)e;
-			switch(a.Button){
-			case Mouse.Button.Left:
-				input.LeftMouseButton = true;
-				break;
-			case Mouse.Button.Right:
-				input.RightMouseButton = true;
-				break;
-			default:break;
+			if(enable){
+				MouseButtonEventArgs a = (MouseButtonEventArgs)e;
+				switch(a.Button){
+				case Mouse.Button.Left:
+					input.LeftMouseButton = true;
+					break;
+				case Mouse.Button.Right:
+					input.RightMouseButton = true;
+					break;
+				default:break;
+				}
 			}
 		}
 		
 		void OnMouseButtonReleased (object sender, EventArgs e)
 		{
-			
-			MouseButtonEventArgs a = (MouseButtonEventArgs)e;
-			switch(a.Button){
-			case Mouse.Button.Left:
-				input.LeftMouseButton = false;
-				break;
-			case Mouse.Button.Right:
-				input.RightMouseButton = false;
-				break;
-			default:break;
+			if(enable){
+				MouseButtonEventArgs a = (MouseButtonEventArgs)e;
+				switch(a.Button){
+				case Mouse.Button.Left:
+					input.LeftMouseButton = false;
+					break;
+				case Mouse.Button.Right:
+					input.RightMouseButton = false;
+					break;
+				default:break;
+				}
 			}
 		}
 		
@@ -119,6 +127,11 @@ namespace _2dThing
 				client.Player.Layer--;
 		}
 		
+		private void toMainMenu(bool pressed){
+			if(pressed)
+				mainMenu = true;
+		}
+		
 		private void toggleNoclip(bool pressed){
 			if(pressed)
 				client.Player.Noclip = !client.Player.Noclip;
@@ -126,53 +139,71 @@ namespace _2dThing
 
 		void OnKeyPressed (object sender, EventArgs e)
 		{
-			KeyEventArgs a = (KeyEventArgs)e;
-			if(!client.Chat.Writing)
-			try
-			{
-				keyMap[a.Code](true);
-			} 
-			catch(KeyNotFoundException exp)
-			{
+			if(enable){
+				KeyEventArgs a = (KeyEventArgs)e;
+				if(!client.Chat.Writing)
+				try
+				{
+					keyMap[a.Code](true);
+				} 
+				catch(KeyNotFoundException exp)
+				{
+				}
 			}
 		}
 		
 		void OnTextEntered(object sender, EventArgs e){
-			TextEventArgs a = (TextEventArgs) e;
-			if(!client.Chat.Writing && a.Unicode.Equals("y")){
-				client.Chat.Writing = true;
-				
-			}
-			else if (client.Chat.Writing)
-			{				
-				client.Chat.update(a.Unicode);
+			if(enable){
+				TextEventArgs a = (TextEventArgs) e;
+				if(!client.Chat.Writing && a.Unicode.Equals("y")){
+					client.Chat.Writing = true;
+					
+				}
+				else if (client.Chat.Writing)
+				{				
+					client.Chat.update(a.Unicode);
+				}
 			}
 			
 		}
 		
 		void OnKeyReleased (object sender, EventArgs e)
 		{
-			KeyEventArgs a = (KeyEventArgs)e;
-			if(!client.Chat.Writing)
-			try
-			{
-				keyMap[a.Code](false);
-			} 
-			catch(KeyNotFoundException exp)
-			{
-			}			
+			if(enable){
+				KeyEventArgs a = (KeyEventArgs)e;
+				if(!client.Chat.Writing)
+				try
+				{
+					keyMap[a.Code](false);
+				} 
+				catch(KeyNotFoundException exp)
+				{
+				}	
+			}
 		}
 		
 		void OnMouseWheelMoved(object sender, EventArgs e){
-			MouseWheelEventArgs a = (MouseWheelEventArgs) e;
-			if(a.Delta < 0)
-				client.BlockType = (client.BlockType - 1 + Cube.BLOCKTYPECOUNT) % Cube.BLOCKTYPECOUNT;
-			else
-				client.BlockType = (client.BlockType + 1) % Cube.BLOCKTYPECOUNT;
+			if(enable){
+				MouseWheelEventArgs a = (MouseWheelEventArgs) e;
+				if(a.Delta < 0)
+					client.BlockType = (client.BlockType - 1 + Cube.BLOCKTYPECOUNT) % Cube.BLOCKTYPECOUNT;
+				else
+					client.BlockType = (client.BlockType + 1) % Cube.BLOCKTYPECOUNT;
+			}
 		}
 		
 		public Input Input{
 			get {return input;}
+		}
+		
+		public bool MainMenu{
+			get { return mainMenu;}
+			set { mainMenu = value; }
+		}
+		
+		public bool Enable{
+			get { return enable; }
+			set { enable = value; }
 		}
 	}
 }

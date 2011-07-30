@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using SFML.Graphics;
+using SFML.Window;
 
 namespace _2dThing
 {
@@ -39,23 +40,32 @@ namespace _2dThing
 				}
 			}
 			
-			if (isClient) {
-				
-				Client client = new Client (ip);
-				if(pseudo != null)
-					client.Pseudo = pseudo;
-				client.run ();
-			} else if (isServer) {
+			if (isServer) {
 				Server server = new Server ();
 				server.run ();
-			} else {				
-				Server server = new Server ();
-				Thread serverThread = new Thread(server.run);
-				serverThread.Start();
+			} else {
+				Server server = null;
+				if(!isClient){
+					server = new Server ();
+					Thread serverThread = new Thread(server.run);
+					serverThread.Start();
+				}
 				
-				Client client = new Client();
-				client.run();
-				server.stop();
+				Dictionary<int,Screen> screens = new Dictionary<int, Screen>();
+				int screen = 0;
+				RenderWindow window = new RenderWindow(new VideoMode(800, 600), "2dThing");				
+				Client client = new Client(window, ip);
+				screens.Add(Screen.GAME, client);
+				
+				MainMenu mainMenu = new MainMenu(window);
+				screens.Add(Screen.MAINMENU, mainMenu);
+				
+				while(screen >= 0){
+					screen = screens[screen].Run();
+				}
+				
+				if(!isClient)
+					server.stop();
 			}
 		}       
 	}
