@@ -43,13 +43,9 @@ namespace _2dThing
 			if (isServer) {
 				Server server = new Server ();
 				server.run ();
-			} else {
-				Server server = null;
-				if(!isClient){
-					server = new Server ();
-					Thread serverThread = new Thread(server.run);
-					serverThread.Start();
-				}
+			} else 
+			{
+				Server server = new Server();
 				
 				Dictionary<int,Screen> screens = new Dictionary<int, Screen>();
 				int screen = 0;
@@ -57,9 +53,10 @@ namespace _2dThing
 				Client client = new Client(window, ip);
 				screens.Add(Screen.GAME, client);
 				
-				MainMenu mainMenu = new MainMenu(window);
+				MainMenu mainMenu = new MainMenu(window, client, server);
 				screens.Add(Screen.MAINMENU, mainMenu);
 				mainMenu.loadEventHandler();
+				
 				while(screen >= 0){
 					int prevScreen = screen;
 					screen = screens[screen].Run();
@@ -70,9 +67,11 @@ namespace _2dThing
 					}
 				}
 				client.Disconnect();
-				if(!isClient)
+				if(server != null)
 					server.stop();
 			}
+			
+			
 		}       
 	}
 }

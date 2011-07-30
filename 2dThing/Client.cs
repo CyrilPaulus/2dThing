@@ -14,8 +14,7 @@ namespace _2dThing
 	public class Client : Screen
 	{
 		RenderWindow window;
-		RenderImage world;
-		RenderImage ui;
+		RenderImage world;		
 		
 		int blockType = 0;
 		int clientId = 0;
@@ -46,13 +45,12 @@ namespace _2dThing
 		public Client (RenderWindow window)
 		{
 			this.window = window;
-			world = new RenderImage (800, 600);
-			ui = new RenderImage (800, 600);
+			world = new RenderImage (800, 600);			
 			
 			inputManager = new InputManager(this);
 			imageManager = new ImageManager();
 						
-			map = new World (imageManager);
+			
 			ticker = new Ticker ();            
 
 						
@@ -60,11 +58,7 @@ namespace _2dThing
 			window.SetFramerateLimit (60);
 			
 			
-
-			player = new Player (map, imageManager);			
-			map.addPlayer (player);
-			world.DefaultView.Center = new Vector2f (0, 0);
-			world.SetView (world.DefaultView);
+			
 			
 			NetPeerConfiguration netConfiguration = new NetPeerConfiguration ("2dThing");			
 			client = new NetClient (netConfiguration);
@@ -75,9 +69,8 @@ namespace _2dThing
 			
 			loadRessources();			
 			blockTypeDisplay = new Cube(blockType, imageManager);
-			blockTypeDisplay.Position = new Vector2f(ui.Width - 2*Cube.WIDTH, ui.Height - 2* Cube.HEIGHT);
-			mouse = new Sprite (imageManager.GetImage("mouse"));
-			Connect();
+			blockTypeDisplay.Position = new Vector2f(window.Width - 2*Cube.WIDTH, window.Height - 2* Cube.HEIGHT);
+			mouse = new Sprite (imageManager.GetImage("mouse"));			
 		}
 		
 		public Client(RenderWindow window, String ip) : this(window)
@@ -85,7 +78,13 @@ namespace _2dThing
 			this.ip = ip;
 		}
 		
-		private void Connect(){
+		public void Connect(){
+			map = new World (imageManager);
+			player = new Player (map, imageManager);			
+			map.addPlayer (player);
+			world.DefaultView.Center = new Vector2f (0, 0);
+			world.SetView (world.DefaultView);
+			
 			client.Start ();			
 					
 			client.Connect (ip, 55017);			
@@ -149,16 +148,16 @@ namespace _2dThing
 				drawPlayersPseudo();				
 				world.Display ();						
 
-				ui.Clear (new Color (255, 255, 255, 0));
-				ui.Draw (mouse);				
-				ui.Draw (uiText);
-				blockTypeDisplay.Draw(ui);
-				chat.Draw(ui);
-				ui.Display ();
+				
+				
+				
 
 				window.Clear (new Color (100, 149, 237));                
 				window.Draw (new Sprite (world.Image));
-				window.Draw (new Sprite (ui.Image));				
+				window.Draw (mouse);				
+				window.Draw (uiText);
+				blockTypeDisplay.Draw(window);
+				chat.Draw(window);				
 				window.Display ();                
 			}
 				Disconnect();			
@@ -233,8 +232,7 @@ namespace _2dThing
 			window.SetView(newView);
 			
 			world = new RenderImage(width, height);
-			world.DefaultView.Center = player.Position;
-			ui = new RenderImage(width, height);
+			world.DefaultView.Center = player.Position;			
 		}
 		
 		public Vector2f getWorldMouse ()
@@ -432,6 +430,12 @@ namespace _2dThing
 			window.Closed += new EventHandler (OnClose);
 			window.Resized += new EventHandler<SizeEventArgs>(OnWindowResized);	
 			inputManager.loadEventHandler();
+		}
+		
+		public String IP
+		{
+			get { return ip;}
+			set { ip = value; }
 		}
 		
 		public override void unloadEventHandler(){
