@@ -55,9 +55,7 @@ namespace _2dThing
 			map = new World (imageManager);
 			ticker = new Ticker ();            
 
-			window.Closed += new EventHandler (OnClose);
-			window.Resized += new EventHandler<SizeEventArgs>(OnWindowResized);	
-			
+						
 			window.ShowMouseCursor (false);
 			window.SetFramerateLimit (60);
 			
@@ -116,8 +114,8 @@ namespace _2dThing
 		{
 			
 				
-			         
-            inputManager.Enable = true;
+			        
+           	Resize(window.Width, window.Height);
 			DateTime lastTickTime = DateTime.Now;
 			
 			Text uiText = new Text ("Tps:", myFont);
@@ -129,10 +127,10 @@ namespace _2dThing
 			
 			while (window.IsOpened()) {	
 				if(inputManager.MainMenu){
-					inputManager.MainMenu = false;
-					inputManager.Enable = false;
+					inputManager.MainMenu = false;					
 					return Screen.MAINMENU;
 				}
+				
 				window.DispatchEvents ();
 
 				if (ticker.Tick ()) {
@@ -163,15 +161,17 @@ namespace _2dThing
 				window.Draw (new Sprite (ui.Image));				
 				window.Display ();                
 			}
+				Disconnect();			
+			return -1;
 			
-			Console.WriteLine ("Disconnecting");			
+		}
+		
+		public void Disconnect(){
+			Console.WriteLine ("Disconnecting");
 			client.Disconnect ("Bye bitches");
 			while (client.ConnectionStatus != NetConnectionStatus.Disconnected) {
 				Thread.Sleep (10);
 			}
-			
-			return -1;
-			
 		}
 
 		/// <summary>
@@ -225,15 +225,16 @@ namespace _2dThing
 			
 		void OnWindowResized(object sender, EventArgs e){
 			SizeEventArgs a = (SizeEventArgs) e;			
-			
-			View newView = new View(new FloatRect(0,0,a.Width, a.Height));
+			Resize(a.Width, a.Height);		
+		}
+		
+		void Resize(uint width, uint height){
+			View newView = new View(new FloatRect(0,0,width, height));
 			window.SetView(newView);
 			
-			world = new RenderImage(a.Width, a.Height);
+			world = new RenderImage(width, height);
 			world.DefaultView.Center = player.Position;
-			ui = new RenderImage(a.Width, a.Height);
-			
-			
+			ui = new RenderImage(width, height);
 		}
 		
 		public Vector2f getWorldMouse ()
@@ -425,6 +426,19 @@ namespace _2dThing
 		
 		public void loadRessources(){						
 			myFont = new Font ("content/arial.ttf");
+		}
+		
+		public override void loadEventHandler(){
+			window.Closed += new EventHandler (OnClose);
+			window.Resized += new EventHandler<SizeEventArgs>(OnWindowResized);	
+			inputManager.loadEventHandler();
+		}
+		
+		public override void unloadEventHandler(){
+			window.Closed -= new EventHandler (OnClose);
+			window.Resized -= new EventHandler<SizeEventArgs>(OnWindowResized);	
+			inputManager.unloadEventHandler();
+			
 		}
 	}
 }

@@ -59,11 +59,17 @@ namespace _2dThing
 				
 				MainMenu mainMenu = new MainMenu(window);
 				screens.Add(Screen.MAINMENU, mainMenu);
-				
+				mainMenu.loadEventHandler();
 				while(screen >= 0){
+					int prevScreen = screen;
 					screen = screens[screen].Run();
+					
+					if(screen >= 0){
+						screens[prevScreen].unloadEventHandler();
+						screens[screen].loadEventHandler();
+					}
 				}
-				
+				client.Disconnect();
 				if(!isClient)
 					server.stop();
 			}

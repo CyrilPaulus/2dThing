@@ -11,8 +11,7 @@ namespace _2dThing
 		private Input input;
 		private Client client;		
 		private Dictionary<Keyboard.Key, Action<bool>> keyMap;
-		private bool mainMenu = false;
-		private bool enable = true;
+		private bool mainMenu = false;		
 		
 		public InputManager (Client client)		
 		{
@@ -20,13 +19,6 @@ namespace _2dThing
 			RenderWindow window = client.MainWindow;
 			input = new Input();			
 			
-			window.MouseMoved += new EventHandler<MouseMoveEventArgs> (OnMouseMoved);
-			window.KeyPressed += new EventHandler<KeyEventArgs> (OnKeyPressed);
-			window.KeyReleased += new EventHandler<KeyEventArgs> (OnKeyReleased);
-			window.MouseButtonPressed += new EventHandler<MouseButtonEventArgs> (OnMouseButtonPressed);
-			window.MouseButtonReleased += new EventHandler<MouseButtonEventArgs>(OnMouseButtonReleased);
-			window.MouseWheelMoved += new EventHandler<MouseWheelEventArgs> (OnMouseWheelMoved);
-			window.TextEntered += new EventHandler<TextEventArgs>(OnTextEntered);
 			keyMap = new Dictionary<Keyboard.Key, Action<bool>>();
 			
 			keyMap[Keyboard.Key.Up] = moveUp;
@@ -44,42 +36,42 @@ namespace _2dThing
 		
 		void OnMouseMoved (object sender, EventArgs e)
 		{
-			if(enable){
-				MouseMoveEventArgs a = (MouseMoveEventArgs)e;
-				client.Mouse.Position = new Vector2f (a.X, a.Y);
-			}
+			
+			MouseMoveEventArgs a = (MouseMoveEventArgs)e;
+			client.Mouse.Position = new Vector2f (a.X, a.Y);
+			
 		}
 
 		void OnMouseButtonPressed (object sender, EventArgs e)
 		{
-			if(enable){
-				MouseButtonEventArgs a = (MouseButtonEventArgs)e;
-				switch(a.Button){
-				case Mouse.Button.Left:
-					input.LeftMouseButton = true;
-					break;
-				case Mouse.Button.Right:
-					input.RightMouseButton = true;
-					break;
-				default:break;
-				}
+			
+			MouseButtonEventArgs a = (MouseButtonEventArgs)e;
+			switch(a.Button){
+			case Mouse.Button.Left:
+				input.LeftMouseButton = true;
+				break;
+			case Mouse.Button.Right:
+				input.RightMouseButton = true;
+				break;
+			default:break;
 			}
+			
 		}
 		
 		void OnMouseButtonReleased (object sender, EventArgs e)
 		{
-			if(enable){
-				MouseButtonEventArgs a = (MouseButtonEventArgs)e;
-				switch(a.Button){
-				case Mouse.Button.Left:
-					input.LeftMouseButton = false;
-					break;
-				case Mouse.Button.Right:
-					input.RightMouseButton = false;
-					break;
-				default:break;
-				}
+			
+			MouseButtonEventArgs a = (MouseButtonEventArgs)e;
+			switch(a.Button){
+			case Mouse.Button.Left:
+				input.LeftMouseButton = false;
+				break;
+			case Mouse.Button.Right:
+				input.RightMouseButton = false;
+				break;
+			default:break;
 			}
+			
 		}
 		
 		private void moveUp(bool pressed){
@@ -139,57 +131,57 @@ namespace _2dThing
 
 		void OnKeyPressed (object sender, EventArgs e)
 		{
-			if(enable){
-				KeyEventArgs a = (KeyEventArgs)e;
-				if(!client.Chat.Writing)
-				try
-				{
-					keyMap[a.Code](true);
-				} 
-				catch(KeyNotFoundException exp)
-				{
-				}
+			
+			KeyEventArgs a = (KeyEventArgs)e;
+			if(!client.Chat.Writing)
+			try
+			{
+				keyMap[a.Code](true);
+			} 
+			catch(KeyNotFoundException exp)
+			{
 			}
+			
 		}
 		
 		void OnTextEntered(object sender, EventArgs e){
-			if(enable){
-				TextEventArgs a = (TextEventArgs) e;
-				if(!client.Chat.Writing && a.Unicode.Equals("y")){
-					client.Chat.Writing = true;
-					
-				}
-				else if (client.Chat.Writing)
-				{				
-					client.Chat.update(a.Unicode);
-				}
+			
+			TextEventArgs a = (TextEventArgs) e;
+			if(!client.Chat.Writing && a.Unicode.Equals("y")){
+				client.Chat.Writing = true;
+				
 			}
+			else if (client.Chat.Writing)
+			{				
+				client.Chat.update(a.Unicode);
+			}
+			
 			
 		}
 		
 		void OnKeyReleased (object sender, EventArgs e)
 		{
-			if(enable){
-				KeyEventArgs a = (KeyEventArgs)e;
-				if(!client.Chat.Writing)
-				try
-				{
-					keyMap[a.Code](false);
-				} 
-				catch(KeyNotFoundException exp)
-				{
-				}	
-			}
+			
+			KeyEventArgs a = (KeyEventArgs)e;
+			if(!client.Chat.Writing)
+			try
+			{
+				keyMap[a.Code](false);
+			} 
+			catch(KeyNotFoundException exp)
+			{
+			}	
+			
 		}
 		
 		void OnMouseWheelMoved(object sender, EventArgs e){
-			if(enable){
-				MouseWheelEventArgs a = (MouseWheelEventArgs) e;
-				if(a.Delta < 0)
-					client.BlockType = (client.BlockType - 1 + Cube.BLOCKTYPECOUNT) % Cube.BLOCKTYPECOUNT;
-				else
-					client.BlockType = (client.BlockType + 1) % Cube.BLOCKTYPECOUNT;
-			}
+			
+			MouseWheelEventArgs a = (MouseWheelEventArgs) e;
+			if(a.Delta < 0)
+				client.BlockType = (client.BlockType - 1 + Cube.BLOCKTYPECOUNT) % Cube.BLOCKTYPECOUNT;
+			else
+				client.BlockType = (client.BlockType + 1) % Cube.BLOCKTYPECOUNT;
+			
 		}
 		
 		public Input Input{
@@ -201,9 +193,27 @@ namespace _2dThing
 			set { mainMenu = value; }
 		}
 		
-		public bool Enable{
-			get { return enable; }
-			set { enable = value; }
+			
+		public void loadEventHandler(){
+			RenderWindow window = client.MainWindow;
+			window.MouseMoved += new EventHandler<MouseMoveEventArgs> (OnMouseMoved);
+			window.KeyPressed += new EventHandler<KeyEventArgs> (OnKeyPressed);
+			window.KeyReleased += new EventHandler<KeyEventArgs> (OnKeyReleased);
+			window.MouseButtonPressed += new EventHandler<MouseButtonEventArgs> (OnMouseButtonPressed);
+			window.MouseButtonReleased += new EventHandler<MouseButtonEventArgs>(OnMouseButtonReleased);
+			window.MouseWheelMoved += new EventHandler<MouseWheelEventArgs> (OnMouseWheelMoved);
+			window.TextEntered += new EventHandler<TextEventArgs>(OnTextEntered);
+		}
+		
+		public void unloadEventHandler(){
+			RenderWindow window = client.MainWindow;
+			window.MouseMoved -= new EventHandler<MouseMoveEventArgs> (OnMouseMoved);
+			window.KeyPressed -= new EventHandler<KeyEventArgs> (OnKeyPressed);
+			window.KeyReleased -= new EventHandler<KeyEventArgs> (OnKeyReleased);
+			window.MouseButtonPressed -= new EventHandler<MouseButtonEventArgs> (OnMouseButtonPressed);
+			window.MouseButtonReleased -= new EventHandler<MouseButtonEventArgs>(OnMouseButtonReleased);
+			window.MouseWheelMoved -= new EventHandler<MouseWheelEventArgs> (OnMouseWheelMoved);
+			window.TextEntered -= new EventHandler<TextEventArgs>(OnTextEntered);
 		}
 	}
 }

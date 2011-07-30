@@ -12,6 +12,12 @@ namespace _2dThing
 		public virtual int Run(){
 				return 0;
 		}
+		
+		public virtual void loadEventHandler(){
+		}
+		
+		public virtual void unloadEventHandler(){
+		}
 	}
 }
 
