@@ -19,9 +19,11 @@ namespace _2dThing.GameContent
 		float maxFallSpeed = 2000;
 
         List<QuadTree> quadTrees;
-
-        public World()
+		ImageManager imageManager;
+		
+        public World(ImageManager imageManager)
         {
+			this.imageManager = imageManager;
             playerList = new List<Player>();            
 			cubeLists = new List<List<Cube>>();
 			quadTrees = new List<QuadTree>();
@@ -35,7 +37,7 @@ namespace _2dThing.GameContent
         public bool addCube(Vector2f pos, int type, int layer)
         {
             Vector2f gridPos = new Vector2f((float)Math.Floor((pos.X / Cube.WIDTH)) * Cube.WIDTH, (float)Math.Floor((pos.Y / Cube.HEIGHT)) * Cube.HEIGHT);
-            Cube cube = new Cube(type);
+            Cube cube = new Cube(type, imageManager);
             cube.Position = gridPos;
             bool exist = false;
 
@@ -57,7 +59,7 @@ namespace _2dThing.GameContent
 		
 		public void forceAddCube(Vector2f pos, int type, int layer){
 			Vector2f gridPos = new Vector2f((float)Math.Floor((pos.X / Cube.WIDTH)) * Cube.WIDTH, (float)Math.Floor((pos.Y / Cube.HEIGHT)) * Cube.HEIGHT);
-            Cube cube = new Cube(type);
+            Cube cube = new Cube(type, imageManager);
             cube.Position = gridPos;
 			cubeLists[layer].Add(cube);
             quadTrees[layer].addCube(cube);

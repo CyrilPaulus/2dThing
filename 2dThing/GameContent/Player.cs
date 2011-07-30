@@ -28,16 +28,16 @@ namespace _2dThing.GameContent
 
         bool flying = false;		
 
-        public Player(World world)
-            : base()
+        public Player(World world, ImageManager imageManager)
+            : base(imageManager)
         {
             this.world = world;
-            Sprite = new Sprite(new Image("content/player.png"));			
+            Sprite = new Sprite(imageManager.GetImage("player"));			
 			size = new Vector2f(sprite.Width - 2, sprite.Height);
 			offset = new Vector2f(-1,0);
-            leftPupil = new Sprite(new Image("content/pupil.png"));
-            rightPupil = new Sprite(new Image("content/pupil.png"));
-			colorMask = new Sprite(new Image("content/colorMask.png"));
+            leftPupil = new Sprite(imageManager.GetImage("pupil"));
+            rightPupil = new Sprite(imageManager.GetImage("pupil"));
+			colorMask = new Sprite(imageManager.GetImage("colorMask"));
 			Random randomiser = new Random();
 			byte[] rgb = new byte[3];
 			randomiser.NextBytes(rgb);

@@ -27,6 +27,7 @@ namespace _2dThing
 		Sprite mouse;		
 		World map;
 		InputManager inputManager;
+		ImageManager imageManager;
 		
 		NetClient client;
 		Dictionary<int, NetworkClient> otherClients;
@@ -47,8 +48,11 @@ namespace _2dThing
 			window = new RenderWindow (new VideoMode (800, 600), "2dThing is back bitches");
 			world = new RenderImage (800, 600);
 			ui = new RenderImage (800, 600);
+			
+			inputManager = new InputManager(this);
+			imageManager = new ImageManager();
 						
-			map = new World ();
+			map = new World (imageManager);
 			ticker = new Ticker ();            
 
 			window.Closed += new EventHandler (OnClose);
@@ -57,9 +61,9 @@ namespace _2dThing
 			window.ShowMouseCursor (false);
 			window.SetFramerateLimit (60);
 			
-			mouse = new Sprite (new Image ("content/mouse.png"));
+			
 
-			player = new Player (map);			
+			player = new Player (map, imageManager);			
 			map.addPlayer (player);
 			world.DefaultView.Center = new Vector2f (0, 0);
 			world.SetView (world.DefaultView);
@@ -70,10 +74,11 @@ namespace _2dThing
 			otherClients = new Dictionary<int, NetworkClient>();
 			
 			chat = new Chat(this);
-			inputManager = new InputManager(this);
-			myFont = new Font ("content/arial.ttf");
-			blockTypeDisplay = new Cube(blockType);
+			
+			loadRessources();			
+			blockTypeDisplay = new Cube(blockType, imageManager);
 			blockTypeDisplay.Position = new Vector2f(ui.Width - 2*Cube.WIDTH, ui.Height - 2* Cube.HEIGHT);
+			mouse = new Sprite (imageManager.GetImage("mouse"));
 		}
 		
 		public Client(String ip) : this()
@@ -117,8 +122,7 @@ namespace _2dThing
 			
 			
 			
-			while (window.IsOpened()) {
-				
+			while (window.IsOpened()) {				
 				window.DispatchEvents ();
 
 				if (ticker.Tick ()) {
@@ -291,7 +295,7 @@ namespace _2dThing
 					else
 					{
 						NetworkClient newClient = new NetworkClient(ci.ClientId, null);
-						newClient.Player = new Player(map);
+						newClient.Player = new Player(map, imageManager);
 						newClient.Player.Color = ci.Color;
 						newClient.Pseudo = ci.Pseudo;
 						map.addPlayer(newClient.Player);
@@ -406,6 +410,10 @@ namespace _2dThing
 		public int BlockType{
 			get { return blockType;}
 			set { blockType = value; blockTypeDisplay.setType(value); }
+		}
+		
+		public void loadRessources(){						
+			myFont = new Font ("content/arial.ttf");
 		}
 	}
 }

@@ -18,11 +18,13 @@ namespace _2dThing
 		int clientId = 1;
 		bool running = true;
 		bool local = false;
+		ImageManager imageManager;
 		
 		public Server ()
 		{
+			imageManager = new ImageManager();
 			this.ticker = new Ticker ();
-			this.map = new World ();
+			this.map = new World (imageManager);
 			this.map.addCube(new Vector2f(0, 90), 0, World.LAYERNBR - 1);
 			lastTickTime = DateTime.Now;
 			NetPeerConfiguration netConfiguration = new NetPeerConfiguration ("2dThing");			
@@ -88,7 +90,7 @@ namespace _2dThing
 						ci.Pseudo = newClient.Pseudo;
 						sendPkt(ci, msg.SenderConnection, true);
 						
-						Player p = new Player(map);
+						Player p = new Player(map, imageManager);
 						map.addPlayer(p);
 						newClient.Player = p;
 						sendFullWorldUpdate(msg.SenderConnection);

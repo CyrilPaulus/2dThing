@@ -12,13 +12,14 @@ namespace _2dThing.GameContent
 		public static int WIDTH = 32;
 		public static int HEIGHT = 32;
 		public static int BLOCKTYPECOUNT = 48;
-		private static Image tileMap = new Image("content/tilemap.png");
 		public int type = 0;
+		ImageManager imageManager;
 		
-        public Cube(int blocktype)
-            : base()
+        public Cube(int blocktype, ImageManager imageManager)
+            : base(imageManager)
         {
-			Sprite = new Sprite(tileMap);
+			this.imageManager = imageManager;
+			Sprite = new Sprite(imageManager.GetImage("tileset"));
 			setType(blocktype);
         }
 		
@@ -26,7 +27,7 @@ namespace _2dThing.GameContent
 			this.type = type;
 			int x = (type % 16) * WIDTH;
 			int y = (type / 16) * HEIGHT;			
-			Sprite newSprite = new Sprite(new Image("content/tilemap.png"));
+			Sprite newSprite = new Sprite(imageManager.GetImage("tileset"));
 			newSprite.SubRect = new IntRect(x, y, WIDTH, HEIGHT);
 			Sprite = newSprite;
 			

@@ -13,9 +13,9 @@ namespace _2dThing.GameContent
 		protected Vector2f offset;
 		protected Vector2f position;
 		protected Vector2f size;
-        public Entity()
+        public Entity(ImageManager imageManager)
         {            
-            Sprite = new Sprite(new Image("content/cube.png"));
+            Sprite = new Sprite(imageManager.GetImage("cube"));
 			offset = new Vector2f(0, 0);
 			position = new Vector2f(0, 0);			
         }

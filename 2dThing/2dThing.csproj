@@ -114,6 +114,9 @@
     <Compile Include="UiContent\Chat.cs" />
     <Compile Include="Network\ChatMessage.cs" />
     <Compile Include="GameContent\InputManager.cs" />
+    <Compile Include="MenuSystem\MenuItem.cs" />
+    <Compile Include="MenuSystem\Menu.cs" />
+    <Compile Include="Utils\ImageManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="csfml-audio-2.dll">
@@ -265,7 +268,7 @@
     <None Include="content\colorMask.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="content\tilemap.png">
+    <None Include="content\tileset.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
@@ -310,5 +313,6 @@
   <ItemGroup>
     <Folder Include="Network\" />
     <Folder Include="UiContent\" />
+    <Folder Include="MenuSystem\" />
   </ItemGroup>
 </Project>
