@@ -13,8 +13,8 @@ namespace _2dThing
 {
 	public class Client : Screen
 	{
-		RenderWindow window;
-		RenderImage world;		
+		
+		RenderImage world;
 		
 		int blockType = 0;
 		int clientId = 0;
@@ -25,8 +25,7 @@ namespace _2dThing
 		
 		Sprite mouse;		
 		World map;
-		InputManager inputManager;
-		ImageManager imageManager;
+		InputManager inputManager;		
 		
 		NetClient client;
 		Dictionary<int, NetworkClient> otherClients;
@@ -42,18 +41,15 @@ namespace _2dThing
 		Player player;
 		UserMessageBuffer uMsgBuffer;
 
-		public Client (RenderWindow window)
+		public Client (RenderWindow window, ImageManager imageManager) : base (window, imageManager)
 		{
 			this.window = window;
 			world = new RenderImage (800, 600);			
 			
-			inputManager = new InputManager(this);
-			imageManager = new ImageManager();
-						
+			inputManager = new InputManager(this);						
 			
-			ticker = new Ticker ();            
-
-						
+			ticker = new Ticker (); 
+					
 			window.ShowMouseCursor (false);
 			window.SetFramerateLimit (60);
 			
@@ -70,16 +66,11 @@ namespace _2dThing
 			mouse = new Sprite (imageManager.GetImage("mouse"));			
 		}
 		
-		public Client(RenderWindow window, String ip) : this(window)
-		{
-			this.ip = ip;
-		}
-		
+				
 		public void Connect(){
 			otherClients.Clear();
 			clientId = 0;
-			hasId = false;
-			
+			hasId = false;			
 			
 			map = new World (imageManager);
 			player = new Player (map, imageManager);			
@@ -93,16 +84,14 @@ namespace _2dThing
 			
 			while (client.ConnectionStatus == NetConnectionStatus.Disconnected) {
 				Thread.Sleep (10);
-			}
-			
+			}			
 						
 			Console.WriteLine ("Client connected");
 			
 			while (!hasId) {
 				readIncomingMsg ();
 				Thread.Sleep (10);
-			}
-			
+			}			
 			
 			NetOutgoingMessage msg = client.CreateMessage ();
 			ClientInfo ci = new ClientInfo (clientId);
@@ -114,62 +103,58 @@ namespace _2dThing
 		public override int Run ()
 		{
 			
-				
-			        
+			//Resize the window if size changed in another screen        
            	Resize(window.Width, window.Height);
+			
 			DateTime lastTickTime = DateTime.Now;
 			
 			Text uiText = new Text ("Tps:", myFont);
 			uiText.Position = new Vector2f (0, 0);
 			uiText.CharacterSize = 14;
-			
-		
-			
-			
+						
 			while (window.IsOpened()) {	
+			
+				window.DispatchEvents ();
+				
 				if(inputManager.MainMenu){
 					inputManager.MainMenu = false;					
 					return Screen.MAINMENU;
 				}
-				
-				window.DispatchEvents ();
-
-				if (ticker.Tick ()) {
+							
+				if (ticker.Tick()) {
 					float ticktime = (float)(DateTime.Now - lastTickTime).TotalSeconds;
 					readIncomingMsg ();
 					update (ticktime);
 					uiText.DisplayedString = "Fps: " + (int)(1f / window.GetFrameTime () * 1000) + "\nTps: " + (int)(1 / (DateTime.Now - lastTickTime).TotalSeconds) + "\nClientId: " + clientId + "\nLayer :" + player.Layer;
 					lastTickTime = DateTime.Now;					
-				}
-				
+				}				
 
 				world.Clear (new Color (100, 149, 237));
 				map.Draw (world, player.Layer);
+				
 				if(inputManager.Input.UpperLayer)
 					map.DrawUpperLayer(world, player.Layer);
+				
 				drawPlayersPseudo();				
 				world.Display ();						
-
 				
-				
-				
-
 				window.Clear (new Color (100, 149, 237));                
 				window.Draw (new Sprite (world.Image));
 				window.Draw (mouse);				
 				window.Draw (uiText);
 				blockTypeDisplay.Draw(window);
 				chat.Draw(window);				
-				window.Display ();                
+				window.Display();                
 			}
-				Disconnect();			
+
+			Disconnect();			
 			return -1;
 			
 		}
 		
 		public void Disconnect(){
 			Console.WriteLine ("Disconnecting");
-			client.Disconnect ("Bye bitches");
+			client.Disconnect ("Bye");
 			while (client.ConnectionStatus != NetConnectionStatus.Disconnected) {
 				Thread.Sleep (10);
 			}
@@ -244,19 +229,15 @@ namespace _2dThing
 
 		public void updateCam ()
 		{
-            
-           
-			float left = world.DefaultView.Center.X - world.DefaultView.Size.X / 2;
+            float left = world.DefaultView.Center.X - world.DefaultView.Size.X / 2;
 			float right = world.DefaultView.Center.X + world.DefaultView.Size.X / 2;
 			if (player.Bbox.Left - 100 < left)
 				world.DefaultView.Move (new Vector2f (player.Bbox.Left - 100 - left, 0));
 			else if (player.Bbox.Left + player.Bbox.Width + 100 > right)
 				world.DefaultView.Move (new Vector2f (player.Bbox.Left + player.Bbox.Width + 100 - right, 0));
 
-
 			float top = world.DefaultView.Center.Y - world.DefaultView.Size.Y / 2;
 			float bottom = world.DefaultView.Center.Y + world.DefaultView.Size.Y / 2;
-
 			if (player.Bbox.Top - 100 < top)
 				world.DefaultView.Move (new Vector2f (0, player.Bbox.Top - 100 - top));
 			else if (player.Bbox.Top + player.Bbox.Height + 100 > bottom)
@@ -290,7 +271,6 @@ namespace _2dThing
 		public void readPacket (NetIncomingMessage msg)
 		{
 			switch (msg.PeekByte ()) {
-				
 			case Packet.CLIENTINFO:
 				ClientInfo ci = ClientInfo.decode (ref msg);
 				if(!hasId){				

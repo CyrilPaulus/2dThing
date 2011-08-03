@@ -40,22 +40,35 @@ namespace _2dThing
 				}
 			}
 			
+			ImageManager imageManager = new ImageManager();
+			
 			if (isServer) {
-				Server server = new Server ();
+				Server server = new Server(imageManager);
 				server.run ();
 			} else 
 			{
-				Server server = new Server();
+				RenderWindow window = new RenderWindow(new VideoMode(800, 600), "2dThing");	
+								
 				
 				Dictionary<int,Screen> screens = new Dictionary<int, Screen>();
 				int screen = 0;
-				RenderWindow window = new RenderWindow(new VideoMode(800, 600), "2dThing");				
-				Client client = new Client(window, ip);
-				screens.Add(Screen.GAME, client);
 				
-				MainMenu mainMenu = new MainMenu(window, client, server);
+				Server server = new Server(imageManager);
+				Client client = new Client(window, imageManager);
+				client.IP = ip;
+				
+				MainMenu mainMenu = new MainMenu(window, imageManager, client, server);			
+							
 				screens.Add(Screen.MAINMENU, mainMenu);
-				mainMenu.loadEventHandler();
+				screens.Add(Screen.GAME, client);				
+				
+				if(isClient){
+					client.Connect();
+					client.loadEventHandler();
+					screen = Screen.GAME;
+				}
+				else
+					mainMenu.loadEventHandler();
 				
 				while(screen >= 0){
 					int prevScreen = screen;

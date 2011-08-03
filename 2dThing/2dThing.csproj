@@ -163,7 +163,6 @@
     <None Include="sfmlnet-audio-2.dll" />
     <None Include="sfmlnet-graphics-2.dll" />
     <None Include="sfmlnet-window-2.dll" />
-    <None Include="Lidgren.Network.dll" />
     <None Include="server.bat">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -181,6 +180,9 @@
     </None>
     <None Include="content\tileset.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Lidgren.Network.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>

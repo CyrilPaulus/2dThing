@@ -9,22 +9,20 @@ namespace _2dThing
 	public class MainMenu : Screen
 	{
 		Player p;
-		RenderImage pImage;
-		RenderWindow window;
+		RenderImage pImage;		
 		MenuItem[] items;
 		bool running = true;
 		Client client;
 		Server server;
 		int selectedIndex = 0;
-		const int nbrItem = 4;
-		ImageManager imageManager;
+		const int nbrItem = 4;		
 		Sprite mouse;
 		Random randomiser = new Random();
 		
 		Color background = Color.Black;
 		Color nextColor = Color.Black;
 		
-		public MainMenu (RenderWindow window, Client client, Server server) : base()
+		public MainMenu (RenderWindow window, ImageManager imageManager, Client client, Server server) : base(window, imageManager)
 		{
 			imageManager = new ImageManager();
 			p = new Player(null, imageManager);
@@ -100,17 +98,6 @@ namespace _2dThing
 		}
 		
 		
-		private int exit(){
-			return Screen.EXIT;
-		}
-		
-		private int option(){
-			return Screen.OPTION;
-		}
-		
-		private int connect(){
-			return Screen.CONNECT;
-		}
 		private int startLocal(){
 			if(server.isRunning()){
 				client.Disconnect();
@@ -118,9 +105,23 @@ namespace _2dThing
 			}
 			Thread serverThread = new Thread(server.run);
 			serverThread.Start();
+			client.IP = "localhost";
 			client.Connect();
 			return Screen.GAME;
 		}
+			
+		private int connect(){
+			return Screen.CONNECT;
+		}
+		
+		private int option(){
+			return Screen.OPTION;
+		}		
+		
+		private int exit(){
+			return Screen.EXIT;
+		}
+		
 		
 		public override void loadEventHandler ()
 		{

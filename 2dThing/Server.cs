@@ -16,24 +16,18 @@ namespace _2dThing
 		NetServer server;
 		Dictionary<NetConnection, NetworkClient> clientList;
 		int clientId = 1;
-		bool running = false;
-		bool local = false;
+		bool running = false;		
 		ImageManager imageManager;
 		
-		public Server ()
+		public Server (ImageManager imageManager)
 		{
-			imageManager = new ImageManager();
+			this.imageManager = imageManager;
 			this.ticker = new Ticker ();
 			
 			NetPeerConfiguration netConfiguration = new NetPeerConfiguration ("2dThing");			
 			netConfiguration.Port = 55017;			
 			server = new NetServer (netConfiguration);
 			clientList = new Dictionary<NetConnection, NetworkClient>();
-		}
-		
-		public Server (bool local) : this()
-		{
-			this.local = local;
 		}
 		
 		public void run ()
