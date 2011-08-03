@@ -92,22 +92,25 @@ namespace _2dThing.GameContent
 
         public void Draw(RenderTarget rt, int layer)
         {
+			Vector2f origin = rt.ConvertCoords(0,0);
+			Shape fog = Shape.Rectangle(new FloatRect(origin.X, origin.Y, rt.DefaultView.Size.X, rt.DefaultView.Size.Y), new Color(100, 149, 237, 150));
+			
 			int layerIndex = 0;
 			foreach(List<Cube> cubeList in cubeLists){
-				if(layerIndex < layer){
-            		foreach (Cube c in cubeList)
-               			 c.Draw(rt, new Color(150,150,150));
-				}
-				else if (layerIndex == layer){
-					foreach (Cube c in cubeList)
-               			 c.Draw(rt);
-				}
 				
-				foreach (Player p in playerList)
-					if(p.Layer == layerIndex && p.Layer < layer)
-                		p.Draw(rt, new Color(150,150,150));
-					else if(p.Layer == layerIndex)
+				if(layerIndex > layer)
+					break;
+				
+				foreach (Cube c in cubeList)
+               		 c.Draw(rt);
+				
+				foreach (Player p in playerList)					
+					if(p.Layer == layerIndex)
 						p.Draw(rt);
+						
+				if(layerIndex < layer)
+					rt.Draw(fog);			
+						
 				layerIndex++;
 			}           
 
@@ -117,10 +120,10 @@ namespace _2dThing.GameContent
 			if(layer + 1 < World.LAYERNBR){
 				foreach (Player p in playerList)
 					if(p.Layer == layer + 1)
-						p.Draw(rt, new Color(255,255,255,150));
+						p.Draw(rt, new Color(255,150,150,150));
 				
 				foreach (Cube c in cubeLists[layer + 1])
-					c.Draw(rt, new Color(255,255,255,150));
+					c.Draw(rt, new Color(255,150,150,150));
 				
 			}
 		}
