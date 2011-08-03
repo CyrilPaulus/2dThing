@@ -22,6 +22,7 @@ namespace _2dThing
 		Color background = Color.Black;
 		Color nextColor = Color.Black;
 		
+		bool mouseButtonPressed = false;
 		public MainMenu (RenderWindow window, ImageManager imageManager, Client client, Server server) : base(window, imageManager)
 		{
 			imageManager = new ImageManager();
@@ -45,12 +46,17 @@ namespace _2dThing
 			foreach(MenuItem i in items)
 				i.CenterX((int) window.Width);
 			
+			
+			
 		}
 		
 		public override int Run ()
 		{
-			
+			byte[] rgb = new byte[3];
+			randomiser.NextBytes(rgb);
+			p.Color = new Color(rgb[2], rgb[1], rgb[0]);
 			while(running){
+				mouseButtonPressed = false;
 				window.DispatchEvents();
 				
 				int index = 0;
@@ -65,7 +71,7 @@ namespace _2dThing
 				if(Keyboard.IsKeyPressed(Keyboard.Key.Return))
 					return items[selectedIndex].doAction();
 				
-				if(Mouse.IsButtonPressed(Mouse.Button.Left)){
+				if(mouseButtonPressed){
 					foreach(MenuItem i in items){					
 						if(i.Bbox.Contains(mouse.Position.X, mouse.Position.Y))
 							return i.doAction();				
@@ -130,6 +136,7 @@ namespace _2dThing
 			window.Resized += new EventHandler<SizeEventArgs>(OnWindowResized);
 			window.KeyPressed += new EventHandler<KeyEventArgs>(OnKeyPressed);
 			window.MouseMoved += new EventHandler<MouseMoveEventArgs>(OnMouseMoved);
+			window.MouseButtonPressed += new EventHandler<MouseButtonEventArgs>(OnMouseButtonPressed);			
 		}
 		
 		public override void unloadEventHandler ()
@@ -139,6 +146,7 @@ namespace _2dThing
 			window.Resized -= new EventHandler<SizeEventArgs>(OnWindowResized);
 			window.KeyPressed -= new EventHandler<KeyEventArgs>(OnKeyPressed);
 			window.MouseMoved -= new EventHandler<MouseMoveEventArgs>(OnMouseMoved);
+			window.MouseButtonPressed -= new EventHandler<MouseButtonEventArgs>(OnMouseButtonPressed);			
 		}
 		
 		void OnWindowResized(object sender, EventArgs e){
@@ -181,7 +189,15 @@ namespace _2dThing
 			
 		}
 		
-		void updateColor(){
+		void OnMouseButtonPressed(object sender, EventArgs e)
+		{
+			MouseButtonEventArgs a = (MouseButtonEventArgs) e;
+			if (a.Button == Mouse.Button.Left)
+				mouseButtonPressed = true;
+		}		
+				
+		void updateColor()
+		{
 			if (background.Equals(nextColor)){
 				byte[] rgb = new byte[3];
 				randomiser.NextBytes(rgb);
