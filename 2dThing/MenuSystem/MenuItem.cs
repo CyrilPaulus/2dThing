@@ -9,10 +9,10 @@ namespace _2dThing
 		Font textFont;
 		Vector2f position;
 		String item;
-		Action action;
+		Func<int> action;		
 		Text itemText;
 		
-		public MenuItem (String item, Vector2f position, Action action)
+		public MenuItem (String item, Vector2f position, Func<int> action)
 		{			
 			this.item = item;
 			this.position = position;
@@ -26,12 +26,25 @@ namespace _2dThing
 			set { textFont = value; itemText.Font = textFont; }
 		}
 		
-		public void doAction(){
-			action();
+		public int doAction(){
+			return action();
 		}
 		
-		public void Draw(RenderTarget rt){
+		public void Draw(RenderTarget rt, bool selected){
+			if(selected)
+				itemText.Color = new Color(255, 201, 14);
+			else
+				itemText.Color = new Color(255, 255, 255);
 			rt.Draw(itemText);
+		}
+		
+		public void CenterX(int width){
+			position = new Vector2f((width - itemText.GetRect().Width) / 2, position.Y);
+			itemText.Position = position;
+		}
+		
+		public FloatRect Bbox{
+			get { return itemText.GetRect();}
 		}
 	}
 }

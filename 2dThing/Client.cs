@@ -57,14 +57,11 @@ namespace _2dThing
 			window.ShowMouseCursor (false);
 			window.SetFramerateLimit (60);
 			
-			
-			
-			
 			NetPeerConfiguration netConfiguration = new NetPeerConfiguration ("2dThing");			
 			client = new NetClient (netConfiguration);
-			uMsgBuffer = new UserMessageBuffer();
-			otherClients = new Dictionary<int, NetworkClient>();
 			
+			uMsgBuffer = new UserMessageBuffer();
+			otherClients = new Dictionary<int, NetworkClient>();			
 			chat = new Chat(this);
 			
 			loadRessources();			
@@ -79,6 +76,11 @@ namespace _2dThing
 		}
 		
 		public void Connect(){
+			otherClients.Clear();
+			clientId = 0;
+			hasId = false;
+			
+			
 			map = new World (imageManager);
 			player = new Player (map, imageManager);			
 			map.addPlayer (player);
@@ -426,7 +428,7 @@ namespace _2dThing
 			myFont = new Font ("content/arial.ttf");
 		}
 		
-		public override void loadEventHandler(){
+		public override void loadEventHandler(){			
 			window.Closed += new EventHandler (OnClose);
 			window.Resized += new EventHandler<SizeEventArgs>(OnWindowResized);	
 			inputManager.loadEventHandler();

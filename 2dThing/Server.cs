@@ -16,7 +16,7 @@ namespace _2dThing
 		NetServer server;
 		Dictionary<NetConnection, NetworkClient> clientList;
 		int clientId = 1;
-		bool running = true;
+		bool running = false;
 		bool local = false;
 		ImageManager imageManager;
 		
@@ -24,9 +24,7 @@ namespace _2dThing
 		{
 			imageManager = new ImageManager();
 			this.ticker = new Ticker ();
-			this.map = new World (imageManager);
-			this.map.addCube(new Vector2f(0, 90), 0, World.LAYERNBR - 1);
-			lastTickTime = DateTime.Now;
+			
 			NetPeerConfiguration netConfiguration = new NetPeerConfiguration ("2dThing");			
 			netConfiguration.Port = 55017;			
 			server = new NetServer (netConfiguration);
@@ -40,6 +38,14 @@ namespace _2dThing
 		
 		public void run ()
 		{
+			running = true;
+			
+			this.map = new World (imageManager);
+			this.map.addCube(new Vector2f(0, 90), 0, World.LAYERNBR - 1);
+			
+			lastTickTime = DateTime.Now;
+			clientList.Clear();
+			
 			server.Start ();
 			Console.WriteLine ("Server started");
 			while (running) {
@@ -49,15 +55,18 @@ namespace _2dThing
 				} else {
 					Thread.Sleep (10);
 				}
-			}
-			Console.WriteLine("Shutting server down");
-			server.Shutdown("Time to sleep bitches");
+			}			
 			
 		}
 		
 		public void stop()
 		{
 			running = false;
+			Console.WriteLine("Shutting server down");
+			server.Shutdown("Time to sleep bitches");
+			while (server.Status != NetPeerStatus.NotRunning) {				
+				Thread.Sleep (10);
+			}
 		}
 				
 		public void update (float time)
@@ -235,7 +244,11 @@ namespace _2dThing
 				server.SendToAll(outMsg, NetDeliveryMethod.ReliableOrdered);
 			else
 				server.SendToAll(outMsg, NetDeliveryMethod.Unreliable);
-		}	
+		}
+		
+		public bool isRunning(){
+			return running;
+		}
 		
 	}
 }
