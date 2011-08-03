@@ -219,7 +219,7 @@ namespace _2dThing
 			window.SetView(newView);
 			
 			world = new RenderImage(width, height);
-			world.DefaultView.Center = player.Position;			
+			world.DefaultView.Center = player.Center;			
 		}
 		
 		public Vector2f getWorldMouse ()
@@ -425,6 +425,10 @@ namespace _2dThing
 			window.Resized -= new EventHandler<SizeEventArgs>(OnWindowResized);	
 			inputManager.unloadEventHandler();
 			
+		}
+		
+		public bool isRunning() {
+			return client.Status == NetPeerStatus.Running;
 		}
 	}
 }

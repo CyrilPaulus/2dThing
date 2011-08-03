@@ -22,6 +22,7 @@ namespace _2dThing
 		Color background = Color.Black;
 		Color nextColor = Color.Black;
 		
+		bool returnToGame = false;
 		bool mouseButtonPressed = false;
 		public MainMenu (RenderWindow window, ImageManager imageManager, Client client, Server server) : base(window, imageManager)
 		{
@@ -58,6 +59,11 @@ namespace _2dThing
 			while(running){
 				mouseButtonPressed = false;
 				window.DispatchEvents();
+				
+				if(returnToGame){
+					returnToGame = false;
+					return Screen.GAME;
+				}
 				
 				int index = 0;
 				foreach(MenuItem i in items){					
@@ -173,6 +179,10 @@ namespace _2dThing
 				break;
 			case Keyboard.Key.Down:
 				selectedIndex = (selectedIndex + 1) % nbrItem;
+				break;
+			case Keyboard.Key.Escape:
+				if(client.isRunning())
+					returnToGame = true;
 				break;
 			default:
 				break;
