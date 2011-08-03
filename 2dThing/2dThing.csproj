@@ -118,6 +118,7 @@
     <Compile Include="Screen.cs" />
     <Compile Include="MenuSystem\MainMenu.cs" />
     <Compile Include="MenuSystem\MenuItem.cs" />
+    <Compile Include="UiContent\LayerDisplay.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="csfml-audio-2.dll">
@@ -183,6 +184,9 @@
     </None>
     <None Include="Lidgren.Network.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="content\layer.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>

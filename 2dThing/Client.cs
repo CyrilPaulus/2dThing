@@ -40,6 +40,7 @@ namespace _2dThing
 		   
 		Player player;
 		UserMessageBuffer uMsgBuffer;
+		LayerDisplay layerDisplay;
 
 		public Client (RenderWindow window, ImageManager imageManager) : base (window, imageManager)
 		{
@@ -62,8 +63,13 @@ namespace _2dThing
 			
 			loadRessources();			
 			blockTypeDisplay = new Cube(blockType, imageManager);
+			layerDisplay = new LayerDisplay(imageManager);
+			
 			blockTypeDisplay.Position = new Vector2f(window.Width - 2*Cube.WIDTH, window.Height - 2* Cube.HEIGHT);
-			mouse = new Sprite (imageManager.GetImage("mouse"));			
+			layerDisplay.Position = blockTypeDisplay.Position - new Vector2f(0, 50);
+			
+			mouse = new Sprite (imageManager.GetImage("mouse"));
+			
 		}
 		
 				
@@ -142,6 +148,7 @@ namespace _2dThing
 				window.Draw (new Sprite (world.Image));
 				window.Draw (mouse);				
 				window.Draw (uiText);
+				layerDisplay.Draw(window, player.Layer);
 				blockTypeDisplay.Draw(window);
 				chat.Draw(window);				
 				window.Display();                
