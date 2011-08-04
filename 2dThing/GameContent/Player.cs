@@ -98,7 +98,7 @@ namespace _2dThing.GameContent
 
         public void update(float frameTime, Input input)
         {
-            base.update(frameTime);
+            base.Update(frameTime);
 			Vector2f oldPos = Position;
 
             if (input.Left)
