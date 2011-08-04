@@ -3,28 +3,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace _2dThing.Utils
-{
-	class Ticker
-	{
-		float ticktime;
-		DateTime lastTick;
+namespace _2dThing.Utils {
+	class Ticker {
+		private float ticktime;
+		private DateTime lastTick;
 
-		public Ticker ()
-		{
+		public Ticker() {
 			this.ticktime = 20;
 			this.lastTick = DateTime.Now;
-
 		}
 
-		public Ticker (float ticktime)
-		{
+		public Ticker(float ticktime) {
 			this.ticktime = ticktime;
 			this.lastTick = DateTime.Now;
 		}
 
-		public bool Tick ()
-		{
+		public bool Tick() {
 			DateTime now = DateTime.Now;
 			if ((now - lastTick).TotalMilliseconds > ticktime) {
 				lastTick = now;
