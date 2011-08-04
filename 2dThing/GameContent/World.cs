@@ -73,7 +73,7 @@ namespace _2dThing.GameContent {
 				
 			foreach (Player p in playerList) {
 				p.DrawDebug(rt);
-				foreach (Cube c in quadTrees[p.Layer].getList(p.Bbox))
+				foreach (Cube c in quadTrees[p.Layer].GetList(p.Bbox))
 					c.DrawDebug(rt, 215);
 			}
 		}
@@ -84,7 +84,7 @@ namespace _2dThing.GameContent {
 			cube.Position = gridPos;
 			bool exist = false;
 
-			foreach (Cube c in quadTrees[layer].getList(cube.Bbox))
+			foreach (Cube c in quadTrees[layer].GetList(cube.Bbox))
 				if (c.Bbox.Intersects(cube.Bbox))
 					exist = true;
 
@@ -94,7 +94,7 @@ namespace _2dThing.GameContent {
 
 			if (!exist) {
 				cubeLists[layer].Add(cube);
-				quadTrees[layer].addCube(cube);
+				quadTrees[layer].AddCube(cube);
 			}
 			return !exist;
 		}
@@ -104,14 +104,14 @@ namespace _2dThing.GameContent {
 			Cube cube = new Cube(type, imageManager);
 			cube.Position = gridPos;
 			cubeLists[layer].Add(cube);
-			quadTrees[layer].addCube(cube);
+			quadTrees[layer].AddCube(cube);
 		}
 
 		public void DeleteCube(Vector2f pos, int layer) {
 			foreach (Cube c in cubeLists[layer]) {
 				if (c.Bbox.Contains(pos.X, pos.Y)) {
 					cubeLists[layer].Remove(c);
-					quadTrees[layer].removeCube(c);
+					quadTrees[layer].RemoveCube(c);
 					return;
 				}
 			}
@@ -126,7 +126,7 @@ namespace _2dThing.GameContent {
 		}		
 
 		public Cube GetCollidingCube(FloatRect bbox, int layer) {
-			foreach (Cube c in quadTrees[layer].getList(bbox)) {
+			foreach (Cube c in quadTrees[layer].GetList(bbox)) {
 				if (c.Bbox.Intersects(bbox))
 					return c;
 			}
