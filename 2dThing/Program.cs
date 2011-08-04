@@ -6,12 +6,9 @@ using System.Threading;
 using SFML.Graphics;
 using SFML.Window;
 
-namespace _2dThing
-{
-	class Program
-	{
-		static void Main (string[] args)
-		{
+namespace _2dThing {
+	class Program {
+		static void Main(string[] args) {
 			bool isClient = false;
 			bool isServer = false;
 			String ip = "localhost";
@@ -21,20 +18,18 @@ namespace _2dThing
 				foreach (string v in args) {
 					if (v == "-server") {
 						isServer = true;
-						isClient = false;
-						
+						isClient = false;						
 					}
 					
 					if (v == "-client") {
 						isServer = false;
 						isClient = true;
-						ip = args[index +1];						
+						ip = args[index + 1];						
 					}
 					
-					if( v == "-pseudo"){
+					if (v == "-pseudo") {
 						pseudo = args[index + 1];
-					}
-					
+					}					
 					
 					index++;
 				}
@@ -44,13 +39,11 @@ namespace _2dThing
 			
 			if (isServer) {
 				Server server = new Server(imageManager);
-				server.run ();
-			} else 
-			{
-				RenderWindow window = new RenderWindow(new VideoMode(800, 600), "2dThing");	
-								
+				server.run();
+			} else {
+				RenderWindow window = new RenderWindow(new VideoMode(800, 600), "2dThing");									
 				
-				Dictionary<int,Screen> screens = new Dictionary<int, Screen>();
+				Dictionary<int,Screen > screens = new Dictionary<int, Screen>();
 				int screen = 0;
 				
 				Server server = new Server(imageManager);
@@ -64,29 +57,26 @@ namespace _2dThing
 				screens.Add(Screen.GAME, client);
 				screens.Add(Screen.CONNECT, connectMenu);
 				
-				if(isClient){
+				if (isClient) {
 					client.Connect();
 					client.LoadEventHandler();
 					screen = Screen.GAME;
-				}
-				else
+				} else
 					mainMenu.LoadEventHandler();
 				
-				while(screen >= 0){
+				while (screen >= 0) {
 					int prevScreen = screen;
 					screen = screens[screen].Run();
 					
-					if(screen >= 0){
+					if (screen >= 0) {
 						screens[prevScreen].UnloadEventHandler();
 						screens[screen].LoadEventHandler();
 					}
 				}
 				client.Disconnect();
-				if(server != null)
+				if (server != null)
 					server.stop();
-			}
-			
-			
+			}			
 		}       
 	}
 }
