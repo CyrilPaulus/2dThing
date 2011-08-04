@@ -1,9 +1,7 @@
 using System;
 
-namespace _2dThing
-{
-	public class Input
-	{
+namespace _2dThing {
+	public class Input {
 		public bool Left;
 		public bool Right;
 		public bool Up;
@@ -12,8 +10,7 @@ namespace _2dThing
 		public bool RightMouseButton;
 		public bool UpperLayer;
 		
-		public Input ()
-		{
+		public Input() {
 			Left = false;
 			Right = false;
 			Up = false;

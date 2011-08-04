@@ -213,13 +213,13 @@ namespace _2dThing {
 		public override void LoadEventHandler() {			
 			window.Closed += new EventHandler (OnClose);
 			window.Resized += new EventHandler<SizeEventArgs>(OnWindowResized);	
-			inputManager.loadEventHandler();
+			inputManager.LoadEventHandler();
 		}
 		
 		public override void UnloadEventHandler() {
 			window.Closed -= new EventHandler (OnClose);
 			window.Resized -= new EventHandler<SizeEventArgs>(OnWindowResized);	
-			inputManager.unloadEventHandler();		
+			inputManager.UnloadEventHandler();		
 		}
 		
 //UTILS	

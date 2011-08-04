@@ -94,7 +94,7 @@ namespace _2dThing.GameContent {
 
 			if (!exist) {
 				cubeLists[layer].Add(cube);
-				quadTrees[layer].AddCube(cube);
+				quadTrees[layer].addCube(cube);
 			}
 			return !exist;
 		}
