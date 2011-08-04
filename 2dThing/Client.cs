@@ -31,7 +31,7 @@ namespace _2dThing
 		Dictionary<int, NetworkClient> otherClients;
 		String ip = "localhost";
 		
-		
+		float zoom = 1;
 		Font myFont;		
 		
 		Chat chat;
@@ -127,7 +127,7 @@ namespace _2dThing
 				window.DispatchEvents ();
 				
 				if(client.ConnectionStatus == NetConnectionStatus.Disconnected)
-					return Screen.MAINMENU;
+				return Screen.MAINMENU;
 				
 				if(inputManager.MainMenu){
 					inputManager.MainMenu = false;					
@@ -233,7 +233,11 @@ namespace _2dThing
 			window.SetView(newView);
 			
 			world = new RenderImage(width, height);
-			world.DefaultView.Center = player.Center;			
+			world.DefaultView.Center = player.Center;
+			world.DefaultView.Zoom(zoom);
+			
+			blockTypeDisplay.Position = new Vector2f(window.Width - 2*Cube.WIDTH, window.Height - 2* Cube.HEIGHT);
+			layerDisplay.Position = blockTypeDisplay.Position - new Vector2f(0, 50);
 		}
 		
 		public Vector2f getWorldMouse ()
@@ -245,17 +249,17 @@ namespace _2dThing
 		{
             float left = world.DefaultView.Center.X - world.DefaultView.Size.X / 2;
 			float right = world.DefaultView.Center.X + world.DefaultView.Size.X / 2;
-			if (player.Bbox.Left - 100 < left)
-				world.DefaultView.Move (new Vector2f (player.Bbox.Left - 100 - left, 0));
-			else if (player.Bbox.Left + player.Bbox.Width + 100 > right)
-				world.DefaultView.Move (new Vector2f (player.Bbox.Left + player.Bbox.Width + 100 - right, 0));
+			if (player.Bbox.Left - 100 * zoom < left)
+				world.DefaultView.Move (new Vector2f (player.Bbox.Left - 100 * zoom - left, 0));
+			else if (player.Bbox.Left + player.Bbox.Width + 100 * zoom > right)
+				world.DefaultView.Move (new Vector2f (player.Bbox.Left + player.Bbox.Width + 100 * zoom - right, 0));
 
 			float top = world.DefaultView.Center.Y - world.DefaultView.Size.Y / 2;
 			float bottom = world.DefaultView.Center.Y + world.DefaultView.Size.Y / 2;
-			if (player.Bbox.Top - 100 < top)
-				world.DefaultView.Move (new Vector2f (0, player.Bbox.Top - 100 - top));
-			else if (player.Bbox.Top + player.Bbox.Height + 100 > bottom)
-				world.DefaultView.Move (new Vector2f (0, player.Bbox.Top + player.Bbox.Height + 100 - bottom));
+			if (player.Bbox.Top - 100 * zoom < top)
+				world.DefaultView.Move (new Vector2f (0, player.Bbox.Top - 100 * zoom - top));
+			else if (player.Bbox.Top + player.Bbox.Height + 100 * zoom > bottom)
+				world.DefaultView.Move (new Vector2f (0, player.Bbox.Top + player.Bbox.Height + 100 * zoom - bottom));
 
 			world.SetView (world.DefaultView);
 		}
@@ -411,6 +415,8 @@ namespace _2dThing
 		
 		public void Zoom(float value){
 			world.DefaultView.Zoom(value);
+			world.DefaultView.Center = player.Center;
+			zoom *= value;
 		}
 		
 		public int BlockType{
@@ -444,5 +450,7 @@ namespace _2dThing
 		public bool isRunning() {
 			return client.Status == NetPeerStatus.Running;
 		}
+		
+		
 	}
 }
