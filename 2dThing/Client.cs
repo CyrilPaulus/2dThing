@@ -40,7 +40,7 @@ namespace _2dThing
 		   
 		Player player;
 		UserMessageBuffer uMsgBuffer;
-		LayerDisplay layerDisplay;
+		LayerDisplay layerDisplay;		
 
 		public Client (RenderWindow window, ImageManager imageManager) : base (window, imageManager)
 		{
@@ -68,8 +68,7 @@ namespace _2dThing
 			blockTypeDisplay.Position = new Vector2f(window.Width - 2*Cube.WIDTH, window.Height - 2* Cube.HEIGHT);
 			layerDisplay.Position = blockTypeDisplay.Position - new Vector2f(0, 50);
 			
-			mouse = new Sprite (imageManager.GetImage("mouse"));
-			
+			mouse = new Sprite (imageManager.GetImage("mouse"));						
 		}
 		
 				
@@ -106,7 +105,7 @@ namespace _2dThing
 			ClientInfo ci = new ClientInfo (clientId);
 			ci.Color = player.Color;
 			ci.Pseudo = pseudo;
-			sendPkt(ci, true);
+			sendPkt(ci, true);			
 		}
 
 		public override int Run ()

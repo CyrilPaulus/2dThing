@@ -56,6 +56,7 @@ namespace _2dThing
 			byte[] rgb = new byte[3];
 			randomiser.NextBytes(rgb);
 			p.Color = new Color(rgb[2], rgb[1], rgb[0]);
+			Resize(window.Width, window.Height);
 			while(running){
 				mouseButtonPressed = false;
 				enterPressed = false;
@@ -94,8 +95,9 @@ namespace _2dThing
 				p.Draw(pImage);
 				pImage.Display();					
 				
-					
-				window.Draw(new Sprite(pImage.Image));
+				Sprite pSprite = new Sprite(pImage.Image);
+				pSprite.Position = new Vector2f(((int)window.Width - (int)pImage.Width) / 2 , (int)window.Height - (int)pImage.Height);
+				window.Draw(pSprite);
 				
 				index = 0;
 				foreach(MenuItem i in items){					
@@ -167,7 +169,10 @@ namespace _2dThing
 		
 		private void Resize(uint width, uint height){			
 			View newView = new View(new FloatRect(0,0, width, height));
-			window.SetView(newView);			
+			window.SetView(newView);
+				
+			foreach(MenuItem i in items)
+				i.CenterX((int) width);
 		}
 		
 		private void OnKeyPressed (object sender, EventArgs e)
@@ -233,8 +238,8 @@ namespace _2dThing
 			else if (background.B < nextColor.B)				
 				background.B += 1;			
 			
-		}
-		
+		}		
+				
 	}
 }
 

@@ -19,6 +19,7 @@ namespace _2dThing
 		MenuItem ip;
 		MenuItem connecting;
 		bool enterPressed = false;
+		bool running = true;
 		public ConnectMenu(RenderWindow window, ImageManager imageManager, Client client, Server server) : base(window, imageManager)
 		{
 			this.server = server;
@@ -45,10 +46,11 @@ namespace _2dThing
 			byte[] rgb = new byte[3];
 			randomiser.NextBytes(rgb);
 			p.Color = new Color(rgb[2], rgb[1], rgb[0]);
-			
-			while(true){
+			Resize(window.Width, window.Height);
+			while(running){
 				enterPressed = false;
 				window.DispatchEvents();
+				
 				
 				if (returnToMain)
 				{
@@ -75,8 +77,10 @@ namespace _2dThing
 				p.Draw(pImage);
 				pImage.Display();					
 				
-					
-				window.Draw(new Sprite(pImage.Image));
+				
+				Sprite pSprite = new Sprite(pImage.Image);
+				pSprite.Position = new Vector2f((int)window.Width - (int)pImage.Width , 0);
+				window.Draw(pSprite);
 				title.Draw(window, false);
 				ip.Draw(window, true);				
 				window.Draw(mouse);
@@ -85,6 +89,7 @@ namespace _2dThing
 				
 				Thread.Sleep(10);
 			}
+			return Screen.EXIT;
 			
 		}
 		
@@ -94,6 +99,8 @@ namespace _2dThing
 			window.KeyPressed += new EventHandler<KeyEventArgs>(OnKeyPressed);
 			window.MouseMoved += new EventHandler<MouseMoveEventArgs>(OnMouseMoved);
 			window.TextEntered += new EventHandler<TextEventArgs>(OnTextEntered);
+			window.Resized += new EventHandler<SizeEventArgs>(OnWindowResized);
+			window.Closed += new EventHandler (OnClose);
 		}
 		
 		public override void unloadEventHandler ()
@@ -102,6 +109,8 @@ namespace _2dThing
 			window.KeyPressed -= new EventHandler<KeyEventArgs>(OnKeyPressed);
 			window.MouseMoved -= new EventHandler<MouseMoveEventArgs>(OnMouseMoved);
 			window.TextEntered -= new EventHandler<TextEventArgs>(OnTextEntered);
+			window.Resized -= new EventHandler<SizeEventArgs>(OnWindowResized);
+			window.Closed -= new EventHandler (OnClose);
 		}
 		
 		private void OnKeyPressed (object sender, EventArgs e)
@@ -148,6 +157,24 @@ namespace _2dThing
 			return unicode.Equals("0") || unicode.Equals("1") || unicode.Equals("2") || unicode.Equals("3") || unicode.Equals("4") 
 					|| unicode.Equals("5") || unicode.Equals("6") || unicode.Equals("7") || unicode.Equals("8") || unicode.Equals("9") || unicode.Equals(".");
 		}
+		
+		void OnWindowResized(object sender, EventArgs e){
+			SizeEventArgs a = (SizeEventArgs) e;			
+			Resize(a.Width, a.Height);		
+		}
+		
+		private void Resize(uint width, uint height){			
+			View newView = new View(new FloatRect(0,0, width, height));
+			window.SetView(newView);
+			ip.CenterX((int) width);
+			title.CenterX((int) width);
+			connecting.CenterX((int) width);
+		}
+		
+		private void OnClose(object sender, EventArgs e){
+			running = false;
+		}
+			
 		
 		
 	}
