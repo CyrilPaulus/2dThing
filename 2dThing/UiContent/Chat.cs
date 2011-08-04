@@ -76,7 +76,7 @@ namespace _2dThing
 			ChatMessage cm = new ChatMessage(client.ClientId);
 			cm.Pseudo = client.Pseudo;
 			cm.Message = toWrite;
-			client.sendPkt(cm, true);			
+			client.SendPacket(cm, true);			
 			toWrite = "";
 			
 		}

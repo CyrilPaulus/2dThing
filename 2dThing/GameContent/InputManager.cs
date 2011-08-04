@@ -94,7 +94,7 @@ namespace _2dThing
 			if(pressed){
 				client.Player.reset();
 				ClientReset cr = new ClientReset(client.ClientId);
-				client.sendPkt(cr);
+				client.SendPacket(cr);
 			}
 		}
 		

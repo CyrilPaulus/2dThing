@@ -9,82 +9,69 @@ using _2dThing.Utils;
 using _2dThing.GameContent;
 using Lidgren.Network;
 
-namespace _2dThing
-{
-	public class Client : Screen
-	{
+namespace _2dThing {
+	public class Client : Screen {
 		
-		RenderImage world;
+		private RenderImage world;	
 		
-		int blockType = 0;
-		int clientId = 0;
-		String pseudo = "Anon";
-		bool hasId = false;
+		private int clientId = -1;
+		private String pseudo = "Anon";		
 		
-		Ticker ticker;
+		private Ticker ticker;
 		
-		Sprite mouse;		
-		World map;
-		InputManager inputManager;		
+		private Sprite mouse;		
+		private World map;
+		private InputManager inputManager;		
 		
-		NetClient client;
-		Dictionary<int, NetworkClient> otherClients;
-		String ip = "localhost";
+		private NetClient client;
+		private Dictionary<int, NetworkClient> otherClients;
+		private String ip = "localhost";
 		
-		float zoom = 1;
-		Font myFont;		
+		private float zoom = 1;
+		private Font myFont;		
 		
-		Chat chat;
-		Cube blockTypeDisplay;
+		private Chat chat;
+		
+		private int blockType = 0;
+		private Cube blockTypeDisplay;
 		
 		   
-		Player player;
-		UserMessageBuffer uMsgBuffer;
-		LayerDisplay layerDisplay;		
+		private Player player;
+		private UserMessageBuffer uMsgBuffer;
+		private LayerDisplay layerDisplay;		
 
-		public Client (RenderWindow window, ImageManager imageManager) : base (window, imageManager)
-		{
+		public Client (RenderWindow window, ImageManager imageManager) : base(window, imageManager) {
 			this.window = window;
-			world = new RenderImage (800, 600);			
+			world = new RenderImage(800, 600);			
 			
 			inputManager = new InputManager(this);						
 			
-			ticker = new Ticker (); 
+			ticker = new Ticker(); 
 					
 			window.ShowMouseCursor (false);
 			window.SetFramerateLimit (60);
 			
-			NetPeerConfiguration netConfiguration = new NetPeerConfiguration ("2dThing");			
-			client = new NetClient (netConfiguration);
+			NetPeerConfiguration netConfiguration = new NetPeerConfiguration("2dThing");			
+			client = new NetClient(netConfiguration);
 			
 			uMsgBuffer = new UserMessageBuffer();
 			otherClients = new Dictionary<int, NetworkClient>();			
 			chat = new Chat(this);
 			
-			loadRessources();			
-			blockTypeDisplay = new Cube(blockType, imageManager);
-			layerDisplay = new LayerDisplay(imageManager);
+			LoadRessources();
 			
+			blockTypeDisplay = new Cube(blockType, imageManager);
 			blockTypeDisplay.Position = new Vector2f(window.Width - 2*Cube.WIDTH, window.Height - 2* Cube.HEIGHT);
-			layerDisplay.Position = blockTypeDisplay.Position - new Vector2f(0, 50);
+			layerDisplay = new LayerDisplay(imageManager);
+			layerDisplay.Position = blockTypeDisplay.Position - new Vector2f(0, 50);			
 			
 			mouse = new Sprite (imageManager.GetImage("mouse"));						
 		}
 		
-				
-		public void Connect(){
-			otherClients.Clear();
-			clientId = 0;
-			hasId = false;			
+		public void Connect(){			
+			Reset();
 			
-			map = new World (imageManager);
-			player = new Player (map, imageManager);			
-			map.addPlayer (player);
-			world.DefaultView.Center = new Vector2f (0, 0);
-			world.SetView (world.DefaultView);
-			
-			client.Start ();			
-					
+			client.Start();				
 			client.Connect (ip, 55017);			
 			
 			DateTime start = DateTime.Now;
@@ -94,140 +81,168 @@ namespace _2dThing
 					return;
 			}			
 						
-			Console.WriteLine ("Client connected");
+			Console.WriteLine ("Connecting... Waiting for ID");
 			
-			while (!hasId) {
-				readIncomingMsg ();
+			while (clientId == -1) {
+				ReadIncomingMsg ();
 				Thread.Sleep (10);
 			}			
+			
+			Console.WriteLine ("Client connected");
 			
 			NetOutgoingMessage msg = client.CreateMessage ();
 			ClientInfo ci = new ClientInfo (clientId);
 			ci.Color = player.Color;
 			ci.Pseudo = pseudo;
-			sendPkt(ci, true);			
+			SendPacket(ci, true);			
 		}
-
-		public override int Run ()
-		{
-			
-			
+		
+		public void Disconnect() {
+			Console.WriteLine ("Disconnecting");
+			client.Disconnect ("Bye");
+			while (client.ConnectionStatus != NetConnectionStatus.Disconnected) {
+				Thread.Sleep (10);
+			}
+		}		
+		
+		public override int Run() {					
 			//Resize the window if size changed in another screen        
            	Resize(window.Width, window.Height);
 			
-			DateTime lastTickTime = DateTime.Now;
-			
-			Text uiText = new Text ("Tps:", myFont);
-			uiText.Position = new Vector2f (0, 0);
-			uiText.CharacterSize = 14;
+			DateTime lastTickTime = DateTime.Now;			
 						
-			while (window.IsOpened()) {	
+			while (window.IsOpened()) {			
+				window.DispatchEvents ();				
 			
-				window.DispatchEvents ();
-				
-				if(client.ConnectionStatus == NetConnectionStatus.Disconnected)
-				return Screen.MAINMENU;
-				
-				if(inputManager.MainMenu){
+				if(inputManager.MainMenu || client.ConnectionStatus == NetConnectionStatus.Disconnected) {
 					inputManager.MainMenu = false;					
 					return Screen.MAINMENU;
 				}
 							
 				if (ticker.Tick()) {
 					float ticktime = (float)(DateTime.Now - lastTickTime).TotalSeconds;
-					readIncomingMsg ();
-					update (ticktime);
-					uiText.DisplayedString = "Fps: " + (int)(1f / window.GetFrameTime () * 1000) + "\nTps: " + (int)(1 / (DateTime.Now - lastTickTime).TotalSeconds) + "\nClientId: " + clientId + "\nLayer :" + player.Layer;
+					ReadIncomingMsg();
+					Update(ticktime);					
 					lastTickTime = DateTime.Now;					
 				}				
-
-				world.Clear (new Color (100, 149, 237));
-				map.Draw (world, player.Layer);
 				
-				if(inputManager.Input.UpperLayer)
-					map.DrawUpperLayer(world, player.Layer);
-				
-				drawPlayersPseudo();				
-				world.Display ();						
-				
-				window.Clear (new Color (100, 149, 237));                
-				window.Draw (new Sprite (world.Image));
-				window.Draw (mouse);				
-				window.Draw (uiText);
-				layerDisplay.Draw(window, player.Layer);
-				blockTypeDisplay.Draw(window);
-				chat.Draw(window);				
-				window.Display();                
+				Draw();				                
 			}
 
 			Disconnect();			
-			return -1;
-			
+			return -1;			
 		}
 		
-		public void Disconnect(){
-			Console.WriteLine ("Disconnecting");
-			client.Disconnect ("Bye");
-			while (client.ConnectionStatus != NetConnectionStatus.Disconnected) {
-				Thread.Sleep (10);
-			}
-		}
-
-		/// <summary>
-		/// Update the game state
-		/// </summary>
-		/// <param name="frameTime">time of last frame in seconds</param>
-		private void update (float frameTime)
-		{
+		private void Reset() {
+			otherClients.Clear();
+			clientId = -1;						
 			
-			if (inputManager.Input.LeftMouseButton){				
+			map = new World (imageManager);
+			player = new Player (map, imageManager);			
+			map.addPlayer (player);
+			world.DefaultView.Center = new Vector2f (0, 0);
+			world.SetView (world.DefaultView);			
+		}
+		
+		private void Draw() {
+			world.Clear (new Color (100, 149, 237));			
+			map.Draw(world, player.Layer);	
+			
+			if(inputManager.Input.UpperLayer)
+				map.DrawUpperLayer(world, player.Layer);
+				
+			DrawPlayersPseudo();			
+			world.Display ();						
+				
+			window.Clear (new Color (100, 149, 237)); 			
+			window.Draw (new Sprite (world.Image));
+			window.Draw (mouse);			
+			layerDisplay.Draw(window, player.Layer);
+			blockTypeDisplay.Draw(window);
+			chat.Draw(window);				
+			window.Display();
+		}
+		
+		private void Update(float frameTime) {			
+			if (inputManager.Input.LeftMouseButton) {				
 				BlockUpdate bu = new BlockUpdate(clientId);
 				bu.Added = true;
-				bu.Position = getWorldMouse();
+				bu.Position = GetWorldMouse();
 				bu.BlockType = (byte) blockType;
 				bu.Layer = (byte) player.Layer;
-				sendPkt(bu);				
+				SendPacket(bu);				
 			}
 			
-			if (inputManager.Input.RightMouseButton){				
+			if (inputManager.Input.RightMouseButton) {				
 				BlockUpdate bu = new BlockUpdate(clientId);
 				bu.Added = false;
-				bu.Position = getWorldMouse();
+				bu.Position = GetWorldMouse();
 				bu.Layer = (byte) player.Layer;
-				sendPkt(bu);
+				SendPacket(bu);
 			}
 			
-			player.lookAt (getWorldMouse ());
-			player.update (frameTime, inputManager.Input);
-			updateCam ();
+			player.lookAt(GetWorldMouse());
+			player.update(frameTime, inputManager.Input);
+			UpdateCam();
 			
-			UserMessage uMsg = new UserMessage (clientId);
+			UserMessage uMsg = new UserMessage(clientId);
 			uMsg.Position = player.Position;
 			uMsg.Ticktime = frameTime;
-			uMsg.EyePosition = getWorldMouse();
+			uMsg.EyePosition = GetWorldMouse();
 			uMsg.FallSpeed = player.FallSpeed;				
 			uMsg.Input = inputManager.Input;
 			uMsg.Layer = (byte) player.Layer;
 			uMsg.Nolcip = player.Noclip;
-			sendPkt(uMsg);
+			SendPacket(uMsg);
 			
 			uMsgBuffer.insert(uMsg);
 		}
 
-		//Events
-		static void OnClose (object sender, EventArgs e)
-		{
+//EVENTS MANAGEMENT
+		
+		private void OnClose(object sender, EventArgs e) {
 			RenderWindow window = (RenderWindow)sender;
 			window.Close ();
 		}
-
 			
-		void OnWindowResized(object sender, EventArgs e){
+		private void OnWindowResized(object sender, EventArgs e) {
 			SizeEventArgs a = (SizeEventArgs) e;			
 			Resize(a.Width, a.Height);		
 		}
 		
-		void Resize(uint width, uint height){
+		public override void loadEventHandler() {			
+			window.Closed += new EventHandler (OnClose);
+			window.Resized += new EventHandler<SizeEventArgs>(OnWindowResized);	
+			inputManager.loadEventHandler();
+		}
+		
+		public override void unloadEventHandler() {
+			window.Closed -= new EventHandler (OnClose);
+			window.Resized -= new EventHandler<SizeEventArgs>(OnWindowResized);	
+			inputManager.unloadEventHandler();		
+		}
+		
+//UTILS	
+		
+		private void DrawPlayersPseudo() {			
+			foreach (NetworkClient c in otherClients.Values){				
+				Text pseudo = new Text(c.Pseudo, myFont);
+				pseudo.CharacterSize = 12;
+				pseudo.Color = Color.White;
+				pseudo.Position = c.Player.Position - new Vector2f(pseudo.GetRect().Width / 2 - c.Player.Bbox.Width / 2, 20);
+				world.Draw(pseudo);
+			}
+		}
+		
+		private Vector2f GetWorldMouse() {
+			return world.ConvertCoords ((uint)mouse.Position.X, (uint)mouse.Position.Y);
+		}
+		
+		private void LoadRessources() {						
+			myFont = new Font ("content/arial.ttf");
+		}
+		
+		private void Resize(uint width, uint height) {
 			View newView = new View(new FloatRect(0,0,width, height));
 			window.SetView(newView);
 			
@@ -239,13 +254,7 @@ namespace _2dThing
 			layerDisplay.Position = blockTypeDisplay.Position - new Vector2f(0, 50);
 		}
 		
-		public Vector2f getWorldMouse ()
-		{
-			return world.ConvertCoords ((uint)mouse.Position.X, (uint)mouse.Position.Y);
-		}
-
-		public void updateCam ()
-		{
+		private void UpdateCam () {
             float left = world.DefaultView.Center.X - world.DefaultView.Size.X / 2;
 			float right = world.DefaultView.Center.X + world.DefaultView.Size.X / 2;
 			if (player.Bbox.Left - 100 * zoom < left)
@@ -261,10 +270,17 @@ namespace _2dThing
 				world.DefaultView.Move (new Vector2f (0, player.Bbox.Top + player.Bbox.Height + 100 * zoom - bottom));
 
 			world.SetView (world.DefaultView);
+		}		
+		
+		public void Zoom(float value) {
+			world.DefaultView.Zoom(value);
+			world.DefaultView.Center = player.Center;
+			zoom *= value;
 		}
 		
-		public void readIncomingMsg ()
-		{
+//Network
+		
+		private void ReadIncomingMsg() {
 			NetIncomingMessage msg;
 			while ((msg = client.ReadMessage()) != null) {
 				switch (msg.MessageType) {
@@ -272,27 +288,25 @@ namespace _2dThing
 				case NetIncomingMessageType.DebugMessage:
 				case NetIncomingMessageType.WarningMessage:
 				case NetIncomingMessageType.ErrorMessage:
-					Console.WriteLine (msg.ReadString ());
+					Console.WriteLine(msg.ReadString ());
 					break;					
 				case NetIncomingMessageType.Data:
-					readPacket (msg);
+					ReadPacket(msg);
 					break;
 				default:
-					Console.WriteLine ("Unhandled type: " + msg.MessageType);
+					Console.WriteLine("Unhandled type: " + msg.MessageType);
 					break;
 				}
-				client.Recycle (msg);
+				client.Recycle(msg);
 			}
 		}
 		
-		public void readPacket (NetIncomingMessage msg)
-		{
+		private void ReadPacket(NetIncomingMessage msg) {			
 			switch (msg.PeekByte ()) {
 			case Packet.CLIENTINFO:
 				ClientInfo ci = ClientInfo.decode (ref msg);
-				if(!hasId){				
+				if(clientId == - 1){				
 					clientId = ci.ClientId;
-					hasId = true;
 				}
 				else if (ci.ClientId != clientId ){				
 				
@@ -360,14 +374,13 @@ namespace _2dThing
 			default:
 				break;
 			}
+		}		
+		
+		public void SendPacket(Packet pkt) {
+			SendPacket(pkt, false);
 		}
 		
-		
-		public void sendPkt(Packet pkt){
-			sendPkt(pkt, false);
-		}
-		
-		public void sendPkt(Packet pkt, bool secure){
+		public void SendPacket(Packet pkt, bool secure) {
 			NetOutgoingMessage outMsg = client.CreateMessage();
 			pkt.encode(ref outMsg);
 			if(secure)
@@ -376,80 +389,45 @@ namespace _2dThing
 				client.SendMessage(outMsg, NetDeliveryMethod.Unreliable);
 		}
 		
-		private void drawPlayersPseudo(){
-			
-			foreach (NetworkClient c in otherClients.Values){				
-				Text pseudo = new Text(c.Pseudo, myFont);
-				pseudo.CharacterSize = 12;
-				pseudo.Color = Color.White;
-				pseudo.Position = c.Player.Position - new Vector2f(pseudo.GetRect().Width / 2 - c.Player.Bbox.Width / 2, 20);
-				world.Draw(pseudo);
-			}
-		}
+//Accessor Mutator	
 		
-		public string Pseudo{
-			get {return pseudo;}
-			set {pseudo = value;}
-		}
-		
-		public int ClientId{
-			get {return clientId;}
-		}
-		
-		public RenderWindow MainWindow{
-			get {return window;}			
-		}
-		
-		public Sprite Mouse{
-			get {return mouse;}
-		}
-		
-		public Chat Chat{
-			get {return chat;}
-		}
-		
-		public Player Player{
-			get {return player;}
-		}
-		
-		public void Zoom(float value){
-			world.DefaultView.Zoom(value);
-			world.DefaultView.Center = player.Center;
-			zoom *= value;
-		}
-		
-		public int BlockType{
-			get { return blockType;}
+		public int BlockType {
+			get { return blockType; }
 			set { blockType = value; blockTypeDisplay.setType(value); }
 		}
 		
-		public void loadRessources(){						
-			myFont = new Font ("content/arial.ttf");
+		public Chat Chat {
+			get { return chat; }
 		}
 		
-		public override void loadEventHandler(){			
-			window.Closed += new EventHandler (OnClose);
-			window.Resized += new EventHandler<SizeEventArgs>(OnWindowResized);	
-			inputManager.loadEventHandler();
+		public int ClientId {
+			get { return clientId; }
 		}
 		
-		public String IP
-		{
-			get { return ip;}
+		public String IP {
+			get { return ip; }
 			set { ip = value; }
 		}
 		
-		public override void unloadEventHandler(){
-			window.Closed -= new EventHandler (OnClose);
-			window.Resized -= new EventHandler<SizeEventArgs>(OnWindowResized);	
-			inputManager.unloadEventHandler();
-			
+		public RenderWindow MainWindow {
+			get { return window; }			
 		}
+		
+		public Sprite Mouse {
+			get { return mouse; }
+		}		
+		
+		public Player Player {
+			get { return player; }
+		}
+		
+		public string Pseudo {
+			get { return pseudo; }
+			set { pseudo = value; }
+		}		
 		
 		public bool isRunning() {
 			return client.Status == NetPeerStatus.Running;
-		}
-		
-		
+		}		
 	}
 }
