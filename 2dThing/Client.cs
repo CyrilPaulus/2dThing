@@ -181,8 +181,8 @@ namespace _2dThing {
 				SendPacket(bu);
 			}
 			
-			player.lookAt(GetWorldMouse());
-			player.update(frameTime, inputManager.Input);
+			player.LookAt(GetWorldMouse());
+			player.Update(frameTime, inputManager.Input);
 			UpdateCam();
 			
 			UserMessage uMsg = new UserMessage(clientId);
@@ -336,7 +336,7 @@ namespace _2dThing {
 				{					
 					if(otherClients.ContainsKey(uMsg.ClientId)){
 						NetworkClient c = otherClients[uMsg.ClientId];
-						c.Player.lookAt(uMsg.EyePosition);
+						c.Player.LookAt(uMsg.EyePosition);
 						c.Player.Layer = uMsg.Layer;
 						if(VectorUtils.Distance(c.Player.Position, uMsg.Position) > 1){
 							c.Player.Position = uMsg.Position;								

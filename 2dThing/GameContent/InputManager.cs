@@ -92,7 +92,7 @@ namespace _2dThing
 		
 		private void resetPlayer(bool pressed){
 			if(pressed){
-				client.Player.reset();
+				client.Player.Reset();
 				ClientReset cr = new ClientReset(client.ClientId);
 				client.SendPacket(cr);
 			}

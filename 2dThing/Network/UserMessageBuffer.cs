@@ -44,7 +44,7 @@ namespace _2dThing
 					while(index != tail){
 						float deltaTime = (float) (buffer[index].Time - currentTime).TotalSeconds;
 																    
-						p.update(deltaTime, currentInput);
+						p.Update(deltaTime, currentInput);
 						
 						currentTime = buffer[index].Time;
 						currentInput = buffer[index].Input;

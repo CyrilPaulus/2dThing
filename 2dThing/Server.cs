@@ -148,7 +148,7 @@ namespace _2dThing
 					NetworkClient c = clientList[msg.SenderConnection];
 					c.Player.Layer = uMsg.Layer;
 					c.Player.Noclip = uMsg.Nolcip;
-					c.Player.update((float) (uMsg.Time - c.LastUpdate).TotalSeconds, uMsg.Input);
+					c.Player.Update((float) (uMsg.Time - c.LastUpdate).TotalSeconds, uMsg.Input);
 					c.LastUpdate = uMsg.Time;	
 					uMsg.Position = c.Player.Position;
 					sendPktToAll(uMsg, true);				
@@ -170,7 +170,7 @@ namespace _2dThing
 			case Packet.CLIENTRESET:
 				if (clientList.ContainsKey(msg.SenderConnection)) {
 						NetworkClient c = clientList[msg.SenderConnection];
-						c.Player.reset();
+						c.Player.Reset();
 				}
 				break;
 			case Packet.CHATMESSAGE:

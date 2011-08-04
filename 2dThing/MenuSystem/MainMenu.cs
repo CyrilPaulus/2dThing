@@ -204,7 +204,7 @@ namespace _2dThing
 			
 			MouseMoveEventArgs a = (MouseMoveEventArgs)e;
 			mouse.Position = new Vector2f(a.X, a.Y);
-			p.lookAt(pImage.ConvertCoords((uint)a.X, (uint)a.Y));
+			p.LookAt(pImage.ConvertCoords((uint)a.X, (uint)a.Y));
 			
 		}
 		

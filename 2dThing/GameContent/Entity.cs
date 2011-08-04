@@ -17,17 +17,7 @@ namespace _2dThing.GameContent {
 			offset = new Vector2f(0, 0);
 			position = new Vector2f(0, 0);			
 		}
-
-		public Vector2f Position {
-			get { return position; }
-			set { position = value; }
-		}
-
-		public Vector2f Scale {
-			get { return sprite.Scale; }
-			set { sprite.Scale = value; }
-		}
-
+		
 		public virtual void Draw(RenderTarget world) {
 			sprite.Position = Position + offset;
 			world.Draw(sprite);
@@ -58,18 +48,30 @@ namespace _2dThing.GameContent {
 		public virtual void Update(float frameTime) {
 
 		}
-
-		public Image Image {
-			set { sprite.Image = value;}
-		}
-
+		
 		public virtual FloatRect Bbox {
 			get { return new FloatRect(Position.X, Position.Y, size.X, size.Y); }
 		}
 		
+		public Image Image {
+			set { sprite.Image = value;}
+		}
+		
+		public Vector2f Position {
+			get { return position; }
+			set { position = value; }
+		}
+
+		public Vector2f Scale {
+			get { return sprite.Scale; }
+			set { sprite.Scale = value; }
+		}
+		
 		public Sprite Sprite {
-			set { sprite = value;
-				size = new Vector2f(sprite.Width, sprite.Height);}
+			set {
+				sprite = value;
+				size = new Vector2f(sprite.Width, sprite.Height);
+			}
 			get { return sprite;}
 		}
     
