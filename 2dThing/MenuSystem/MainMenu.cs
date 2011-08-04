@@ -24,6 +24,7 @@ namespace _2dThing
 		
 		bool returnToGame = false;
 		bool mouseButtonPressed = false;
+		bool enterPressed = false;
 		public MainMenu (RenderWindow window, ImageManager imageManager, Client client, Server server) : base(window, imageManager)
 		{
 			imageManager = new ImageManager();
@@ -32,8 +33,7 @@ namespace _2dThing
 			pImage = new RenderImage(window.Width, window.Height);
 			pImage.DefaultView.Zoom(0.08F);
 			pImage.DefaultView.Center = p.Center + new Vector2f(0,-30);
-			pImage.SetView(pImage.DefaultView);
-			p.Position = new Vector2f(0,0);
+			pImage.SetView(pImage.DefaultView);			
 			
 			this.window = window;
 			this.client = client;
@@ -58,6 +58,7 @@ namespace _2dThing
 			p.Color = new Color(rgb[2], rgb[1], rgb[0]);
 			while(running){
 				mouseButtonPressed = false;
+				enterPressed = false;
 				window.DispatchEvents();
 				
 				if(returnToGame){
@@ -74,7 +75,7 @@ namespace _2dThing
 					index++;
 				}
 				
-				if(Keyboard.IsKeyPressed(Keyboard.Key.Return))
+				if(enterPressed)
 					return items[selectedIndex].doAction();
 				
 				if(mouseButtonPressed){
@@ -183,6 +184,9 @@ namespace _2dThing
 			case Keyboard.Key.Escape:
 				if(client.isRunning())
 					returnToGame = true;
+				break;
+			case Keyboard.Key.Return:
+				enterPressed = true;
 				break;
 			default:
 				break;

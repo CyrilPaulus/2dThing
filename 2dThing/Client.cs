@@ -88,8 +88,11 @@ namespace _2dThing
 					
 			client.Connect (ip, 55017);			
 			
+			DateTime start = DateTime.Now;
 			while (client.ConnectionStatus == NetConnectionStatus.Disconnected) {
 				Thread.Sleep (10);
+				if((DateTime.Now - start).TotalSeconds > 20)
+					return;
 			}			
 						
 			Console.WriteLine ("Client connected");
@@ -109,6 +112,7 @@ namespace _2dThing
 		public override int Run ()
 		{
 			
+			
 			//Resize the window if size changed in another screen        
            	Resize(window.Width, window.Height);
 			
@@ -121,6 +125,9 @@ namespace _2dThing
 			while (window.IsOpened()) {	
 			
 				window.DispatchEvents ();
+				
+				if(client.ConnectionStatus == NetConnectionStatus.Disconnected)
+					return Screen.MAINMENU;
 				
 				if(inputManager.MainMenu){
 					inputManager.MainMenu = false;					

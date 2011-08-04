@@ -119,6 +119,7 @@
     <Compile Include="MenuSystem\MainMenu.cs" />
     <Compile Include="MenuSystem\MenuItem.cs" />
     <Compile Include="UiContent\LayerDisplay.cs" />
+    <Compile Include="MenuSystem\ConnectMenu.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="csfml-audio-2.dll">

@@ -57,10 +57,12 @@ namespace _2dThing
 				Client client = new Client(window, imageManager);
 				client.IP = ip;
 				
-				MainMenu mainMenu = new MainMenu(window, imageManager, client, server);			
+				MainMenu mainMenu = new MainMenu(window, imageManager, client, server);
+				ConnectMenu connectMenu = new ConnectMenu(window, imageManager, client, server);
 							
 				screens.Add(Screen.MAINMENU, mainMenu);
-				screens.Add(Screen.GAME, client);				
+				screens.Add(Screen.GAME, client);
+				screens.Add(Screen.CONNECT, connectMenu);
 				
 				if(isClient){
 					client.Connect();

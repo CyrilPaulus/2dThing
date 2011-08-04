@@ -8,13 +8,11 @@ namespace _2dThing
 	{
 		Font textFont;
 		Vector2f position;
-		String item;
 		Func<int> action;		
 		Text itemText;
 		
 		public MenuItem (String item, Vector2f position, Func<int> action)
 		{			
-			this.item = item;
 			this.position = position;
 			this.action = action;
 			this.textFont = new Font("content/arial.ttf");
@@ -45,6 +43,11 @@ namespace _2dThing
 		
 		public FloatRect Bbox{
 			get { return itemText.GetRect();}
+		}
+		
+		public String Item{
+			set { itemText.DisplayedString = value; }
+			get { return itemText.DisplayedString; }
 		}
 	}
 }
