@@ -210,13 +210,13 @@ namespace _2dThing {
 			Resize(a.Width, a.Height);		
 		}
 		
-		public override void loadEventHandler() {			
+		public override void LoadEventHandler() {			
 			window.Closed += new EventHandler (OnClose);
 			window.Resized += new EventHandler<SizeEventArgs>(OnWindowResized);	
 			inputManager.loadEventHandler();
 		}
 		
-		public override void unloadEventHandler() {
+		public override void UnloadEventHandler() {
 			window.Closed -= new EventHandler (OnClose);
 			window.Resized -= new EventHandler<SizeEventArgs>(OnWindowResized);	
 			inputManager.unloadEventHandler();		

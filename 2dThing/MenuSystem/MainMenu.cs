@@ -138,9 +138,9 @@ namespace _2dThing
 		}
 		
 		
-		public override void loadEventHandler ()
+		public override void LoadEventHandler ()
 		{
-			base.loadEventHandler ();
+			base.LoadEventHandler ();
 			window.Closed += new EventHandler (OnClose);
 			window.Resized += new EventHandler<SizeEventArgs>(OnWindowResized);
 			window.KeyPressed += new EventHandler<KeyEventArgs>(OnKeyPressed);
@@ -148,9 +148,9 @@ namespace _2dThing
 			window.MouseButtonPressed += new EventHandler<MouseButtonEventArgs>(OnMouseButtonPressed);			
 		}
 		
-		public override void unloadEventHandler ()
+		public override void UnloadEventHandler ()
 		{
-			base.unloadEventHandler ();
+			base.UnloadEventHandler ();
 			window.Closed -= new EventHandler (OnClose);
 			window.Resized -= new EventHandler<SizeEventArgs>(OnWindowResized);
 			window.KeyPressed -= new EventHandler<KeyEventArgs>(OnKeyPressed);

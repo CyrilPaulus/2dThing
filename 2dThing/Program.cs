@@ -66,19 +66,19 @@ namespace _2dThing
 				
 				if(isClient){
 					client.Connect();
-					client.loadEventHandler();
+					client.LoadEventHandler();
 					screen = Screen.GAME;
 				}
 				else
-					mainMenu.loadEventHandler();
+					mainMenu.LoadEventHandler();
 				
 				while(screen >= 0){
 					int prevScreen = screen;
 					screen = screens[screen].Run();
 					
 					if(screen >= 0){
-						screens[prevScreen].unloadEventHandler();
-						screens[screen].loadEventHandler();
+						screens[prevScreen].UnloadEventHandler();
+						screens[screen].LoadEventHandler();
 					}
 				}
 				client.Disconnect();
