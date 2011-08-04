@@ -35,7 +35,7 @@ namespace _2dThing
 			running = true;
 			
 			this.map = new World (imageManager);
-			this.map.addCube(new Vector2f(0, 90), 0, World.LAYERNBR - 1);
+			this.map.AddCube(new Vector2f(0, 90), 0, World.LAYERNBR - 1);
 			
 			lastTickTime = DateTime.Now;
 			clientList.Clear();
@@ -94,7 +94,7 @@ namespace _2dThing
 						sendPkt(ci, msg.SenderConnection, true);
 						
 						Player p = new Player(map, imageManager);
-						map.addPlayer(p);
+						map.AddPlayer(p);
 						newClient.Player = p;
 						sendFullWorldUpdate(msg.SenderConnection);
 						sendFullClientInfo(msg.SenderConnection);
@@ -104,7 +104,7 @@ namespace _2dThing
 						if(clientList.ContainsKey(msg.SenderConnection)){						
 							NetworkClient c = clientList[msg.SenderConnection];
 							clientList.Remove (c.Connection);
-							map.deletePlayer(c.Player);
+							map.DeletePlayer(c.Player);
 							Console.WriteLine ("Client " + c.Pseudo + " disconnected");
 								
 							ClientDisconnect cd = new ClientDisconnect(c.ClientId);
@@ -158,12 +158,12 @@ namespace _2dThing
 			case Packet.BLOCKUPDATE:				
 				BlockUpdate bu = BlockUpdate.decode(ref msg);
 				
-				if((bu.Added && map.addCube(bu.Position, bu.BlockType, bu.Layer)) || !bu.Added) {
+				if((bu.Added && map.AddCube(bu.Position, bu.BlockType, bu.Layer)) || !bu.Added) {
 					sendPktToAll(bu);
 				}
 					
 				if(!bu.Added)
-					map.deleteCube(bu.Position, bu.Layer);		
+					map.DeleteCube(bu.Position, bu.Layer);		
 				
 				break;
 			

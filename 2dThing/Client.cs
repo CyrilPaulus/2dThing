@@ -139,7 +139,7 @@ namespace _2dThing {
 			
 			map = new World (imageManager);
 			player = new Player (map, imageManager);			
-			map.addPlayer (player);
+			map.AddPlayer (player);
 			world.DefaultView.Center = new Vector2f (0, 0);
 			world.SetView (world.DefaultView);			
 		}
@@ -321,7 +321,7 @@ namespace _2dThing {
 						newClient.Player = new Player(map, imageManager);
 						newClient.Player.Color = ci.Color;
 						newClient.Pseudo = ci.Pseudo;
-						map.addPlayer(newClient.Player);
+						map.AddPlayer(newClient.Player);
 						otherClients.Add(newClient.ClientId, newClient);
 					}
 				}
@@ -351,9 +351,9 @@ namespace _2dThing {
 			case Packet.BLOCKUPDATE:				
 				BlockUpdate bu = BlockUpdate.decode(ref msg);
 				if(bu.Added)
-					map.forceAddCube(bu.Position, bu.BlockType, bu.Layer);
+					map.ForceAddCube(bu.Position, bu.BlockType, bu.Layer);
 				else
-					map.deleteCube(bu.Position, bu.Layer);
+					map.DeleteCube(bu.Position, bu.Layer);
 				break;
 			
 			case Packet.CLIENTDISCONNECT:
@@ -362,7 +362,7 @@ namespace _2dThing {
 				if(otherClients.ContainsKey(cd.ClientId)){
 					NetworkClient c = otherClients[cd.ClientId];
 					otherClients.Remove(c.ClientId);
-					map.deletePlayer(c.Player);				
+					map.DeletePlayer(c.Player);				
 				}
 				break;
 				
