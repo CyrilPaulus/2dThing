@@ -59,8 +59,8 @@ namespace _2dThing {
 					window.Display();
 					if (client.isRunning())
 						client.Disconnect();
-					if (server.isRunning())
-						server.stop();
+					if (server.IsRunning())
+						server.Stop();
 					client.IP = ip.Item;
 					client.Connect();
 					return Screen.GAME;

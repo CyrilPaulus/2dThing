@@ -39,7 +39,7 @@ namespace _2dThing {
 			
 			if (isServer) {
 				Server server = new Server(imageManager);
-				server.run();
+				server.Run();
 			} else {
 				RenderWindow window = new RenderWindow(new VideoMode(800, 600), "2dThing");									
 				
@@ -75,7 +75,7 @@ namespace _2dThing {
 				}
 				client.Disconnect();
 				if (server != null)
-					server.stop();
+					server.Stop();
 			}			
 		}       
 	}

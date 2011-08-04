@@ -108,11 +108,11 @@ namespace _2dThing {
 		}
 		
 		private int StartLocal() {
-			if (server.isRunning()) {
+			if (server.IsRunning()) {
 				client.Disconnect();
-				server.stop();
+				server.Stop();
 			}
-			Thread serverThread = new Thread(server.run);
+			Thread serverThread = new Thread(server.Run);
 			serverThread.Start();
 			client.IP = "localhost";
 			client.Connect();
