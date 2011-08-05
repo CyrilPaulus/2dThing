@@ -12,6 +12,7 @@ namespace _2dThing
 		public const byte CLIENTDISCONNECT = 4;
 		public const byte CLIENTRESET = 5;
 		public const byte CHATMESSAGE = 6;
+		public const byte WORLDRESET = 7;
 		protected byte type;
 		protected int clientId;
 		

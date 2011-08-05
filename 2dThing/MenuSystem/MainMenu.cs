@@ -13,7 +13,7 @@ namespace _2dThing {
 		private Client client;
 		private Server server;
 		private int selectedIndex = 0;
-		private const int nbrItem = 4;
+		private int nbrItem = 5;
 		private Sprite mouse;
 		private Random randomiser = new Random();
 		private Color background = Color.Black;
@@ -38,13 +38,11 @@ namespace _2dThing {
 			items[0] = new MenuItem("Local Game", new Vector2f(0, 100), StartLocal);
 			items[1] = new MenuItem("Connect", new Vector2f(0, 130), Connect);
 			items[2] = new MenuItem("Options", new Vector2f(0, 160), Option);
-			items[3] = new MenuItem("Exit", new Vector2f(0, 220), Exit);
+			items[3] = new MenuItem("Load map", new Vector2f(0, 190), LoadMap);
+			items[4] = new MenuItem("Exit", new Vector2f(0, 250), Exit);			
 			
 			foreach (MenuItem i in items)
-				i.CenterX((int)window.Width);
-			
-			
-			
+				i.CenterX((int)window.Width);			
 		}
 		
 		public override int Run() {
@@ -60,15 +58,6 @@ namespace _2dThing {
 				if (returnToGame) {
 					returnToGame = false;
 					return Screen.GAME;
-				}
-				
-				int index = 0;
-				foreach (MenuItem i in items) {					
-					if (i.Bbox.Contains(mouse.Position.X, mouse.Position.Y)) {
-						selectedIndex = index;
-						break;
-					}
-					index++;
 				}
 				
 				if (enterPressed)
@@ -97,7 +86,7 @@ namespace _2dThing {
 				pSprite.Position = new Vector2f(((int)window.Width - (int)pImage.Width) / 2, (int)window.Height - (int)pImage.Height);
 				window.Draw(pSprite);
 				
-				index = 0;
+				int index = 0;
 				foreach (MenuItem i in items) {					
 					i.Draw(window, index == selectedIndex);					
 					index++;
@@ -132,6 +121,13 @@ namespace _2dThing {
 		
 		private int Exit() {
 			return Screen.EXIT;
+		}
+		
+		private int LoadMap(){
+			if(server.IsRunning())
+				return Screen.LOAD;
+			else
+				return Screen.MAINMENU;
 		}
 		
 		public override void LoadEventHandler() {
@@ -189,6 +185,15 @@ namespace _2dThing {
 			MouseMoveEventArgs a = (MouseMoveEventArgs)e;
 			mouse.Position = new Vector2f(a.X, a.Y);
 			p.LookAt(pImage.ConvertCoords((uint)a.X, (uint)a.Y));
+			
+			int index = 0;
+				foreach (MenuItem i in items) {					
+					if (i.Bbox.Contains(mouse.Position.X, mouse.Position.Y)) {
+						selectedIndex = index;
+						break;
+					}
+					index++;
+				}
 			
 		}
 		

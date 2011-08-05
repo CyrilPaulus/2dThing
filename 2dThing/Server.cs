@@ -243,6 +243,14 @@ namespace _2dThing {
 		public void SaveMap(String filename){		
 				map.SaveMap(filename);			
 		}
+		
+		public void LoadMap(String filename){
+			map.LoadMap(filename);
+			WorldReset wr = new WorldReset(0);
+			SendPktToAll(wr, true);
+			foreach (NetworkClient c in clientList.Values)
+				SendFullWorldUpdate(c.Connection);
+		}
 	}
 }
 

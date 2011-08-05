@@ -114,6 +114,7 @@
     <Compile Include="MenuSystem\ConnectMenu.cs" />
     <Compile Include="MenuSystem\LoadMenu.cs" />
     <Compile Include="Utils\FileLister.cs" />
+    <Compile Include="Network\WorldReset.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="csfml-audio-2.dll">

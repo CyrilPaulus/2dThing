@@ -8,6 +8,7 @@ namespace _2dThing {
 		private Server server;
 		private bool running = true;
 		private bool returnToMainMenu = false;
+		private bool returnToGame = false;
 		private FileLister fl;
 		
 		public LoadMenu(RenderWindow window, ImageManager imageManger, Server server) : base(window, imageManger) {
@@ -23,7 +24,12 @@ namespace _2dThing {
 				if(returnToMainMenu) {
 					returnToMainMenu = false;
 					return Screen.MAINMENU;
-				}					
+				}
+				
+				if(returnToGame) {
+					returnToMainMenu = false;
+					return Screen.GAME;
+				}
 				
 				window.Clear(Screen.BACKGROUND);
 				fl.Draw(window);
@@ -61,8 +67,10 @@ namespace _2dThing {
 						fl.Down();
 					break;
 				case Keyboard.Key.Return:
-						fl.Expand();
-						Console.WriteLine(fl.GetSelectedIndex());
+						if(fl.Expand() == FileLister.FILE){
+							server.LoadMap(fl.GetSelectedIndex());
+							returnToGame = true;
+						}
 					break;
 								
 				default:
