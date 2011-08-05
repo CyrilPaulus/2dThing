@@ -240,6 +240,9 @@ namespace _2dThing {
 			return running;
 		}
 		
+		public void SaveMap(String filename){		
+				map.SaveMap(filename);			
+		}
 	}
 }
 

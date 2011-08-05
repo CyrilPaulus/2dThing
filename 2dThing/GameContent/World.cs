@@ -6,6 +6,7 @@ using System.Text;
 using _2dThing.Utils;
 using SFML.Window;
 using SFML.Graphics;
+using System.IO;
 
 namespace _2dThing.GameContent {
 	public class World {
@@ -27,6 +28,19 @@ namespace _2dThing.GameContent {
 				cubeLists.Add(new List<Cube>());
 				quadTrees.Add(new QuadTree(10, new Vector2f(90, 90)));
 			}
+		}
+		
+		private void Reset(){
+			cubeLists.Clear();
+			quadTrees.Clear();
+			
+			for (int i = 0; i < LAYERNBR; i++) {
+				cubeLists.Add(new List<Cube>());
+				quadTrees.Add(new QuadTree(10, new Vector2f(90, 90)));
+			}		
+			
+			foreach(Player p in playerList)
+				p.Reset();
 		}
 		
 		public void Draw(RenderTarget rt, int layer) {
@@ -149,6 +163,50 @@ namespace _2dThing.GameContent {
 		
 		public List<Player> Players {
 			get { return playerList; }
+		}
+		
+		public void SaveMap(String filename){			
+			if(File.Exists(filename))
+				File.Delete(filename);
+			FileStream fs = new FileStream(filename, FileMode.CreateNew);
+			BinaryWriter bw = new BinaryWriter(fs);
+			
+			int count = 0;
+			foreach(List<Cube> cubeList in cubeLists)
+				count += cubeList.Count;
+			bw.Write(count);
+			
+			int layer = 0;
+			foreach(List<Cube> cubeList in cubeLists) {
+				foreach(Cube c in cubeList) {
+					bw.Write(layer);
+					bw.Write(c.type);
+					bw.Write(c.Position.X);
+					bw.Write(c.Position.Y);
+				}
+				layer++;
+			}
+			
+			bw.Close();
+			fs.Close();
+		}
+		
+		public void LoadMap(String filename){
+			Reset();
+			FileStream fs = new FileStream(filename, FileMode.Open, FileAccess.Read);
+			BinaryReader br = new BinaryReader(fs);
+			int count = br.ReadInt32();
+			Console.WriteLine(count);
+			
+			for(int i = 0; i < count; i++){
+				int layer = br.ReadInt32();
+				int type = br.ReadInt32();
+				Vector2f position = new Vector2f(br.ReadSingle(), br.ReadSingle());
+				AddCube(position, type, layer);
+			}
+			
+			br.Close();
+			fs.Close();
 		}
 	}
 }

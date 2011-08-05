@@ -117,7 +117,7 @@ namespace _2dThing {
 				if(inputManager.MainMenu || client.ConnectionStatus == NetConnectionStatus.Disconnected) {
 					inputManager.MainMenu = false;					
 					return Screen.MAINMENU;
-				}
+				}			
 							
 				if (ticker.Tick()) {
 					float ticktime = (float)(DateTime.Now - lastTickTime).TotalSeconds;
