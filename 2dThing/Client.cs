@@ -145,7 +145,7 @@ namespace _2dThing {
 		}
 		
 		private void Draw() {
-			world.Clear (new Color (100, 149, 237));			
+			world.Clear (Screen.BACKGROUND);			
 			map.Draw(world, player.Layer);	
 			
 			if(inputManager.Input.UpperLayer)
@@ -154,7 +154,7 @@ namespace _2dThing {
 			DrawPlayersPseudo();			
 			world.Display ();						
 				
-			window.Clear (new Color (100, 149, 237)); 			
+			window.Clear (Screen.BACKGROUND); 			
 			window.Draw (new Sprite (world.Image));
 			window.Draw (mouse);			
 			layerDisplay.Draw(window, player.Layer);

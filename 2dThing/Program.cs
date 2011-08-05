@@ -56,6 +56,7 @@ namespace _2dThing {
 				screens.Add(Screen.MAINMENU, mainMenu);
 				screens.Add(Screen.GAME, client);
 				screens.Add(Screen.CONNECT, connectMenu);
+				screens.Add(Screen.LOAD, new LoadMenu(window, imageManager, server));
 				
 				if (isClient) {
 					client.Connect();

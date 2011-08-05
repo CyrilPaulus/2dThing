@@ -82,6 +82,9 @@ namespace _2dThing {
 					}
 				}
 				
+				if(Keyboard.IsKeyPressed(Keyboard.Key.L))
+					return Screen.LOAD;
+				
 				UpdateColor();
 							
 				window.Clear(background);
@@ -174,13 +177,7 @@ namespace _2dThing {
 					break;
 				case Keyboard.Key.Return:
 					enterPressed = true;
-					break;
-				case Keyboard.Key.B:
-					System.Windows.Forms.SaveFileDialog sfd = new System.Windows.Forms.SaveFileDialog();
-					sfd.Filter = "map file (*.map)|*.map";
-					if(sfd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-						server.SaveMap(sfd.FileName);
-					break;
+					break;				
 				default:
 					break;
 			}
