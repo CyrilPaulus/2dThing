@@ -13,7 +13,7 @@ namespace _2dThing {
 		private Client client;
 		private Server server;
 		private int selectedIndex = 0;
-		private int nbrItem = 5;
+		private int nbrItem = 6;
 		private Sprite mouse;
 		private Random randomiser = new Random();
 		private Color background = Color.Black;
@@ -39,7 +39,9 @@ namespace _2dThing {
 			items[1] = new MenuItem("Connect", new Vector2f(0, 130), Connect);
 			items[2] = new MenuItem("Options", new Vector2f(0, 160), Option);
 			items[3] = new MenuItem("Load map", new Vector2f(0, 190), LoadMap);
-			items[4] = new MenuItem("Exit", new Vector2f(0, 250), Exit);			
+			items[4] = new MenuItem("Save map", new Vector2f(0, 220), SaveMap);
+			items[5] = new MenuItem("Exit", new Vector2f(0, 280), Exit);
+			
 			
 			foreach (MenuItem i in items)
 				i.CenterX((int)window.Width);			
@@ -126,6 +128,13 @@ namespace _2dThing {
 		private int LoadMap(){
 			if(server.IsRunning())
 				return Screen.LOAD;
+			else
+				return Screen.MAINMENU;
+		}
+		
+		private int SaveMap(){
+			if(client.isRunning())
+				return Screen.SAVE;
 			else
 				return Screen.MAINMENU;
 		}

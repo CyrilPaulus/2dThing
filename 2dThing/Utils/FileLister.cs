@@ -19,6 +19,8 @@ namespace _2dThing {
 		private int cursor = 0;
 		private int length = 0;
 		private bool load = true;
+		private int editMode = 0;
+		private string newName = "";
 		
 		public FileLister(String path, bool load) : this(path, load, "*") {
 			
@@ -93,7 +95,10 @@ namespace _2dThing {
 				else
 					text.Color = Color.White;
 				
-				text.DisplayedString = "New directory";
+				if(editMode == NEWDIRECTORY)
+					text.DisplayedString = newName + "_";
+				else
+					text.DisplayedString = "New directory";
 				
 				if(text.GetRect().Top + text.GetRect().Height > rt.Height - 10){
 					position.X += maxX + 2;
@@ -140,7 +145,10 @@ namespace _2dThing {
 				else
 					text.Color = Color.White;
 				
-				text.DisplayedString = "New file";
+				if(editMode == NEWFILE)
+					text.DisplayedString = newName + "_";
+				else
+					text.DisplayedString = "New file";
 				
 				if(text.GetRect().Top + text.GetRect().Height > rt.Height - 10){
 					position.X += maxX + 2;
@@ -206,7 +214,50 @@ namespace _2dThing {
 				return "New file";
 			else
 				return files[cursor - directories.Count - 1].FullName;			
-		}		
+		}
+		
+		public void EnterEditMode(int mode){
+			editMode = mode;
+			Console.WriteLine(editMode);
+		}
+		
+		public bool IsEditing(){
+			return editMode != 0;
+		}
+		
+		public void AddChar(String c){
+			if (c.Equals("\b")){
+				if(newName.Length > 0)
+					newName = newName.Substring(0, newName.Length - 1);
+			}
+			else if (c.Equals("\r") || c.Equals("\n")){
+				if(newName.Length > 0) {
+					if(editMode == NEWDIRECTORY){
+						current.CreateSubdirectory(newName);
+					}
+					else if(editMode == NEWFILE){
+						
+						if(!newName.EndsWith(".map"))
+							newName += ".map";
+						
+						FileStream fs = File.Create(current.FullName + "/" + newName);
+						fs.Close();
+					}
+					editMode = 0;
+					newName="";
+					SetDirectory(current);
+				}
+			}
+			else
+				newName += c;				
+		}
+		
+		public void Delete(){
+			if(Expand() == FILE){
+				File.Delete(GetSelectedIndex());
+				SetDirectory(current);
+			}
+		}
 	}
 }
 

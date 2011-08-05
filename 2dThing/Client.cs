@@ -278,6 +278,10 @@ namespace _2dThing {
 			zoom *= value;
 		}
 		
+		public void SaveMap(String filename){
+			map.SaveMap(filename);
+		}
+		
 //Network
 		
 		private void ReadIncomingMsg() {

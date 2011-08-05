@@ -166,9 +166,7 @@ namespace _2dThing.GameContent {
 		}
 		
 		public void SaveMap(String filename){			
-			if(File.Exists(filename))
-				File.Delete(filename);
-			FileStream fs = new FileStream(filename, FileMode.CreateNew);
+			FileStream fs = new FileStream(filename, FileMode.Truncate);
 			BinaryWriter bw = new BinaryWriter(fs);
 			
 			int count = 0;

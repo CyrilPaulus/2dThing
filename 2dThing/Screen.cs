@@ -9,6 +9,7 @@ namespace _2dThing {
 		public static int CONNECT = 2;
 		public static int OPTION = 3;
 		public static int LOAD = 4;
+		public static int SAVE = 5;
 		public static Color BACKGROUND = new Color (100, 149, 237);
 		public static Font ARIAL = new Font("content/arial.ttf");
 		protected RenderWindow window;

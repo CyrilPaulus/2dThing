@@ -51,7 +51,8 @@ namespace _2dThing
 		}
 		
 		public void update(String c){
-			if(c.Equals("\b") && toWrite.Length > 0){				
+			if(c.Equals("\b")) {
+				if(toWrite.Length > 0)				
 					toWrite = toWrite.Substring(0, toWrite.Length -1);
 			}
 			else if (c.Equals("\r") || c.Equals("\n")){
